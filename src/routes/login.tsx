@@ -1,0 +1,76 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/login")({
+  head: () => ({ meta: [{ title: "تسجيل الدخول | سلمان فارس" }] }),
+  component: LoginPage,
+});
+
+function LoginPage() {
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/admin` },
+        });
+        if (error) throw error;
+        toast.success("تم إنشاء الحساب");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast.success("تم تسجيل الدخول");
+      }
+      navigate({ to: "/admin" });
+    } catch (err: any) {
+      toast.error(err?.message ?? "حدث خطأ");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="mx-auto flex min-h-[70vh] max-w-md items-center px-4">
+      <div className="w-full rounded-2xl border border-border/70 bg-card/60 p-6">
+        <h1 className="text-xl font-bold">{mode === "signin" ? "تسجيل الدخول" : "إنشاء حساب"}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          أول حساب يتم إنشاؤه يصبح المسؤول تلقائياً.
+        </p>
+        <form onSubmit={onSubmit} className="mt-5 space-y-3">
+          <div>
+            <Label htmlFor="email">البريد الإلكتروني</Label>
+            <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="password">كلمة المرور</Label>
+            <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+          </div>
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "..." : mode === "signin" ? "دخول" : "إنشاء"}
+          </Button>
+        </form>
+        <button
+          type="button"
+          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+          className="mt-4 w-full text-center text-xs text-muted-foreground hover:text-foreground"
+        >
+          {mode === "signin" ? "ليس لديك حساب؟ إنشاء حساب جديد" : "لديك حساب؟ تسجيل الدخول"}
+        </button>
+      </div>
+    </div>
+  );
+}
