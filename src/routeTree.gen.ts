@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WebsitesRouteImport } from './routes/websites'
 import { Route as TrendingRouteImport } from './routes/trending'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppsRouteImport } from './routes/apps'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 
 const WebsitesRoute = WebsitesRouteImport.update({
@@ -24,9 +26,19 @@ const TrendingRoute = TrendingRouteImport.update({
   path: '/trending',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppsRoute = AppsRouteImport.update({
   id: '/apps',
   path: '/apps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,34 +49,49 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/apps': typeof AppsRoute
+  '/login': typeof LoginRoute
   '/trending': typeof TrendingRoute
   '/websites': typeof WebsitesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/apps': typeof AppsRoute
+  '/login': typeof LoginRoute
   '/trending': typeof TrendingRoute
   '/websites': typeof WebsitesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/apps': typeof AppsRoute
+  '/login': typeof LoginRoute
   '/trending': typeof TrendingRoute
   '/websites': typeof WebsitesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/apps' | '/trending' | '/websites'
+  fullPaths: '/' | '/admin' | '/apps' | '/login' | '/trending' | '/websites'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/apps' | '/trending' | '/websites'
-  id: '__root__' | '/' | '/apps' | '/trending' | '/websites'
+  to: '/' | '/admin' | '/apps' | '/login' | '/trending' | '/websites'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/apps'
+    | '/login'
+    | '/trending'
+    | '/websites'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   AppsRoute: typeof AppsRoute
+  LoginRoute: typeof LoginRoute
   TrendingRoute: typeof TrendingRoute
   WebsitesRoute: typeof WebsitesRoute
 }
@@ -85,11 +112,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrendingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/apps': {
       id: '/apps'
       path: '/apps'
       fullPath: '/apps'
       preLoaderRoute: typeof AppsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -104,7 +145,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   AppsRoute: AppsRoute,
+  LoginRoute: LoginRoute,
   TrendingRoute: TrendingRoute,
   WebsitesRoute: WebsitesRoute,
 }
