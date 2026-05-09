@@ -28,11 +28,12 @@ type FormState = {
   badge: string;
   views: string;
   image_url: string;
+  rating: string;
 };
 
 const empty: FormState = {
   title: "", description: "", category: "apps", url: "",
-  cta: "زيارة الموقع", emoji: "✨", badge: "", views: "", image_url: "",
+  cta: "زيارة الموقع", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
 };
 
 function AdminPage() {
@@ -80,6 +81,7 @@ function AdminPage() {
         badge: form.badge.trim() || null,
         views: form.views.trim() || null,
         image_url: form.image_url.trim() || null,
+        rating: form.rating.trim() ? Number(form.rating) : null,
       };
       if (form.id) {
         const { error } = await supabase.from("items").update(payload).eq("id", form.id);
@@ -113,6 +115,7 @@ function AdminPage() {
       category: it.category, url: it.url, cta: it.cta,
       emoji: it.emoji, badge: it.badge ?? "", views: it.views ?? "",
       image_url: it.image_url ?? "",
+      rating: it.rating != null ? String(it.rating) : "",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -210,6 +213,18 @@ function AdminPage() {
         <div>
           <Label>المشاهدات (اختياري)</Label>
           <Input value={form.views} onChange={(e) => setForm({ ...form, views: e.target.value })} placeholder="120K" />
+        </div>
+        <div>
+          <Label>التقييم 0-5 (اختياري)</Label>
+          <Input
+            type="number"
+            min={0}
+            max={5}
+            step={0.1}
+            value={form.rating}
+            onChange={(e) => setForm({ ...form, rating: e.target.value })}
+            placeholder="4.5"
+          />
         </div>
         <div className="md:col-span-2">
           <Label>الصورة المصغّرة (اختياري)</Label>

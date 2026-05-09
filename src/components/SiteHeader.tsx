@@ -2,12 +2,16 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import avatarUrl from "@/assets/avatar.jpg";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { SocialLinks } from "@/components/SocialLinks";
 
 const nav = [
   { to: "/", label: "الرئيسية" },
   { to: "/apps", label: "التطبيقات" },
   { to: "/websites", label: "المواقع" },
   { to: "/trending", label: "الأكثر مشاهدة" },
+  { to: "/about", label: "من نحن" },
+  { to: "/contact", label: "تواصل" },
 ] as const;
 
 export function SiteHeader() {
@@ -43,12 +47,15 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <Link
-          to={signedIn ? "/admin" : "/login"}
-          className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50"
-        >
-          {signedIn ? "لوحة التحكم" : "دخول"}
-        </Link>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Link
+            to={signedIn ? "/admin" : "/login"}
+            className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50"
+          >
+            {signedIn ? "لوحة التحكم" : "دخول"}
+          </Link>
+        </div>
       </div>
       <div className="flex gap-1 overflow-x-auto px-4 pb-2 md:hidden">
         {nav.map((n) => (
@@ -69,8 +76,15 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="mt-16 border-t border-border/60 bg-background/40">
-      <div className="mx-auto max-w-7xl px-4 py-6 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} سلمان فارس
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-8">
+        <SocialLinks />
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+          <Link to="/about" className="hover:text-foreground">من نحن</Link>
+          <Link to="/contact" className="hover:text-foreground">تواصل معنا</Link>
+        </div>
+        <div className="text-center text-xs text-muted-foreground">
+          © {new Date().getFullYear()} سلمان فارس
+        </div>
       </div>
     </footer>
   );

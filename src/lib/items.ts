@@ -13,6 +13,7 @@ export type Item = {
   views: string | null;
   emoji: string;
   image_url: string | null;
+  rating: number | null;
   sort_order: number;
   created_at: string;
 };
