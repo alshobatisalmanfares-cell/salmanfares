@@ -1,4 +1,4 @@
-import { ExternalLink, Eye } from "lucide-react";
+import { ExternalLink, Eye, Star } from "lucide-react";
 import type { Item } from "@/lib/items";
 
 export function ItemCard({ item }: { item: Item }) {
@@ -20,6 +20,17 @@ export function ItemCard({ item }: { item: Item }) {
       </div>
       <h3 className="mt-4 text-lg font-bold text-foreground">{item.title}</h3>
       <p className="mt-1.5 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+      {item.rating != null && (
+        <div className="mt-2 flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Star
+              key={i}
+              className={`h-3.5 w-3.5 ${i <= Math.round(item.rating!) ? "fill-primary text-primary" : "text-muted-foreground/40"}`}
+            />
+          ))}
+          <span className="ms-1 text-xs text-muted-foreground">{item.rating.toFixed(1)}</span>
+        </div>
+      )}
       <div className="mt-auto flex items-center justify-between pt-5">
         {item.views ? (
           <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
