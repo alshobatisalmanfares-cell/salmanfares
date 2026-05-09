@@ -12,6 +12,7 @@ export type Item = {
   badge: string | null;
   views: string | null;
   emoji: string;
+  image_url: string | null;
   sort_order: number;
   created_at: string;
 };
