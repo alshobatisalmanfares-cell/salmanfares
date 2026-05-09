@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Mail, MessageCircle } from "lucide-react";
+import { Mail } from "lucide-react";
 import { SocialLinks } from "@/components/SocialLinks";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,7 +28,7 @@ function ContactPage() {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const body = `الاسم: ${name}%0Aالبريد: ${email}%0A%0A${message}`;
-    window.location.href = `mailto:contact@salmanfares.com?subject=رسالة من ${name}&body=${body}`;
+    window.location.href = `mailto:salman77fares@gmail.com?subject=رسالة من ${name}&body=${body}`;
     toast.success("جاري فتح بريدك الإلكتروني...");
   }
 
@@ -41,27 +41,15 @@ function ContactPage() {
         </p>
       </div>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
+      <div className="mt-8 grid gap-4">
         <a
-          href="mailto:contact@salmanfares.com"
+          href="mailto:salman77fares@gmail.com"
           className="flex items-center gap-3 rounded-xl border border-border/70 bg-card/50 p-4 hover:border-primary/50"
         >
           <Mail className="h-5 w-5 text-primary" />
           <div>
             <div className="text-xs text-muted-foreground">البريد الإلكتروني</div>
-            <div className="font-semibold">contact@salmanfares.com</div>
-          </div>
-        </a>
-        <a
-          href="https://t.me/salmanfares"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 rounded-xl border border-border/70 bg-card/50 p-4 hover:border-primary/50"
-        >
-          <MessageCircle className="h-5 w-5 text-primary" />
-          <div>
-            <div className="text-xs text-muted-foreground">تيليجرام</div>
-            <div className="font-semibold">@salmanfares</div>
+            <div className="font-semibold">salman77fares@gmail.com</div>
           </div>
         </a>
       </div>
