@@ -204,10 +204,6 @@ function AdminPage() {
           <Input value={form.cta} onChange={(e) => setForm({ ...form, cta: e.target.value })} />
         </div>
         <div>
-          <Label>الأيقونة (إيموجي)</Label>
-          <Input value={form.emoji} onChange={(e) => setForm({ ...form, emoji: e.target.value })} />
-        </div>
-        <div>
           <Label>شارة (اختياري)</Label>
           <Input value={form.badge} onChange={(e) => setForm({ ...form, badge: e.target.value })} placeholder="جديد، مميز..." />
         </div>
