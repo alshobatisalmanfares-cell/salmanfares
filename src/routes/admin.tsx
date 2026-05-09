@@ -242,7 +242,13 @@ function AdminPage() {
         <div className="space-y-2">
           {(items ?? []).map((it) => (
             <div key={it.id} className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/40 p-3">
-              <span className="text-2xl">{it.emoji}</span>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border/60 bg-muted/30 text-2xl">
+                {it.image_url ? (
+                  <img src={it.image_url} alt={it.title} loading="lazy" className="h-full w-full object-cover" />
+                ) : (
+                  <span>{it.emoji}</span>
+                )}
+              </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate font-semibold">{it.title}</span>
