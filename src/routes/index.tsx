@@ -22,7 +22,7 @@ function Index() {
     <div>
       <section className="mx-auto max-w-7xl px-4 py-12 md:py-16 text-center">
         <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/40 px-3 py-1 text-[11px] font-semibold text-muted-foreground">
-          موقع تقني عربي
+          موقع سلمان فارس
         </span>
         <h1 className="mx-auto mt-5 max-w-3xl text-3xl font-extrabold leading-tight md:text-5xl">
           اكتشف <span className="text-gradient-primary">أفضل التطبيقات والمواقع</span>
