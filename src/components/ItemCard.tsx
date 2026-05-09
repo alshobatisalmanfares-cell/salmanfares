@@ -4,6 +4,16 @@ import type { Item } from "@/lib/items";
 export function ItemCard({ item }: { item: Item }) {
   return (
     <div className="group flex flex-col rounded-xl border border-border/70 bg-card/60 p-5 transition-colors hover:border-primary/50">
+      {item.image_url && (
+        <div className="-mx-5 -mt-5 mb-4 overflow-hidden rounded-t-xl border-b border-border/60 bg-muted/30">
+          <img
+            src={item.image_url}
+            alt={item.title}
+            loading="lazy"
+            className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+      )}
       <div className="flex items-start justify-between gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-border/60 bg-muted/30 text-2xl">
           {item.emoji}

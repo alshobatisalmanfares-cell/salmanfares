@@ -27,11 +27,12 @@ type FormState = {
   emoji: string;
   badge: string;
   views: string;
+  image_url: string;
 };
 
 const empty: FormState = {
   title: "", description: "", category: "apps", url: "",
-  cta: "زيارة الموقع", emoji: "✨", badge: "", views: "",
+  cta: "زيارة الموقع", emoji: "✨", badge: "", views: "", image_url: "",
 };
 
 function AdminPage() {
@@ -77,6 +78,7 @@ function AdminPage() {
         emoji: form.emoji || "✨",
         badge: form.badge.trim() || null,
         views: form.views.trim() || null,
+        image_url: form.image_url.trim() || null,
       };
       if (form.id) {
         const { error } = await supabase.from("items").update(payload).eq("id", form.id);
@@ -109,6 +111,7 @@ function AdminPage() {
       id: it.id, title: it.title, description: it.description,
       category: it.category, url: it.url, cta: it.cta,
       emoji: it.emoji, badge: it.badge ?? "", views: it.views ?? "",
+      image_url: it.image_url ?? "",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -179,6 +182,18 @@ function AdminPage() {
         <div>
           <Label>المشاهدات (اختياري)</Label>
           <Input value={form.views} onChange={(e) => setForm({ ...form, views: e.target.value })} placeholder="120K" />
+        </div>
+        <div className="md:col-span-2">
+          <Label>رابط الصورة المصغّرة (اختياري)</Label>
+          <Input
+            type="url"
+            value={form.image_url}
+            onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+            placeholder="https://example.com/thumbnail.jpg"
+          />
+          {form.image_url && (
+            <img src={form.image_url} alt="" className="mt-2 h-24 w-40 rounded-lg border border-border/60 object-cover" />
+          )}
         </div>
         <div className="md:col-span-2 flex gap-2">
           <Button type="submit" disabled={saving}>
