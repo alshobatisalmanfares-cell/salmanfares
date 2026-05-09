@@ -2,7 +2,7 @@ import { Facebook, Instagram, Youtube, Music2 } from "lucide-react";
 
 export const socials = [
   { label: "يوتيوب", href: "https://youtube.com/@salman7fares", Icon: Youtube },
-  { label: "تيك توك", href: "https://vt.tiktok.com/ZS9t7btyx/", Icon: Music2 },
+  { label: "تيك توك", href: "https://www.tiktok.com/@salman7fares", Icon: Music2 },
   { label: "إنستقرام", href: "https://www.instagram.com/salman7fares", Icon: Instagram },
   { label: "فيسبوك", href: "https://www.facebook.com/profile.php?id=61589610831953", Icon: Facebook },
 ];
