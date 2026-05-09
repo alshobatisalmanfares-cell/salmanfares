@@ -42,6 +42,7 @@ function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [form, setForm] = useState<FormState>(empty);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -121,6 +122,37 @@ function AdminPage() {
     navigate({ to: "/" });
   }
 
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("الرجاء اختيار صورة");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("الحجم يجب أن يكون أقل من 5MB");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() ?? "jpg";
+      const path = `${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from("item-images").upload(path, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+      if (error) throw error;
+      const { data } = supabase.storage.from("item-images").getPublicUrl(path);
+      setForm((f) => ({ ...f, image_url: data.publicUrl }));
+      toast.success("تم رفع الصورة");
+    } catch (err: any) {
+      toast.error(err?.message ?? "فشل الرفع");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  }
+
   if (!authChecked) return <div className="p-12 text-center text-sm text-muted-foreground">...</div>;
   if (!isAdmin) {
     return (
@@ -184,13 +216,16 @@ function AdminPage() {
           <Input value={form.views} onChange={(e) => setForm({ ...form, views: e.target.value })} placeholder="120K" />
         </div>
         <div className="md:col-span-2">
-          <Label>رابط الصورة المصغّرة (اختياري)</Label>
-          <Input
-            type="url"
-            value={form.image_url}
-            onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-            placeholder="https://example.com/thumbnail.jpg"
-          />
+          <Label>الصورة المصغّرة (اختياري)</Label>
+          <div className="mt-1 flex items-center gap-3">
+            <Input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+            {form.image_url && (
+              <Button type="button" variant="outline" size="sm" onClick={() => setForm({ ...form, image_url: "" })}>
+                إزالة
+              </Button>
+            )}
+          </div>
+          {uploading && <p className="mt-1 text-xs text-muted-foreground">جارٍ الرفع...</p>}
           {form.image_url && (
             <img src={form.image_url} alt="" className="mt-2 h-24 w-40 rounded-lg border border-border/60 object-cover" />
           )}
