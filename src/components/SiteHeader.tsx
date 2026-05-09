@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import avatarUrl from "@/assets/avatar.jpg";
 
 const nav = [
   { to: "/", label: "الرئيسية" },
@@ -24,10 +24,12 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <span className="text-base font-extrabold text-foreground">سلمان فارس</span>
+          <img
+            src={avatarUrl}
+            alt="سلمان فارس"
+            className="h-10 w-10 rounded-full object-cover ring-1 ring-border/70"
+          />
+          <span className="text-xl font-extrabold text-foreground md:text-2xl">سلمان فارس</span>
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
           {nav.map((n) => (
