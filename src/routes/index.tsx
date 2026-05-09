@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { CategorySection } from "@/components/CategorySection";
+import { SearchBar, filterItems } from "@/components/SearchBar";
 import { fetchItems, fetchTrending } from "@/lib/items";
 
 export const Route = createFileRoute("/")({
@@ -17,6 +19,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   const latest = useQuery({ queryKey: ["items", "latest"], queryFn: () => fetchItems() });
   const trending = useQuery({ queryKey: ["items", "trending"], queryFn: () => fetchTrending(6) });
+  const [q, setQ] = useState("");
 
   return (
     <div>
@@ -39,10 +42,23 @@ function Index() {
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </div>
+        <div className="mt-8">
+          <SearchBar value={q} onChange={setQ} placeholder="ابحث عن تطبيق أو موقع..." />
+        </div>
       </section>
 
-      <CategorySection title="أحدث الإضافات" items={(latest.data ?? []).slice(0, 6)} />
-      <CategorySection title="الأكثر مشاهدة" items={trending.data ?? []} />
+      {q.trim() ? (
+        <CategorySection
+          title={`نتائج البحث: ${q}`}
+          items={filterItems(latest.data ?? [], q)}
+          emptyText="لا توجد نتائج مطابقة."
+        />
+      ) : (
+        <>
+          <CategorySection title="أحدث الإضافات" items={(latest.data ?? []).slice(0, 6)} />
+          <CategorySection title="الأكثر مشاهدة" items={trending.data ?? []} />
+        </>
+      )}
     </div>
   );
 }
