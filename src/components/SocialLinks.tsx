@@ -1,11 +1,10 @@
-import { Facebook, Instagram, Twitter, Youtube, Send } from "lucide-react";
+import { Facebook, Instagram, Youtube, Music2 } from "lucide-react";
 
 export const socials = [
-  { label: "يوتيوب", href: "https://youtube.com/@salmanfares", Icon: Youtube },
-  { label: "تويتر / X", href: "https://x.com/salmanfares", Icon: Twitter },
-  { label: "إنستقرام", href: "https://instagram.com/salmanfares", Icon: Instagram },
-  { label: "فيسبوك", href: "https://facebook.com/salmanfares", Icon: Facebook },
-  { label: "تيليجرام", href: "https://t.me/salmanfares", Icon: Send },
+  { label: "يوتيوب", href: "https://youtube.com/@salman7fares", Icon: Youtube },
+  { label: "تيك توك", href: "https://vt.tiktok.com/ZS9t7btyx/", Icon: Music2 },
+  { label: "إنستقرام", href: "https://www.instagram.com/salman7fares", Icon: Instagram },
+  { label: "فيسبوك", href: "https://www.facebook.com/profile.php?id=61589610831953", Icon: Facebook },
 ];
 
 export function SocialLinks({ size = "md" }: { size?: "sm" | "md" }) {
