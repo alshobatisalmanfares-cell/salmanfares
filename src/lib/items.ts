@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type ItemCategory = "apps" | "websites" | "trending";
+export type ItemCategory = "apps" | "websites" | "games";
 
 export type Item = {
   id: string;
@@ -14,6 +14,7 @@ export type Item = {
   emoji: string;
   image_url: string | null;
   rating: number | null;
+  required_follows: string[];
   sort_order: number;
   created_at: string;
 };
