@@ -1,0 +1,1 @@
+ALTER TABLE public.items ADD COLUMN IF NOT EXISTS required_follows text[] NOT NULL DEFAULT '{}'::text[];
