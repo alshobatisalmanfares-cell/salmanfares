@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WebsitesRouteImport } from './routes/websites'
-import { Route as TrendingRouteImport } from './routes/trending'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppsRouteImport } from './routes/apps'
@@ -21,11 +20,6 @@ import { Route as IndexRouteImport } from './routes/index'
 const WebsitesRoute = WebsitesRouteImport.update({
   id: '/websites',
   path: '/websites',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TrendingRoute = TrendingRouteImport.update({
-  id: '/trending',
-  path: '/trending',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -66,7 +60,6 @@ export interface FileRoutesByFullPath {
   '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
-  '/trending': typeof TrendingRoute
   '/websites': typeof WebsitesRoute
 }
 export interface FileRoutesByTo {
@@ -76,7 +69,6 @@ export interface FileRoutesByTo {
   '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
-  '/trending': typeof TrendingRoute
   '/websites': typeof WebsitesRoute
 }
 export interface FileRoutesById {
@@ -87,7 +79,6 @@ export interface FileRoutesById {
   '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
-  '/trending': typeof TrendingRoute
   '/websites': typeof WebsitesRoute
 }
 export interface FileRouteTypes {
@@ -99,18 +90,9 @@ export interface FileRouteTypes {
     | '/apps'
     | '/contact'
     | '/login'
-    | '/trending'
     | '/websites'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/about'
-    | '/admin'
-    | '/apps'
-    | '/contact'
-    | '/login'
-    | '/trending'
-    | '/websites'
+  to: '/' | '/about' | '/admin' | '/apps' | '/contact' | '/login' | '/websites'
   id:
     | '__root__'
     | '/'
@@ -119,7 +101,6 @@ export interface FileRouteTypes {
     | '/apps'
     | '/contact'
     | '/login'
-    | '/trending'
     | '/websites'
   fileRoutesById: FileRoutesById
 }
@@ -130,7 +111,6 @@ export interface RootRouteChildren {
   AppsRoute: typeof AppsRoute
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
-  TrendingRoute: typeof TrendingRoute
   WebsitesRoute: typeof WebsitesRoute
 }
 
@@ -141,13 +121,6 @@ declare module '@tanstack/react-router' {
       path: '/websites'
       fullPath: '/websites'
       preLoaderRoute: typeof WebsitesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/trending': {
-      id: '/trending'
-      path: '/trending'
-      fullPath: '/trending'
-      preLoaderRoute: typeof TrendingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -202,9 +175,18 @@ const rootRouteChildren: RootRouteChildren = {
   AppsRoute: AppsRoute,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,
-  TrendingRoute: TrendingRoute,
   WebsitesRoute: WebsitesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
