@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/lib/i18n";
+import { SiteSettingsProvider } from "@/lib/site-settings";
 
 function NotFoundComponent() {
   return (
@@ -128,14 +129,16 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
-        <div className="flex min-h-screen flex-col">
-          <SiteHeader />
-          <main className="flex-1">
-            <Outlet />
-          </main>
-          <SiteFooter />
-        </div>
-        <Toaster richColors position="top-center" />
+        <SiteSettingsProvider>
+          <div className="flex min-h-screen flex-col">
+            <SiteHeader />
+            <main className="flex-1">
+              <Outlet />
+            </main>
+            <SiteFooter />
+          </div>
+          <Toaster richColors position="top-center" />
+        </SiteSettingsProvider>
       </I18nProvider>
     </QueryClientProvider>
   );
