@@ -172,6 +172,34 @@
     background-attachment: fixed;
     color: var(--color-foreground);
     font-family: "Cairo", system-ui, sans-serif;
+    position: relative;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 20% 20%, var(--bg-anim-1, #7DD8FF) 0%, transparent 45%),
+      radial-gradient(circle at 80% 30%, var(--bg-anim-2, #B891FF) 0%, transparent 45%),
+      radial-gradient(circle at 50% 80%, var(--bg-anim-1, #7DD8FF) 0%, transparent 50%);
+    background-size: 200% 200%;
+    opacity: 0.35;
+    filter: blur(60px);
+    animation: bgFloat 18s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  @keyframes bgFloat {
+    0%   { background-position: 0% 0%, 100% 0%, 50% 100%; }
+    50%  { background-position: 50% 30%, 60% 70%, 30% 40%; }
+    100% { background-position: 100% 80%, 20% 30%, 70% 60%; }
+  }
+
+  .__remove_dup_body__ {
+    color: var(--color-foreground);
+    font-family: "Cairo", system-ui, sans-serif;
   }
 }
 
