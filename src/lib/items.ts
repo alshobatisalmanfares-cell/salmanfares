@@ -15,6 +15,7 @@ export type Item = {
   image_url: string | null;
   rating: number | null;
   required_follows: string[];
+  gallery: string[];
   sort_order: number;
   created_at: string;
 };
