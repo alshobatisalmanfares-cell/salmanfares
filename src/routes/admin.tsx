@@ -103,7 +103,8 @@ function AdminPage() {
       setForm(empty);
       qc.invalidateQueries({ queryKey: ["items"] });
     } catch (err: any) {
-      toast.error(err?.message ?? "خطأ");
+      console.error(err);
+      toast.error("حدث خطأ، يرجى المحاولة مرة أخرى");
     } finally {
       setSaving(false);
     }
@@ -112,7 +113,7 @@ function AdminPage() {
   async function remove(id: string) {
     if (!confirm("هل تريد الحذف؟")) return;
     const { error } = await supabase.from("items").delete().eq("id", id);
-    if (error) { toast.error(error.message); return; }
+    if (error) { console.error(error); toast.error("تعذّر الحذف"); return; }
     toast.success("تم الحذف");
     qc.invalidateQueries({ queryKey: ["items"] });
   }
@@ -153,7 +154,7 @@ function AdminPage() {
       const url = await uploadFile(file);
       setForm((f) => ({ ...f, image_url: url }));
       toast.success("تم الرفع");
-    } catch (err: any) { toast.error(err?.message ?? "فشل"); }
+    } catch (err: any) { console.error(err); toast.error("فشل رفع الصورة"); }
     finally { setUploading(false); e.target.value = ""; }
   }
 
@@ -170,7 +171,7 @@ function AdminPage() {
       }
       setForm((f) => ({ ...f, gallery: [...f.gallery, ...urls] }));
       toast.success(`تم رفع ${urls.length} صورة`);
-    } catch (err: any) { toast.error(err?.message ?? "فشل"); }
+    } catch (err: any) { console.error(err); toast.error("فشل رفع الصور"); }
     finally { setGalleryUploading(false); e.target.value = ""; }
   }
 
@@ -370,7 +371,8 @@ function SettingsTab() {
       await refresh();
       toast.success("تم الحفظ");
     } catch (err: any) {
-      toast.error(err?.message ?? "خطأ");
+      console.error(err);
+      toast.error("تعذّر حفظ الإعدادات");
     } finally { setSaving(false); }
   }
 
