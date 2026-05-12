@@ -123,7 +123,9 @@ export function ItemCard({ item }: { item: Item }) {
     localStorage.setItem(followStorageKey, "1");
     setFollowed(true);
     setFollowOpen(false);
-    window.open(item.url, "_blank", "noopener,noreferrer");
+    if (/^https?:\/\//i.test(item.url)) {
+      window.open(item.url, "_blank", "noopener,noreferrer");
+    }
   }
 
   const gallery = (item.gallery ?? []) as string[];
