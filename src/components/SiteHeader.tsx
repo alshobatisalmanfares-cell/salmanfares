@@ -83,22 +83,22 @@ export function SiteHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
           <ThemeToggle />
-          {!authReady ? null : !signedIn ? (
-            <Link to="/login" className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50">
-              {t("nav.login")}
-            </Link>
-          ) : isAdmin ? (
+          {signedIn && isAdmin ? (
             <Link to="/admin" className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-primary/20">
               <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
               {t("nav.admin")}
             </Link>
-          ) : (
+          ) : signedIn ? (
             <button
               onClick={() => supabase.auth.signOut()}
               className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50"
             >
               {t("nav.logout")}
             </button>
+          ) : (
+            <Link to="/login" className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50">
+              {t("nav.login")}
+            </Link>
           )}
         </div>
       </div>
