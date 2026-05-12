@@ -123,14 +123,10 @@ export function ItemCard({ item }: { item: Item }) {
     localStorage.setItem(followStorageKey, "1");
     setFollowed(true);
     setFollowOpen(false);
-    if (/^https?:\/\//i.test(item.url)) {
-      window.open(item.url, "_blank", "noopener,noreferrer");
-    }
+    window.open(item.url, "_blank", "noopener,noreferrer");
   }
 
   const gallery = (item.gallery ?? []) as string[];
-
-  const safeUrl = /^https?:\/\//i.test(item.url) ? item.url : "#";
 
   return (
     <div className="group flex flex-col rounded-xl border border-border/70 bg-card/60 p-5 transition-colors hover:border-primary/50">
@@ -177,7 +173,7 @@ export function ItemCard({ item }: { item: Item }) {
           </span>
         ) : <span />}
         <a
-          href={safeUrl}
+          href={item.url}
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleClick}

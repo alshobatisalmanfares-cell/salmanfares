@@ -41,8 +41,7 @@ function LoginPage() {
       }
       navigate({ to: "/" });
     } catch (err: any) {
-      console.error(err);
-      toast.error("بيانات الدخول غير صحيحة أو حدث خطأ");
+      toast.error(err?.message ?? "حدث خطأ");
     } finally {
       setLoading(false);
     }
