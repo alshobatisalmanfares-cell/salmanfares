@@ -22,7 +22,6 @@ export type Database = {
           cta: string
           description: string
           emoji: string
-          gallery: string[]
           id: string
           image_url: string | null
           rating: number | null
@@ -40,7 +39,6 @@ export type Database = {
           cta?: string
           description?: string
           emoji?: string
-          gallery?: string[]
           id?: string
           image_url?: string | null
           rating?: number | null
@@ -58,7 +56,6 @@ export type Database = {
           cta?: string
           description?: string
           emoji?: string
-          gallery?: string[]
           id?: string
           image_url?: string | null
           rating?: number | null
@@ -68,60 +65,6 @@ export type Database = {
           updated_at?: string
           url?: string
           views?: string | null
-        }
-        Relationships: []
-      }
-      site_settings: {
-        Row: {
-          accent_color: string
-          base_font_size: number
-          bg_color_1: string
-          bg_color_2: string
-          heading_scale: number
-          hero_highlight_ar: string
-          hero_highlight_en: string
-          hero_subtitle_ar: string
-          hero_subtitle_en: string
-          hero_title_ar: string
-          hero_title_en: string
-          id: string
-          primary_color: string
-          secondary_color: string
-          updated_at: string
-        }
-        Insert: {
-          accent_color?: string
-          base_font_size?: number
-          bg_color_1?: string
-          bg_color_2?: string
-          heading_scale?: number
-          hero_highlight_ar?: string
-          hero_highlight_en?: string
-          hero_subtitle_ar?: string
-          hero_subtitle_en?: string
-          hero_title_ar?: string
-          hero_title_en?: string
-          id?: string
-          primary_color?: string
-          secondary_color?: string
-          updated_at?: string
-        }
-        Update: {
-          accent_color?: string
-          base_font_size?: number
-          bg_color_1?: string
-          bg_color_2?: string
-          heading_scale?: number
-          hero_highlight_ar?: string
-          hero_highlight_en?: string
-          hero_subtitle_ar?: string
-          hero_subtitle_en?: string
-          hero_title_ar?: string
-          hero_title_en?: string
-          id?: string
-          primary_color?: string
-          secondary_color?: string
-          updated_at?: string
         }
         Relationships: []
       }
