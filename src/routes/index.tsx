@@ -4,64 +4,60 @@ import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { CategorySection } from "@/components/CategorySection";
 import { SearchBar, filterItems } from "@/components/SearchBar";
-import { fetchItems } from "@/lib/items";
-import { useI18n } from "@/lib/i18n";
-import { useSiteSettings } from "@/lib/site-settings";
+import { fetchItems, fetchTrending } from "@/lib/items";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "سلمان فارس | تطبيقات ومواقع وألعاب" },
-      { name: "description", content: "اكتشف أفضل التطبيقات والمواقع والألعاب المختارة بعناية." },
+      { title: "سلمان فارس | تطبيقات ومواقع تقنية" },
+      { name: "description", content: "اكتشف أفضل التطبيقات والمواقع التقنية المختارة بعناية." },
     ],
   }),
   component: Index,
 });
 
 function Index() {
-  const { t, lang } = useI18n();
-  const { settings } = useSiteSettings();
   const latest = useQuery({ queryKey: ["items", "latest"], queryFn: () => fetchItems() });
+  const trending = useQuery({ queryKey: ["items", "trending"], queryFn: () => fetchTrending(6) });
   const [q, setQ] = useState("");
-
-  const isAr = lang === "ar" || lang === "ur";
-  const heroTitle = isAr ? settings.hero_title_ar : settings.hero_title_en;
-  const heroHighlight = isAr ? settings.hero_highlight_ar : settings.hero_highlight_en;
-  const heroSubtitle = isAr ? settings.hero_subtitle_ar : settings.hero_subtitle_en;
 
   return (
     <div>
       <section className="mx-auto max-w-7xl px-4 py-12 md:py-16 text-center">
         <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/40 px-3 py-1 text-[11px] font-semibold text-muted-foreground">
-          {t("home.badge")}
+          موقع سلمان فارس
         </span>
-        <h1 className="mx-auto mt-5 max-w-3xl text-3xl font-extrabold leading-tight md:text-5xl" style={{ fontSize: `calc(2.25rem * var(--site-heading-scale, 1))` }}>
-          {heroTitle} <span className="text-gradient-primary">{heroHighlight}</span>
+        <h1 className="mx-auto mt-5 max-w-3xl text-3xl font-extrabold leading-tight md:text-5xl">
+          اكتشف <span className="text-gradient-primary">أفضل التطبيقات والمواقع</span>
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground md:text-base">{heroSubtitle}</p>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-          <Link to="/apps" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:opacity-90">
-            {t("home.browse.apps")}
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-          <Link to="/websites" className="inline-flex items-center gap-2 rounded-lg border border-border/70 bg-card/40 px-5 py-2.5 text-sm font-bold text-foreground hover:bg-muted/50">
-            {t("home.browse.websites")}
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-          <Link to="/games" className="inline-flex items-center gap-2 rounded-lg border border-border/70 bg-card/40 px-5 py-2.5 text-sm font-bold text-foreground hover:bg-muted/50">
-            {t("home.browse.games")}
+        <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground md:text-base">
+          مكتبة مختارة من الأدوات الرقمية المفيدة، تُحدَّث باستمرار.
+        </p>
+        <div className="mt-6">
+          <Link
+            to="/apps"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:opacity-90"
+          >
+            تصفح التطبيقات
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </div>
         <div className="mt-8">
-          <SearchBar value={q} onChange={setQ} placeholder={t("home.search")} />
+          <SearchBar value={q} onChange={setQ} placeholder="ابحث عن تطبيق أو موقع..." />
         </div>
       </section>
 
       {q.trim() ? (
-        <CategorySection title={`${t("home.results")}: ${q}`} items={filterItems(latest.data ?? [], q)} emptyText={t("home.noresults")} />
+        <CategorySection
+          title={`نتائج البحث: ${q}`}
+          items={filterItems(latest.data ?? [], q)}
+          emptyText="لا توجد نتائج مطابقة."
+        />
       ) : (
-        <CategorySection title={t("home.latest")} items={(latest.data ?? []).slice(0, 9)} />
+        <>
+          <CategorySection title="أحدث الإضافات" items={(latest.data ?? []).slice(0, 6)} />
+          <CategorySection title="الأكثر مشاهدة" items={trending.data ?? []} />
+        </>
       )}
     </div>
   );

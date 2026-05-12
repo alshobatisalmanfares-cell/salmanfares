@@ -10,8 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WebsitesRouteImport } from './routes/websites'
+import { Route as TrendingRouteImport } from './routes/trending'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as GamesRouteImport } from './routes/games'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppsRouteImport } from './routes/apps'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -23,14 +23,14 @@ const WebsitesRoute = WebsitesRouteImport.update({
   path: '/websites',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TrendingRoute = TrendingRouteImport.update({
+  id: '/trending',
+  path: '/trending',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GamesRoute = GamesRouteImport.update({
-  id: '/games',
-  path: '/games',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -65,8 +65,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
-  '/games': typeof GamesRoute
   '/login': typeof LoginRoute
+  '/trending': typeof TrendingRoute
   '/websites': typeof WebsitesRoute
 }
 export interface FileRoutesByTo {
@@ -75,8 +75,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
-  '/games': typeof GamesRoute
   '/login': typeof LoginRoute
+  '/trending': typeof TrendingRoute
   '/websites': typeof WebsitesRoute
 }
 export interface FileRoutesById {
@@ -86,8 +86,8 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
-  '/games': typeof GamesRoute
   '/login': typeof LoginRoute
+  '/trending': typeof TrendingRoute
   '/websites': typeof WebsitesRoute
 }
 export interface FileRouteTypes {
@@ -98,8 +98,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apps'
     | '/contact'
-    | '/games'
     | '/login'
+    | '/trending'
     | '/websites'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -108,8 +108,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apps'
     | '/contact'
-    | '/games'
     | '/login'
+    | '/trending'
     | '/websites'
   id:
     | '__root__'
@@ -118,8 +118,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apps'
     | '/contact'
-    | '/games'
     | '/login'
+    | '/trending'
     | '/websites'
   fileRoutesById: FileRoutesById
 }
@@ -129,8 +129,8 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AppsRoute: typeof AppsRoute
   ContactRoute: typeof ContactRoute
-  GamesRoute: typeof GamesRoute
   LoginRoute: typeof LoginRoute
+  TrendingRoute: typeof TrendingRoute
   WebsitesRoute: typeof WebsitesRoute
 }
 
@@ -143,18 +143,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WebsitesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trending': {
+      id: '/trending'
+      path: '/trending'
+      fullPath: '/trending'
+      preLoaderRoute: typeof TrendingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/games': {
-      id: '/games'
-      path: '/games'
-      fullPath: '/games'
-      preLoaderRoute: typeof GamesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -201,8 +201,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AppsRoute: AppsRoute,
   ContactRoute: ContactRoute,
-  GamesRoute: GamesRoute,
   LoginRoute: LoginRoute,
+  TrendingRoute: TrendingRoute,
   WebsitesRoute: WebsitesRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,12 +1,10 @@
-import { Facebook, Instagram, Youtube, Music2, type LucideIcon } from "lucide-react";
+import { Facebook, Instagram, Youtube, Music2 } from "lucide-react";
 
-export type SocialKey = "youtube" | "tiktok" | "instagram" | "facebook";
-
-export const socials: { key: SocialKey; label: string; href: string; Icon: LucideIcon }[] = [
-  { key: "youtube", label: "يوتيوب", href: "https://youtube.com/@salman7fares", Icon: Youtube },
-  { key: "tiktok", label: "تيك توك", href: "https://www.tiktok.com/@salman7fares", Icon: Music2 },
-  { key: "instagram", label: "إنستقرام", href: "https://www.instagram.com/salman7fares", Icon: Instagram },
-  { key: "facebook", label: "فيسبوك", href: "https://www.facebook.com/profile.php?id=61589610831953", Icon: Facebook },
+export const socials = [
+  { label: "يوتيوب", href: "https://youtube.com/@salman7fares", Icon: Youtube },
+  { label: "تيك توك", href: "https://www.tiktok.com/@salman7fares", Icon: Music2 },
+  { label: "إنستقرام", href: "https://www.instagram.com/salman7fares", Icon: Instagram },
+  { label: "فيسبوك", href: "https://www.facebook.com/profile.php?id=61589610831953", Icon: Facebook },
 ];
 
 export function SocialLinks({ size = "md" }: { size?: "sm" | "md" }) {
@@ -14,9 +12,9 @@ export function SocialLinks({ size = "md" }: { size?: "sm" | "md" }) {
   const icon = size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4";
   return (
     <div className="flex flex-wrap items-center justify-center gap-2">
-      {socials.map(({ key, label, href, Icon }) => (
+      {socials.map(({ label, href, Icon }) => (
         <a
-          key={key}
+          key={label}
           href={href}
           target="_blank"
           rel="noopener noreferrer"
