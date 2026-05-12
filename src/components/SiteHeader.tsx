@@ -97,7 +97,7 @@ export function SiteHeader() {
               onClick={() => supabase.auth.signOut()}
               className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50"
             >
-              {t("nav.logout") !== "nav.logout" ? t("nav.logout") : "تسجيل الخروج"}
+              {t("nav.logout")}
             </button>
           )}
         </div>
