@@ -128,6 +128,8 @@ export function ItemCard({ item }: { item: Item }) {
 
   const gallery = (item.gallery ?? []) as string[];
 
+  const safeUrl = /^https?:\/\//i.test(item.url) ? item.url : "#";
+
   return (
     <div className="group flex flex-col rounded-xl border border-border/70 bg-card/60 p-5 transition-colors hover:border-primary/50">
       <div className="flex items-start justify-between gap-3">
@@ -173,7 +175,7 @@ export function ItemCard({ item }: { item: Item }) {
           </span>
         ) : <span />}
         <a
-          href={item.url}
+          href={safeUrl}
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleClick}
