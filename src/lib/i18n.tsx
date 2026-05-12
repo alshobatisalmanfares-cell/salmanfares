@@ -26,6 +26,7 @@ const dict: Dict = {
   "nav.admin": { ar: "لوحة التحكم", en: "Admin", es: "Admin", nl: "Beheer", tr: "Yönetim", ur: "ایڈمن", pt: "Admin" },
   "nav.login": { ar: "دخول", en: "Login", es: "Entrar", nl: "Inloggen", tr: "Giriş", ur: "لاگ ان", pt: "Entrar" },
   "nav.loggedin": { ar: "تم الدخول", en: "Signed in", es: "Conectado", nl: "Ingelogd", tr: "Giriş yapıldı", ur: "لاگ ان", pt: "Conectado" },
+  "nav.logout": { ar: "تسجيل الخروج", en: "Sign out", es: "Salir", nl: "Uitloggen", tr: "Çıkış", ur: "لاگ آؤٹ", pt: "Sair" },
 
   // home
   "home.badge": { ar: "موقع سلمان فارس", en: "Salman Faris Hub", es: "Salman Faris", nl: "Salman Faris", tr: "Salman Faris", ur: "سلمان فارس", pt: "Salman Faris" },
