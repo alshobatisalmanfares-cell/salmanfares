@@ -85,8 +85,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "سلمان للتقنية" },
       { name: "twitter:description", content: "موقع سلمان فارس - اكتشف أفضل التطبيقات والالعاب والمواقع التقنية ." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b1f02d46-abcf-4b55-a73e-79adb698a769/id-preview-c2da5124--43ac7a3a-e1e7-40e7-a128-d00dc601691d.lovable.app-1778579978967.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b1f02d46-abcf-4b55-a73e-79adb698a769/id-preview-c2da5124--43ac7a3a-e1e7-40e7-a128-d00dc601691d.lovable.app-1778579978967.png" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/bU3DOz3UDyU9X5DCn1DZLGCLn4D3/social-images/social-1778618125921-1000085693.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/bU3DOz3UDyU9X5DCn1DZLGCLn4D3/social-images/social-1778618125921-1000085693.webp" },
     ],
     links: [
       {
