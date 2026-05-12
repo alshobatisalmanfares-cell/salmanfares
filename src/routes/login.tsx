@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "تسجيل الدخول | سلمان فارس" }] }),
@@ -13,10 +15,12 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPwd, setShowPwd] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,11 +37,12 @@ function LoginPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast.success("تم تسجيل الدخول");
+        toast.success(t("login.success"));
       }
-      navigate({ to: "/admin" });
+      navigate({ to: "/" });
     } catch (err: any) {
-      toast.error(err?.message ?? "حدث خطأ");
+      console.error(err);
+      toast.error("بيانات الدخول غير صحيحة أو حدث خطأ");
     } finally {
       setLoading(false);
     }
@@ -46,21 +51,36 @@ function LoginPage() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md items-center px-4">
       <div className="w-full rounded-2xl border border-border/70 bg-card/60 p-6">
-        <h1 className="text-xl font-bold">{mode === "signin" ? "تسجيل الدخول" : "إنشاء حساب"}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          أول حساب يتم إنشاؤه يصبح المسؤول تلقائياً.
-        </p>
+        <h1 className="text-xl font-bold">{mode === "signin" ? t("login.signin") : t("login.signup")}</h1>
         <form onSubmit={onSubmit} className="mt-5 space-y-3">
           <div>
-            <Label htmlFor="email">البريد الإلكتروني</Label>
+            <Label htmlFor="email">{t("login.email")}</Label>
             <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
           <div>
-            <Label htmlFor="password">كلمة المرور</Label>
-            <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Label htmlFor="password">{t("login.password")}</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPwd ? "text" : "password"}
+                required
+                minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="pe-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPwd((s) => !s)}
+                aria-label="إظهار/إخفاء كلمة المرور"
+                className="absolute inset-y-0 end-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+              >
+                {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? "..." : mode === "signin" ? "دخول" : "إنشاء"}
+            {loading ? "..." : mode === "signin" ? t("login.signin") : t("login.signup")}
           </Button>
         </form>
         <button
@@ -68,7 +88,7 @@ function LoginPage() {
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
           className="mt-4 w-full text-center text-xs text-muted-foreground hover:text-foreground"
         >
-          {mode === "signin" ? "ليس لديك حساب؟ إنشاء حساب جديد" : "لديك حساب؟ تسجيل الدخول"}
+          {mode === "signin" ? t("login.toSignup") : t("login.toSignin")}
         </button>
       </div>
     </div>
