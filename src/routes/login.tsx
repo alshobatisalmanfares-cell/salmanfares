@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "تسجيل الدخول | سلمان فارس" }] }),
@@ -18,7 +17,6 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPwd, setShowPwd] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -49,6 +47,9 @@ function LoginPage() {
     <div className="mx-auto flex min-h-[70vh] max-w-md items-center px-4">
       <div className="w-full rounded-2xl border border-border/70 bg-card/60 p-6">
         <h1 className="text-xl font-bold">{mode === "signin" ? "تسجيل الدخول" : "إنشاء حساب"}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          أول حساب يتم إنشاؤه يصبح المسؤول تلقائياً.
+        </p>
         <form onSubmit={onSubmit} className="mt-5 space-y-3">
           <div>
             <Label htmlFor="email">البريد الإلكتروني</Label>
@@ -56,25 +57,7 @@ function LoginPage() {
           </div>
           <div>
             <Label htmlFor="password">كلمة المرور</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPwd ? "text" : "password"}
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="pe-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPwd((s) => !s)}
-                aria-label="إظهار/إخفاء كلمة المرور"
-                className="absolute inset-y-0 end-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
-              >
-                {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
+            <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? "..." : mode === "signin" ? "دخول" : "إنشاء"}

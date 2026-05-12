@@ -11,7 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
-import { socials, type SocialKey } from "@/components/SocialLinks";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "لوحة التحكم | سلمان فارس" }] }),
@@ -30,13 +29,11 @@ type FormState = {
   views: string;
   image_url: string;
   rating: string;
-  required_follows: SocialKey[];
 };
 
 const empty: FormState = {
   title: "", description: "", category: "apps", url: "",
-  cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
-  required_follows: [],
+  cta: "زيارة الموقع", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
 };
 
 function AdminPage() {
@@ -79,13 +76,12 @@ function AdminPage() {
         description: form.description.trim(),
         category: form.category,
         url: form.url.trim(),
-        cta: form.cta.trim() || "تحميل التطبيق",
+        cta: form.cta.trim() || "زيارة الموقع",
         emoji: form.emoji || "✨",
         badge: form.badge.trim() || null,
         views: form.views.trim() || null,
         image_url: form.image_url.trim() || null,
         rating: form.rating.trim() ? Number(form.rating) : null,
-        required_follows: form.required_follows,
       };
       if (form.id) {
         const { error } = await supabase.from("items").update(payload).eq("id", form.id);
@@ -120,7 +116,6 @@ function AdminPage() {
       emoji: it.emoji, badge: it.badge ?? "", views: it.views ?? "",
       image_url: it.image_url ?? "",
       rating: it.rating != null ? String(it.rating) : "",
-      required_follows: (it.required_follows ?? []) as SocialKey[],
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -193,9 +188,9 @@ function AdminPage() {
           <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as ItemCategory })}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="games">ألعاب</SelectItem>
               <SelectItem value="apps">تطبيقات</SelectItem>
               <SelectItem value="websites">مواقع</SelectItem>
+              <SelectItem value="trending">الأكثر مشاهدة</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -245,37 +240,6 @@ function AdminPage() {
           {form.image_url && (
             <img src={form.image_url} alt="" className="mt-2 h-24 w-40 rounded-lg border border-border/60 object-cover" />
           )}
-        </div>
-        <div className="md:col-span-2">
-          <Label>متابعة إجبارية قبل التنزيل/الزيارة (اختياري)</Label>
-          <p className="mt-1 text-xs text-muted-foreground">اختر القنوات التي يجب على المستخدم متابعتها لفتح الزر.</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {socials.map((s) => {
-              const active = form.required_follows.includes(s.key);
-              return (
-                <button
-                  key={s.key}
-                  type="button"
-                  onClick={() =>
-                    setForm((f) => ({
-                      ...f,
-                      required_follows: active
-                        ? f.required_follows.filter((k) => k !== s.key)
-                        : [...f.required_follows, s.key],
-                    }))
-                  }
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
-                    active
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border/70 bg-card/40 text-foreground hover:bg-muted/50"
-                  }`}
-                >
-                  <s.Icon className="h-3.5 w-3.5" />
-                  {s.label}
-                </button>
-              );
-            })}
-          </div>
         </div>
         <div className="md:col-span-2 flex gap-2">
           <Button type="submit" disabled={saving}>
