@@ -1,7 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
-@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -171,7 +171,11 @@
     background: var(--gradient-bg);
     background-attachment: fixed;
     color: var(--color-foreground);
-    font-family: "Cairo", system-ui, sans-serif;
+    font-family: "Almarai", system-ui, sans-serif;
+  }
+
+  html, button, input, textarea, select, h1, h2, h3, h4, h5, h6 {
+    font-family: "Almarai", system-ui, sans-serif;
     position: relative;
   }
 
