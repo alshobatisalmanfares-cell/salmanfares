@@ -16,6 +16,7 @@ import {
 export function SiteHeader() {
   const { t, lang, setLang } = useI18n();
   const [signedIn, setSignedIn] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -27,6 +28,7 @@ export function SiteHeader() {
       } else {
         setIsAdmin(false);
       }
+      setAuthReady(true);
     }
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => check(session));
     supabase.auth.getSession().then(({ data }) => check(data.session));
@@ -81,7 +83,7 @@ export function SiteHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
           <ThemeToggle />
-          {signedIn ? (
+          {!authReady ? null : signedIn ? (
             <span className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-foreground">
               <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
               {t("nav.loggedin")}
