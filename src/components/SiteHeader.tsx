@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import avatarUrl from "@/assets/avatar.jpg";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SocialLinks } from "@/components/SocialLinks";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, LANGS, type Lang } from "@/lib/i18n";
 
 export function SiteHeader() {
   const { t, lang, setLang } = useI18n();
