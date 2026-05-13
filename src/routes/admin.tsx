@@ -31,12 +31,13 @@ type FormState = {
   image_url: string;
   rating: string;
   required_follows: SocialKey[];
+  gallery: string[];
 };
 
 const empty: FormState = {
   title: "", description: "", category: "apps", url: "",
   cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
-  required_follows: [],
+  required_follows: [], gallery: [],
 };
 
 function AdminPage() {
@@ -47,6 +48,7 @@ function AdminPage() {
   const [form, setForm] = useState<FormState>(empty);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -86,6 +88,7 @@ function AdminPage() {
         image_url: form.image_url.trim() || null,
         rating: form.rating.trim() ? Number(form.rating) : null,
         required_follows: form.required_follows,
+        gallery: form.gallery,
       };
       if (form.id) {
         const { error } = await supabase.from("items").update(payload).eq("id", form.id);
@@ -121,6 +124,7 @@ function AdminPage() {
       image_url: it.image_url ?? "",
       rating: it.rating != null ? String(it.rating) : "",
       required_follows: (it.required_follows ?? []) as SocialKey[],
+      gallery: it.gallery ?? [],
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -159,6 +163,42 @@ function AdminPage() {
       setUploading(false);
       e.target.value = "";
     }
+  }
+
+  async function handleGalleryUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploadingGallery(true);
+    try {
+      const urls: string[] = [];
+      for (const file of files) {
+        if (!file.type.startsWith("image/")) continue;
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error(`${file.name}: الحجم يجب أن يكون أقل من 5MB`);
+          continue;
+        }
+        const ext = file.name.split(".").pop() ?? "jpg";
+        const path = `gallery/${crypto.randomUUID()}.${ext}`;
+        const { error } = await supabase.storage.from("item-images").upload(path, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+        if (error) { toast.error(error.message); continue; }
+        const { data } = supabase.storage.from("item-images").getPublicUrl(path);
+        urls.push(data.publicUrl);
+      }
+      if (urls.length) {
+        setForm((f) => ({ ...f, gallery: [...f.gallery, ...urls] }));
+        toast.success(`تم رفع ${urls.length} صورة`);
+      }
+    } finally {
+      setUploadingGallery(false);
+      e.target.value = "";
+    }
+  }
+
+  function removeGalleryImage(url: string) {
+    setForm((f) => ({ ...f, gallery: f.gallery.filter((u) => u !== url) }));
   }
 
   if (!authChecked) return <div className="p-12 text-center text-sm text-muted-foreground">...</div>;
@@ -244,6 +284,36 @@ function AdminPage() {
           {uploading && <p className="mt-1 text-xs text-muted-foreground">جارٍ الرفع...</p>}
           {form.image_url && (
             <img src={form.image_url} alt="" className="mt-2 h-24 w-40 rounded-lg border border-border/60 object-cover" />
+          )}
+        </div>
+        <div className="md:col-span-2">
+          <Label>صور توضيحية (متعددة - اختياري)</Label>
+          <p className="mt-1 text-xs text-muted-foreground">يمكنك رفع عدة صور لعرضها كمعرض للعنصر.</p>
+          <Input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleGalleryUpload}
+            disabled={uploadingGallery}
+            className="mt-2"
+          />
+          {uploadingGallery && <p className="mt-1 text-xs text-muted-foreground">جارٍ الرفع...</p>}
+          {form.gallery.length > 0 && (
+            <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {form.gallery.map((url) => (
+                <div key={url} className="relative">
+                  <img src={url} alt="" className="h-20 w-full rounded-lg border border-border/60 object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeGalleryImage(url)}
+                    className="absolute -top-2 -end-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow"
+                    aria-label="حذف"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
           )}
         </div>
         <div className="md:col-span-2">

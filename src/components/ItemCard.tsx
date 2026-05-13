@@ -42,6 +42,8 @@ export function ItemCard({ item }: { item: Item }) {
   const [signedIn, setSignedIn] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [followOpen, setFollowOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [clickedKeys, setClickedKeys] = useState<SocialKey[]>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
@@ -57,6 +59,8 @@ export function ItemCard({ item }: { item: Item }) {
     setFollowed(localStorage.getItem(followStorageKey) === "1");
   }, [followStorageKey]);
 
+  const allClicked = requiredKeys.every((k) => clickedKeys.includes(k));
+
   function handleClick(e: React.MouseEvent) {
     if (!signedIn) {
       e.preventDefault();
@@ -70,11 +74,14 @@ export function ItemCard({ item }: { item: Item }) {
   }
 
   function confirmFollowed() {
+    if (!allClicked) return;
     localStorage.setItem(followStorageKey, "1");
     setFollowed(true);
     setFollowOpen(false);
     window.open(item.url, "_blank", "noopener,noreferrer");
   }
+
+  const isLong = item.description.length > 140;
 
   return (
     <div className="group flex flex-col rounded-xl border border-border/70 bg-card/60 p-5 transition-colors hover:border-primary/50">
@@ -93,7 +100,22 @@ export function ItemCard({ item }: { item: Item }) {
         )}
       </div>
       <h3 className="mt-4 text-lg font-bold text-foreground">{item.title}</h3>
-      <p className="mt-1.5 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+      <p
+        className={`mt-1.5 text-sm leading-relaxed text-muted-foreground ${
+          expanded ? "" : "line-clamp-3"
+        }`}
+      >
+        {item.description}
+      </p>
+      {isLong && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-1 self-start text-xs font-semibold text-primary hover:underline"
+        >
+          {expanded ? t("card.less") : t("card.more")}
+        </button>
+      )}
       {item.rating != null && (
         <div className="mt-2 flex items-center gap-1">
           <StarRating value={item.rating} />
@@ -142,22 +164,31 @@ export function ItemCard({ item }: { item: Item }) {
               const s = socials.find((x) => x.key === k);
               if (!s) return null;
               const Icon = s.Icon;
+              const done = clickedKeys.includes(k);
               return (
                 <a
                   key={k}
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-lg border border-border/70 bg-card/40 px-3 py-2 text-sm hover:bg-primary hover:text-primary-foreground"
+                  onClick={() => setClickedKeys((prev) => (prev.includes(k) ? prev : [...prev, k]))}
+                  className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+                    done
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border/70 bg-card/40 hover:bg-primary hover:text-primary-foreground"
+                  }`}
                 >
                   <Icon className="h-4 w-4" />
                   {s.label}
+                  {done && <span aria-hidden>✓</span>}
                 </a>
               );
             })}
           </div>
           <DialogFooter>
-            <Button onClick={confirmFollowed}>{t("lock.follow.confirm")}</Button>
+            <Button onClick={confirmFollowed} disabled={!allClicked}>
+              {allClicked ? t("lock.follow.confirm") : t("lock.follow.pending")}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
