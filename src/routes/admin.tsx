@@ -287,6 +287,36 @@ function AdminPage() {
           )}
         </div>
         <div className="md:col-span-2">
+          <Label>صور توضيحية (متعددة - اختياري)</Label>
+          <p className="mt-1 text-xs text-muted-foreground">يمكنك رفع عدة صور لعرضها كمعرض للعنصر.</p>
+          <Input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleGalleryUpload}
+            disabled={uploadingGallery}
+            className="mt-2"
+          />
+          {uploadingGallery && <p className="mt-1 text-xs text-muted-foreground">جارٍ الرفع...</p>}
+          {form.gallery.length > 0 && (
+            <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {form.gallery.map((url) => (
+                <div key={url} className="relative">
+                  <img src={url} alt="" className="h-20 w-full rounded-lg border border-border/60 object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeGalleryImage(url)}
+                    className="absolute -top-2 -end-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow"
+                    aria-label="حذف"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="md:col-span-2">
           <Label>متابعة إجبارية قبل التنزيل/الزيارة (اختياري)</Label>
           <p className="mt-1 text-xs text-muted-foreground">اختر القنوات التي يجب على المستخدم متابعتها لفتح الزر.</p>
           <div className="mt-2 flex flex-wrap gap-2">
