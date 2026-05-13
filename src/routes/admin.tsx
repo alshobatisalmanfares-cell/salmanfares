@@ -31,12 +31,13 @@ type FormState = {
   image_url: string;
   rating: string;
   required_follows: SocialKey[];
+  gallery: string[];
 };
 
 const empty: FormState = {
   title: "", description: "", category: "apps", url: "",
   cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
-  required_follows: [],
+  required_follows: [], gallery: [],
 };
 
 function AdminPage() {
@@ -47,6 +48,7 @@ function AdminPage() {
   const [form, setForm] = useState<FormState>(empty);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -86,6 +88,7 @@ function AdminPage() {
         image_url: form.image_url.trim() || null,
         rating: form.rating.trim() ? Number(form.rating) : null,
         required_follows: form.required_follows,
+        gallery: form.gallery,
       };
       if (form.id) {
         const { error } = await supabase.from("items").update(payload).eq("id", form.id);
@@ -121,6 +124,7 @@ function AdminPage() {
       image_url: it.image_url ?? "",
       rating: it.rating != null ? String(it.rating) : "",
       required_follows: (it.required_follows ?? []) as SocialKey[],
+      gallery: ((it as any).gallery ?? []) as string[],
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -159,6 +163,42 @@ function AdminPage() {
       setUploading(false);
       e.target.value = "";
     }
+  }
+
+  async function handleGalleryUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setUploadingGallery(true);
+    try {
+      const urls: string[] = [];
+      for (const file of files) {
+        if (!file.type.startsWith("image/")) continue;
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error(`${file.name}: الحجم يجب أن يكون أقل من 5MB`);
+          continue;
+        }
+        const ext = file.name.split(".").pop() ?? "jpg";
+        const path = `gallery/${crypto.randomUUID()}.${ext}`;
+        const { error } = await supabase.storage.from("item-images").upload(path, file, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+        if (error) { toast.error(error.message); continue; }
+        const { data } = supabase.storage.from("item-images").getPublicUrl(path);
+        urls.push(data.publicUrl);
+      }
+      if (urls.length) {
+        setForm((f) => ({ ...f, gallery: [...f.gallery, ...urls] }));
+        toast.success(`تم رفع ${urls.length} صورة`);
+      }
+    } finally {
+      setUploadingGallery(false);
+      e.target.value = "";
+    }
+  }
+
+  function removeGalleryImage(url: string) {
+    setForm((f) => ({ ...f, gallery: f.gallery.filter((u) => u !== url) }));
   }
 
   if (!authChecked) return <div className="p-12 text-center text-sm text-muted-foreground">...</div>;
