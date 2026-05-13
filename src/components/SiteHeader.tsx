@@ -32,10 +32,10 @@ export function SiteHeader() {
         <Link to="/" className="flex items-center gap-2">
           <img
             src={avatarUrl}
-            alt="سلمان فارس"
+            alt={t("site.name")}
             className="h-10 w-10 rounded-full object-cover ring-1 ring-border/70"
           />
-          <span className="text-xl font-extrabold text-foreground md:text-2xl">سلمان فارس</span>
+          <span className="text-xl font-extrabold text-foreground md:text-2xl">{t("site.name")}</span>
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
           {nav.map((n) => (
@@ -50,13 +50,18 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setLang(lang === "ar" ? "en" : "ar")}
+          <select
+            value={lang}
+            onChange={(e) => setLang(e.target.value as Lang)}
             aria-label="language"
-            className="inline-flex h-9 items-center justify-center rounded-md border border-border/70 bg-card/40 px-2.5 text-xs font-bold text-foreground hover:bg-muted/50"
+            className="inline-flex h-9 items-center justify-center rounded-md border border-border/70 bg-card/40 px-2 text-xs font-bold text-foreground hover:bg-muted/50"
           >
-            {lang === "ar" ? "English" : "عربي"}
-          </button>
+            {LANGS.map((l) => (
+              <option key={l.code} value={l.code} className="bg-background text-foreground">
+                {l.label}
+              </option>
+            ))}
+          </select>
           <ThemeToggle />
           <Link
             to={signedIn ? "/admin" : "/login"}
@@ -93,7 +98,7 @@ export function SiteFooter() {
           <Link to="/contact" className="hover:text-foreground">{t("footer.contact")}</Link>
         </div>
         <div className="text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} سلمان فارس
+          © {new Date().getFullYear()} {t("site.name")}
         </div>
       </div>
     </footer>
