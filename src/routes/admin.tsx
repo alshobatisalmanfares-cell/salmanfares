@@ -124,7 +124,7 @@ function AdminPage() {
       image_url: it.image_url ?? "",
       rating: it.rating != null ? String(it.rating) : "",
       required_follows: (it.required_follows ?? []) as SocialKey[],
-      gallery: ((it as any).gallery ?? []) as string[],
+      gallery: it.gallery ?? [],
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
