@@ -75,6 +75,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "google-site-verification", content: "La90iHMhtvnYwBk1mnhonFebPOlu3J5Vb4YlO2CrGQQ" },
       { title: "سلمان للتقنية" },
       { name: "description", content: "موقع سلمان فارس - اكتشف أفضل التطبيقات والالعاب والمواقع التقنية ." },
       { name: "author", content: "Salman Faris" },
