@@ -7,20 +7,25 @@ import { fetchItems } from "@/lib/items";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/apps")({
-  head: () => ({ meta: [{ title: "apps | سلمان فارس" }] }),
-  component: Page,
+  head: () => ({
+    meta: [
+      { title: "أفضل التطبيقات | سلمان فارس" },
+      { name: "description", content: "أفضل التطبيقات التقنية المختارة." },
+    ],
+  }),
+  component: AppsPage,
 });
 
-function Page() {
+function AppsPage() {
   const { t } = useI18n();
   const { data } = useQuery({ queryKey: ["items", "apps"], queryFn: () => fetchItems("apps") });
   const [q, setQ] = useState("");
   return (
     <div>
       <div className="mx-auto max-w-7xl px-4 pt-8">
-        <SearchBar value={q} onChange={setQ} placeholder={t("home.search")} />
+        <SearchBar value={q} onChange={setQ} placeholder={t("search.app")} />
       </div>
-      <CategorySection title={t("cat.apps.title")} subtitle={t("cat.apps.sub")} items={filterItems(data ?? [], q)} />
+      <CategorySection title={t("section.apps")} items={filterItems(data ?? [], q)} emptyText={t("section.empty")} />
     </div>
   );
 }

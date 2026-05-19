@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { ExternalLink, Eye, Lock, Star, StarHalf, ChevronDown, ChevronUp, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ExternalLink, Eye, Lock, Star, StarHalf } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import type { Item } from "@/lib/items";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +21,8 @@ function StarRating({ value }: { value: number }) {
     <div className="flex items-center gap-0.5">
       {[0, 1, 2, 3, 4].map((i) => {
         const fill = v - i;
-        if (fill >= 1) return <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary" />;
+        if (fill >= 1)
+          return <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary" />;
         if (fill >= 0.25 && fill < 1)
           return (
             <span key={i} className="relative inline-flex">
@@ -35,46 +36,14 @@ function StarRating({ value }: { value: number }) {
   );
 }
 
-function ExpandableText({ text }: { text: string }) {
-  const { t } = useI18n();
-  const [open, setOpen] = useState(false);
-  const [overflows, setOverflows] = useState(false);
-  const ref = useRef<HTMLParagraphElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    setOverflows(el.scrollHeight > el.clientHeight + 1);
-  }, [text]);
-
-  return (
-    <div className="mt-1.5">
-      <p
-        ref={ref}
-        className={`text-sm leading-relaxed text-muted-foreground ${open ? "" : "line-clamp-3"}`}
-      >
-        {text}
-      </p>
-      {(overflows || open) && (
-        <button
-          type="button"
-          onClick={() => setOpen((s) => !s)}
-          className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-primary hover:opacity-80"
-        >
-          {open ? t("common.less") : t("common.more")}
-          {open ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-        </button>
-      )}
-    </div>
-  );
-}
-
 export function ItemCard({ item }: { item: Item }) {
   const { t } = useI18n();
   const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [followOpen, setFollowOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [clickedKeys, setClickedKeys] = useState<SocialKey[]>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
@@ -85,26 +54,12 @@ export function ItemCard({ item }: { item: Item }) {
   const requiredKeys = (item.required_follows ?? []) as SocialKey[];
   const requiresFollow = requiredKeys.length > 0;
   const followStorageKey = `follow:${item.id}`;
-  const clickedKey = `follow_clicks:${item.id}`;
   const [followed, setFollowed] = useState(false);
-  const [clicked, setClicked] = useState<Record<string, boolean>>({});
-
   useEffect(() => {
     setFollowed(localStorage.getItem(followStorageKey) === "1");
-    try {
-      setClicked(JSON.parse(localStorage.getItem(clickedKey) ?? "{}"));
-    } catch {
-      setClicked({});
-    }
-  }, [followStorageKey, clickedKey]);
+  }, [followStorageKey]);
 
-  function markClicked(k: string) {
-    const next = { ...clicked, [k]: true };
-    setClicked(next);
-    localStorage.setItem(clickedKey, JSON.stringify(next));
-  }
-
-  const allClicked = requiredKeys.every((k) => clicked[k]);
+  const allClicked = requiredKeys.every((k) => clickedKeys.includes(k));
 
   function handleClick(e: React.MouseEvent) {
     if (!signedIn) {
@@ -126,7 +81,7 @@ export function ItemCard({ item }: { item: Item }) {
     window.open(item.url, "_blank", "noopener,noreferrer");
   }
 
-  const gallery = (item.gallery ?? []) as string[];
+  const isLong = item.description.length > 140;
 
   return (
     <div className="group flex flex-col rounded-xl border border-border/70 bg-card/60 p-5 transition-colors hover:border-primary/50">
@@ -145,24 +100,26 @@ export function ItemCard({ item }: { item: Item }) {
         )}
       </div>
       <h3 className="mt-4 text-lg font-bold text-foreground">{item.title}</h3>
-      <ExpandableText text={item.description} />
+      <p
+        className={`mt-1.5 text-sm leading-relaxed text-muted-foreground ${
+          expanded ? "" : "line-clamp-3"
+        }`}
+      >
+        {item.description}
+      </p>
+      {isLong && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-1 self-start text-xs font-semibold text-primary hover:underline"
+        >
+          {expanded ? t("card.less") : t("card.more")}
+        </button>
+      )}
       {item.rating != null && (
         <div className="mt-2 flex items-center gap-1">
           <StarRating value={item.rating} />
           <span className="ms-1 text-xs text-muted-foreground">{item.rating.toFixed(1)}</span>
-        </div>
-      )}
-      {gallery.length > 0 && (
-        <div className="mt-3 flex gap-2 overflow-x-auto">
-          {gallery.map((g, i) => (
-            <img
-              key={i}
-              src={g}
-              alt=""
-              loading="lazy"
-              className="h-20 w-32 shrink-0 rounded-lg border border-border/60 object-cover"
-            />
-          ))}
         </div>
       )}
       <div className="mt-auto flex items-center justify-between pt-5">
@@ -207,22 +164,23 @@ export function ItemCard({ item }: { item: Item }) {
               const s = socials.find((x) => x.key === k);
               if (!s) return null;
               const Icon = s.Icon;
-              const done = !!clicked[k];
+              const done = clickedKeys.includes(k);
               return (
                 <a
                   key={k}
                   href={s.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => markClicked(k)}
+                  onClick={() => setClickedKeys((prev) => (prev.includes(k) ? prev : [...prev, k]))}
                   className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
                     done
-                      ? "border-primary bg-primary/15 text-foreground"
-                      : "border-border/70 bg-card/40 hover:bg-muted/40"
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border/70 bg-card/40 hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
-                  {done ? <Check className="h-4 w-4 text-primary" /> : <Icon className="h-4 w-4" />}
+                  <Icon className="h-4 w-4" />
                   {s.label}
+                  {done && <span aria-hidden>✓</span>}
                 </a>
               );
             })}

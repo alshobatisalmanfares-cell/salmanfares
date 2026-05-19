@@ -12,7 +12,6 @@ import appCss from "../styles.css?url";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/lib/i18n";
-import { SiteSettingsProvider } from "@/lib/site-settings";
 
 function NotFoundComponent() {
   return (
@@ -76,18 +75,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "سلمان فارس | تطبيقات ومواقع تقنية" },
-      { name: "description", content: "موقع سلمان فارس - اكتشف أفضل التطبيقات والمواقع التقنية وطرق الربح من الإنترنت." },
+      { name: "google-site-verification", content: "La90iHMhtvnYwBk1mnhonFebPOlu3J5Vb4YlO2CrGQQ" },
+      { title: "سلمان للتقنية" },
+      { name: "description", content: "موقع سلمان فارس - اكتشف أفضل التطبيقات والالعاب والمواقع التقنية ." },
       { name: "author", content: "Salman Faris" },
-      { property: "og:title", content: "سلمان فارس | تطبيقات ومواقع تقنية" },
-      { property: "og:description", content: "موقع سلمان فارس - اكتشف أفضل التطبيقات والمواقع التقنية وطرق الربح من الإنترنت." },
+      { property: "og:title", content: "سلمان للتقنية" },
+      { property: "og:description", content: "موقع سلمان فارس - اكتشف أفضل التطبيقات والالعاب والمواقع التقنية ." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "سلمان فارس | تطبيقات ومواقع تقنية" },
-      { name: "twitter:description", content: "موقع سلمان فارس - اكتشف أفضل التطبيقات والمواقع التقنية وطرق الربح من الإنترنت." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c1212dd8-5dc8-4200-8e56-5c1efc19133a/id-preview-75d01eae--43ac7a3a-e1e7-40e7-a128-d00dc601691d.lovable.app-1778274680430.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c1212dd8-5dc8-4200-8e56-5c1efc19133a/id-preview-75d01eae--43ac7a3a-e1e7-40e7-a128-d00dc601691d.lovable.app-1778274680430.png" },
+      { name: "twitter:title", content: "سلمان للتقنية" },
+      { name: "twitter:description", content: "موقع سلمان فارس - اكتشف أفضل التطبيقات والالعاب والمواقع التقنية ." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/bU3DOz3UDyU9X5DCn1DZLGCLn4D3/social-images/social-1778618125921-1000085693.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/bU3DOz3UDyU9X5DCn1DZLGCLn4D3/social-images/social-1778618125921-1000085693.webp" },
     ],
     links: [
       {
@@ -129,16 +129,14 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
-        <SiteSettingsProvider>
-          <div className="flex min-h-screen flex-col">
-            <SiteHeader />
-            <main className="flex-1">
-              <Outlet />
-            </main>
-            <SiteFooter />
-          </div>
-          <Toaster richColors position="top-center" />
-        </SiteSettingsProvider>
+        <div className="flex min-h-screen flex-col">
+          <SiteHeader />
+          <main className="flex-1">
+            <Outlet />
+          </main>
+          <SiteFooter />
+        </div>
+        <Toaster richColors position="top-center" />
       </I18nProvider>
     </QueryClientProvider>
   );
