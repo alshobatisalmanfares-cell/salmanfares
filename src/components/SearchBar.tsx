@@ -1,16 +1,14 @@
 import { Search, X } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
 
 export function SearchBar({
   value,
   onChange,
-  placeholder,
+  placeholder = "ابحث...",
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
 }) {
-  const { t } = useI18n();
   return (
     <div className="relative mx-auto w-full max-w-xl">
       <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -18,7 +16,7 @@ export function SearchBar({
         type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder ?? t("home.search")}
+        placeholder={placeholder}
         className="h-11 w-full rounded-xl border border-border/70 bg-card/60 pr-10 pl-10 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/60 focus:outline-none"
       />
       {value && (
@@ -26,7 +24,7 @@ export function SearchBar({
           type="button"
           onClick={() => onChange("")}
           className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-          aria-label={t("search.clear")}
+          aria-label="مسح"
         >
           <X className="h-4 w-4" />
         </button>
