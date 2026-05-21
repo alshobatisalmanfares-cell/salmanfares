@@ -9,13 +9,26 @@ import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      { title: "سلمان فارس | تطبيقات ومواقع وألعاب" },
-      { name: "description", content: "اكتشف أفضل التطبيقات والمواقع والألعاب المختارة بعناية." },
-    ],
-  }),
+      meta: [
+    { title: "سلمان فارس | تطبيقات مواقع وألعاب" },
+    { name: "description", content: "اكتشف أفضل التطبيقات والمواقع والألعاب المختارة بعناية" },
+    {
+      tagName: "script",
+      attributes: {
+        async: "true",
+        src: "https://www.googletagmanager.com/gtag/js?id=G-E3CNV7811N"
+      }
+    },
+    {
+      tagName: "script",
+      innerHTML: "window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-E3CNV7811N');"
+    }
+  ],
+
+    }),
   component: Index,
 });
+
 
 function Index() {
   const { t } = useI18n();
