@@ -20,7 +20,7 @@ const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 );
 CardHeader.displayName = "CardHeader";
 
-const CardTitle = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+const CardTitle = React.forwardRef<HTMLDivDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
@@ -47,7 +47,36 @@ CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex items-center p-6 pt-0", className)} {...props} />
+    <div ref={ref} className={cn("flex items-center p-6 pt-0", className)} {...props}>
+      <button
+        style={{
+          marginLeft: "auto",
+          background: "#007bff",
+          color: "white",
+          border: "none",
+          borderRadius: "6px",
+          padding: "8px 16px",
+          cursor: "pointer",
+          position: "relative",
+          right: 0,
+          bottom: 0,
+          fontSize: "1rem",
+        }}
+        onClick={() => {
+          if (navigator.share) {
+            navigator.share({
+              title: document.title,
+              url: window.location.href,
+            });
+          } else {
+            navigator.clipboard.writeText(window.location.href);
+            alert("تم نسخ الرابط!");
+          }
+        }}
+      >
+        مشاركة الرابط
+      </button>
+    </div>
   ),
 );
 CardFooter.displayName = "CardFooter";
