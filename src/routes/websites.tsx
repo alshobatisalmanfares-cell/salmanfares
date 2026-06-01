@@ -24,7 +24,7 @@ function WebsitesPage() {
       <div className="mx-auto max-w-7xl px-4 pt-8">
         <SearchBar value={q} onChange={setQ} placeholder="ابحث عن موقع..." />
       </div>
-      <CategorySection title="أفضل المواقع" items={filterItems(data ?? [], q)} />
+      <CategorySection title="أفضل المواقع" items={filterItems(data ?? [], q)} midSlot={<NativeBannerAd />} />
     </div>
   );
 }
