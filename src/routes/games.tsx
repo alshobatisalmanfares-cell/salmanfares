@@ -24,7 +24,7 @@ function GamesPage() {
       <div className="mx-auto max-w-7xl px-4 pt-8">
         <SearchBar value={q} onChange={setQ} placeholder="ابحث عن لعبة..." />
       </div>
-      <CategorySection title="أفضل الألعاب" items={filterItems(data ?? [], q)} />
+      <CategorySection title="أفضل الألعاب" items={filterItems(data ?? [], q)} midSlot={<NativeBannerAd />} />
     </div>
   );
 }
