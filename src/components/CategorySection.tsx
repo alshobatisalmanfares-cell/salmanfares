@@ -1,16 +1,21 @@
 import { ItemCard } from "./ItemCard";
 import type { Item } from "@/lib/items";
+import type { ReactNode } from "react";
 
 export function CategorySection({
   title,
   subtitle,
   items,
   emptyText,
+  midSlot,
+  midSlotAfter = 3,
 }: {
   title: string;
   subtitle?: string;
   items: Item[];
   emptyText?: string;
+  midSlot?: ReactNode;
+  midSlotAfter?: number;
 }) {
   return (
     <section className="mx-auto max-w-7xl px-4 py-12">
@@ -26,8 +31,15 @@ export function CategorySection({
         </p>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((it) => (
-            <ItemCard key={it.id} item={it} />
+          {items.map((it, idx) => (
+            <>
+              <ItemCard key={it.id} item={it} />
+              {midSlot && idx === Math.min(midSlotAfter - 1, items.length - 1) && (
+                <div key="__mid_ad" className="sm:col-span-2 lg:col-span-3 py-2">
+                  {midSlot}
+                </div>
+              )}
+            </>
           ))}
         </div>
       )}
