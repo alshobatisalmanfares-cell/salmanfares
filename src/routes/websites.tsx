@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { CategorySection } from "@/components/CategorySection";
-import { NativeBannerAd } from "@/components/NativeBannerAd";
 import { SearchBar, filterItems } from "@/components/SearchBar";
 import { fetchItems } from "@/lib/items";
 
@@ -24,7 +23,7 @@ function WebsitesPage() {
       <div className="mx-auto max-w-7xl px-4 pt-8">
         <SearchBar value={q} onChange={setQ} placeholder="ابحث عن موقع..." />
       </div>
-      <CategorySection title="أفضل المواقع" items={filterItems(data ?? [], q)} midSlot={<NativeBannerAd />} />
+      <CategorySection title="أفضل المواقع" items={filterItems(data ?? [], q)} />
     </div>
   );
 }

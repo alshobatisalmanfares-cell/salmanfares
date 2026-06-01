@@ -5,7 +5,6 @@ import { ArrowLeft } from "lucide-react";
 
 import { CategorySection } from "@/components/CategorySection";
 import { SearchBar, filterItems } from "@/components/SearchBar";
-import { NativeBannerAd } from "@/components/NativeBannerAd";
 import { fetchItems } from "@/lib/items";
 import { useI18n } from "@/lib/i18n";
 
@@ -108,19 +107,28 @@ function Index() {
           title={`${t("home.results")}: ${q}`}
           items={filterItems(latest.data ?? [], q)}
           emptyText={t("home.noresults")}
-          midSlot={<NativeBannerAd />}
         />
       ) : (
-        <CategorySection
-          title={t("home.latest")}
-          items={(latest.data ?? []).slice(0, 9)}
-          midSlot={<NativeBannerAd />}
-        />
+        <CategorySection title={t("home.latest")} items={(latest.data ?? []).slice(0, 9)} />
       )}
 
       {/* 468x60 Banner Ad */}
       <section className="mx-auto max-w-7xl px-4 py-6">
         <AdBanner468x60 />
+      </section>
+
+      {/* Native Banner Ad */}
+      <section className="mx-auto max-w-7xl px-4 py-8">
+        <div className="flex justify-center">
+          <div className="w-full max-w-[728px]">
+            <script
+              async
+              data-cfasync="false"
+              src="https://pl29600563.effectivecpmnetwork.com/1fd3de437d60db326297432f6ed0be74/invoke.js"
+            />
+            <div id="container-1fd3de437d60db326297432f6ed0be74" />
+          </div>
+        </div>
       </section>
     </div>
   );
