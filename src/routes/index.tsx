@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
+
 import { CategorySection } from "@/components/CategorySection";
 import { SearchBar, filterItems } from "@/components/SearchBar";
 import { fetchItems } from "@/lib/items";
