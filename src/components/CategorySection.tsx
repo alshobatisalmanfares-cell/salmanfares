@@ -1,6 +1,6 @@
 import { ItemCard } from "./ItemCard";
 import type { Item } from "@/lib/items";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 export function CategorySection({
   title,
