@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import avatarUrl from "@/assets/avatar.jpg";
@@ -8,14 +8,40 @@ import { useI18n, LANGS, type Lang } from "@/lib/i18n";
 
 export function SiteHeader() {
   const { t, lang, setLang } = useI18n();
+  const navigate = useNavigate();
   const [signedIn, setSignedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  async function checkAdmin(userId: string | undefined) {
+    if (!userId) {
+      setIsAdmin(false);
+      return;
+    }
+    const { data } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    setIsAdmin(!!data);
+  }
+
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setSignedIn(!!session);
+      checkAdmin(session?.user?.id);
     });
-    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    supabase.auth.getSession().then(({ data }) => {
+      setSignedIn(!!data.session);
+      checkAdmin(data.session?.user?.id);
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    navigate({ to: "/" });
+  }
 
   const nav = [
     { to: "/", label: t("nav.home") },
@@ -63,12 +89,30 @@ export function SiteHeader() {
             ))}
           </select>
           <ThemeToggle />
-          <Link
-            to={signedIn ? "/admin" : "/login"}
-            className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50"
-          >
-            {signedIn ? t("nav.admin") : t("nav.login")}
-          </Link>
+          {signedIn ? (
+            <>
+              <Link
+                to={isAdmin ? "/admin" : "/"}
+                className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50"
+              >
+                {isAdmin ? t("nav.admin") : t("nav.home")}
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50"
+              >
+                {t("nav.logout")}
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50"
+            >
+              {t("nav.login")}
+            </Link>
+          )}
         </div>
       </div>
       <div className="flex gap-1 overflow-x-auto px-4 pb-2 md:hidden">

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { CategorySection } from "@/components/CategorySection";
+import { NativeBannerAd } from "@/components/NativeBannerAd";
 import { SearchBar, filterItems } from "@/components/SearchBar";
 import { fetchItems } from "@/lib/items";
 
@@ -23,7 +24,7 @@ function GamesPage() {
       <div className="mx-auto max-w-7xl px-4 pt-8">
         <SearchBar value={q} onChange={setQ} placeholder="ابحث عن لعبة..." />
       </div>
-      <CategorySection title="أفضل الألعاب" items={filterItems(data ?? [], q)} />
+      <CategorySection title="أفضل الألعاب" items={filterItems(data ?? [], q)} midSlot={<NativeBannerAd />} />
     </div>
   );
 }

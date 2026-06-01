@@ -25,6 +25,7 @@ const dict: Record<string, Tr> = {
   "nav.contact": { ar: "تواصل", en: "Contact", es: "Contacto", nl: "Contact", tr: "İletişim", ur: "رابطہ", pt: "Contato", fr: "Contact", de: "Kontakt" },
   "nav.admin": { ar: "لوحة التحكم", en: "Admin", es: "Panel", nl: "Beheer", tr: "Yönetim", ur: "ایڈمن", pt: "Painel", fr: "Admin", de: "Verwaltung" },
   "nav.login": { ar: "دخول", en: "Login", es: "Entrar", nl: "Inloggen", tr: "Giriş", ur: "لاگ ان", pt: "Entrar", fr: "Connexion", de: "Anmelden" },
+  "nav.logout": { ar: "خروج", en: "Logout", es: "Salir", nl: "Uitloggen", tr: "Çıkış", ur: "لاگ آؤٹ", pt: "Sair", fr: "Déconnexion", de: "Abmelden" },
 
   "home.badge": { ar: "موقع سلمان فارس", en: "Salman Faris Hub", es: "Hub Salman Faris", nl: "Salman Faris Hub", tr: "Salman Faris Merkezi", ur: "سلمان فارس ہب", pt: "Hub Salman Faris", fr: "Plateforme Salman Faris", de: "Salman Faris Hub" },
   "home.title.1": { ar: "اكتشف", en: "Discover", es: "Descubre", nl: "Ontdek", tr: "Keşfet", ur: "دریافت کریں", pt: "Descubra", fr: "Découvrez", de: "Entdecke" },
