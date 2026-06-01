@@ -31,16 +31,20 @@ export function CategorySection({
         </p>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((it, idx) => (
-            <>
-              <ItemCard key={it.id} item={it} />
-              {midSlot && idx === Math.min(midSlotAfter - 1, items.length - 1) && (
-                <div key="__mid_ad" className="sm:col-span-2 lg:col-span-3 py-2">
-                  {midSlot}
-                </div>
-              )}
-            </>
-          ))}
+          {items.map((it, idx) => {
+            const showAd =
+              !!midSlot && idx === Math.min(midSlotAfter - 1, items.length - 1);
+            return (
+              <Fragment key={it.id}>
+                <ItemCard item={it} />
+                {showAd && (
+                  <div className="sm:col-span-2 lg:col-span-3 py-2">
+                    {midSlot}
+                  </div>
+                )}
+              </Fragment>
+            );
+          })}
         </div>
       )}
     </section>
