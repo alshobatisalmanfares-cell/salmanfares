@@ -36,6 +36,10 @@ function StarRating({ value }: { value: number }) {
   );
 }
 
+function isSafeUrl(url: string) {
+  return /^https?:\/\//i.test(url);
+}
+
 export function ItemCard({ item }: { item: Item }) {
   const { t } = useI18n();
   const navigate = useNavigate();
@@ -78,7 +82,9 @@ export function ItemCard({ item }: { item: Item }) {
     localStorage.setItem(followStorageKey, "1");
     setFollowed(true);
     setFollowOpen(false);
-    window.open(item.url, "_blank", "noopener,noreferrer");
+    if (isSafeUrl(item.url)) {
+      window.open(item.url, "_blank", "noopener,noreferrer");
+    }
   }
 
   const isLong = item.description.length > 140;
@@ -130,7 +136,7 @@ export function ItemCard({ item }: { item: Item }) {
           </span>
         ) : <span />}
         <a
-          href={item.url}
+          href={isSafeUrl(item.url) ? item.url : "#"}
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleClick}
