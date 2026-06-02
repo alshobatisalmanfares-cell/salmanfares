@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { ExternalLink, Eye, Lock, Star, StarHalf } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
 import type { Item } from "@/lib/items";
-import { supabase } from "@/integrations/supabase/client";
 import { socials, type SocialKey } from "./SocialLinks";
 import { useI18n } from "@/lib/i18n";
 import {
@@ -42,18 +40,9 @@ function isSafeUrl(url: string) {
 
 export function ItemCard({ item }: { item: Item }) {
   const { t } = useI18n();
-  const navigate = useNavigate();
-  const [signedIn, setSignedIn] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
   const [followOpen, setFollowOpen] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [clickedKeys, setClickedKeys] = useState<SocialKey[]>([]);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSignedIn(!!s));
-    return () => sub.subscription.unsubscribe();
-  }, []);
 
   const requiredKeys = (item.required_follows ?? []) as SocialKey[];
   const requiresFollow = requiredKeys.length > 0;
@@ -65,12 +54,8 @@ export function ItemCard({ item }: { item: Item }) {
 
   const allClicked = requiredKeys.every((k) => clickedKeys.includes(k));
 
-  function handleClick(e: React.MouseEvent) {
-    if (!signedIn) {
-      e.preventDefault();
-      setLoginOpen(true);
-      return;
-    }
+  function handleCtaClick(e: React.MouseEvent) {
+    e.stopPropagation();
     if (requiresFollow && !followed) {
       e.preventDefault();
       setFollowOpen(true);
@@ -87,12 +72,21 @@ export function ItemCard({ item }: { item: Item }) {
     }
   }
 
-  const isLong = item.description.length > 140;
-
   return (
-    <div className="group flex flex-col rounded-xl border border-border/70 bg-card/60 p-5 transition-colors hover:border-primary/50">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => setDetailsOpen(true)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setDetailsOpen(true);
+        }
+      }}
+      className="group flex cursor-pointer flex-col rounded-2xl border border-border/60 bg-card/60 p-5 card-elevated hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/60"
+    >
       <div className="flex items-start justify-between gap-3">
-        <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border border-border/60 bg-muted/30 text-2xl">
+        <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-muted/30 text-2xl">
           {item.image_url ? (
             <img src={item.image_url} alt={item.title} loading="lazy" className="h-full w-full object-cover" />
           ) : (
@@ -106,22 +100,9 @@ export function ItemCard({ item }: { item: Item }) {
         )}
       </div>
       <h3 className="mt-4 text-lg font-bold text-foreground">{item.title}</h3>
-      <p
-        className={`mt-1.5 text-sm leading-relaxed text-muted-foreground ${
-          expanded ? "" : "line-clamp-3"
-        }`}
-      >
+      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground line-clamp-3">
         {item.description}
       </p>
-      {isLong && (
-        <button
-          type="button"
-          onClick={() => setExpanded((v) => !v)}
-          className="mt-1 self-start text-xs font-semibold text-primary hover:underline"
-        >
-          {expanded ? t("card.less") : t("card.more")}
-        </button>
-      )}
       {item.rating != null && (
         <div className="mt-2 flex items-center gap-1">
           <StarRating value={item.rating} />
@@ -139,28 +120,84 @@ export function ItemCard({ item }: { item: Item }) {
           href={isSafeUrl(item.url) ? item.url : "#"}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={handleClick}
+          onClick={handleCtaClick}
           className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
         >
-          {!signedIn || (requiresFollow && !followed) ? <Lock className="h-3.5 w-3.5" /> : <ExternalLink className="h-3.5 w-3.5" />}
+          {requiresFollow && !followed ? <Lock className="h-3.5 w-3.5" /> : <ExternalLink className="h-3.5 w-3.5" />}
           {item.cta}
         </a>
       </div>
 
-      <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
-        <DialogContent>
+      {/* Details modal */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent
+          className="max-w-lg"
+          onClick={(e) => e.stopPropagation()}
+        >
           <DialogHeader>
-            <DialogTitle>{t("lock.login.title")}</DialogTitle>
-            <DialogDescription>{t("lock.login.desc")}</DialogDescription>
+            <div className="flex items-center gap-3">
+              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-muted/30 text-2xl">
+                {item.image_url ? (
+                  <img src={item.image_url} alt={item.title} className="h-full w-full object-cover" />
+                ) : (
+                  <span>{item.emoji}</span>
+                )}
+              </div>
+              <div className="text-start">
+                <DialogTitle className="text-lg font-extrabold">{item.title}</DialogTitle>
+                {item.rating != null && (
+                  <div className="mt-1 flex items-center gap-1">
+                    <StarRating value={item.rating} />
+                    <span className="ms-1 text-xs text-muted-foreground">{item.rating.toFixed(1)}</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </DialogHeader>
-          <DialogFooter>
-            <Button onClick={() => navigate({ to: "/login" })}>{t("lock.login.cta")}</Button>
+          <DialogDescription className="max-h-[40vh] overflow-y-auto whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+            {item.description}
+          </DialogDescription>
+          {item.gallery && item.gallery.length > 0 && (
+            <div className="mt-2">
+              <div className="text-xs font-semibold text-muted-foreground">{t("details.gallery")}</div>
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {item.gallery.map((src, i) => (
+                  <img
+                    key={i}
+                    src={src}
+                    alt={`${item.title} ${i + 1}`}
+                    loading="lazy"
+                    className="aspect-square w-full rounded-lg object-cover"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          <DialogFooter className="flex flex-row justify-between gap-2">
+            <Button variant="ghost" onClick={() => setDetailsOpen(false)}>{t("details.close")}</Button>
+            <Button asChild>
+              <a
+                href={isSafeUrl(item.url) ? item.url : "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  if (requiresFollow && !followed) {
+                    e.preventDefault();
+                    setDetailsOpen(false);
+                    setFollowOpen(true);
+                  }
+                }}
+              >
+                <ExternalLink className="h-4 w-4" />
+                {item.cta || t("details.cta")}
+              </a>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <Dialog open={followOpen} onOpenChange={setFollowOpen}>
-        <DialogContent>
+        <DialogContent onClick={(e) => e.stopPropagation()}>
           <DialogHeader>
             <DialogTitle>{t("lock.follow.title")}</DialogTitle>
             <DialogDescription>{t("lock.follow.desc")}</DialogDescription>
