@@ -1,5 +1,7 @@
+import { Fragment } from "react";
 import { ItemCard } from "./ItemCard";
 import type { Item } from "@/lib/items";
+import { NativeBannerAd } from "./NativeBannerAd";
 
 export function CategorySection({
   title,
@@ -26,8 +28,11 @@ export function CategorySection({
         </p>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((it) => (
-            <ItemCard key={it.id} item={it} />
+          {items.map((it, i) => (
+            <Fragment key={it.id}>
+              <ItemCard item={it} />
+              {i === 1 && items.length > 2 && <NativeBannerAd />}
+            </Fragment>
           ))}
         </div>
       )}
