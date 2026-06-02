@@ -1,7 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
-@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Almarai:wght@300;400;700;800&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -171,7 +171,16 @@
     background: var(--gradient-bg);
     background-attachment: fixed;
     color: var(--color-foreground);
-    font-family: "Cairo", system-ui, sans-serif;
+    font-family: "Almarai", "Tajawal", system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Tajawal", "Almarai", system-ui, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  nav, [role="menu"], [data-menu] {
+    font-family: "Almarai", system-ui, sans-serif;
   }
 }
 
@@ -186,5 +195,13 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+  .card-elevated {
+    box-shadow: 0 4px 14px -6px rgb(0 0 0 / 0.25), 0 2px 4px -2px rgb(0 0 0 / 0.15);
+    transition: transform 280ms cubic-bezier(.2,.7,.2,1), box-shadow 280ms ease, border-color 280ms ease;
+  }
+  .card-elevated:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px -12px rgb(0 0 0 / 0.4), 0 4px 10px -4px rgb(0 0 0 / 0.25);
   }
 }
