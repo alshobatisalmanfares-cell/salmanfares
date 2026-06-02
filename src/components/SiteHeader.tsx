@@ -1,14 +1,24 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { Menu, Home, AppWindow, Globe, Gamepad2, Info, Mail, Shield, FileText, Languages, Settings as SettingsIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import avatarUrl from "@/assets/avatar.jpg";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SocialLinks } from "@/components/SocialLinks";
 import { useI18n, LANGS, type Lang } from "@/lib/i18n";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 
 export function SiteHeader() {
   const { t, lang, setLang } = useI18n();
   const [signedIn, setSignedIn] = useState(false);
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setSignedIn(!!session);
@@ -17,18 +27,118 @@ export function SiteHeader() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  const nav = [
-    { to: "/", label: t("nav.home") },
-    { to: "/apps", label: t("nav.apps") },
-    { to: "/websites", label: t("nav.websites") },
-    { to: "/games", label: t("nav.games") },
-    { to: "/about", label: t("nav.about") },
-    { to: "/contact", label: t("nav.contact") },
+  const mainNav = [
+    { to: "/", label: t("nav.home"), Icon: Home },
+    { to: "/apps", label: t("nav.apps"), Icon: AppWindow },
+    { to: "/websites", label: t("nav.websites"), Icon: Globe },
+    { to: "/games", label: t("nav.games"), Icon: Gamepad2 },
+    { to: "/about", label: t("nav.about"), Icon: Info },
+    { to: "/contact", label: t("nav.contact"), Icon: Mail },
+  ] as const;
+  const legalNav = [
+    { to: "/privacy", label: t("nav.privacy"), Icon: Shield },
+    { to: "/terms", label: t("nav.terms"), Icon: FileText },
   ] as const;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
+        {/* Hamburger trigger — visually top-left in RTL via flex order on the controls cluster */}
+        <div className="flex items-center gap-2 order-last">
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger
+              aria-label={t("menu.open")}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border/60 bg-card/40 text-foreground transition-colors hover:bg-muted/60"
+            >
+              <Menu className="h-5 w-5" />
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[300px] sm:w-[340px] overflow-y-auto" data-menu>
+              <SheetHeader>
+                <SheetTitle className="text-lg font-extrabold">{t("menu.title")}</SheetTitle>
+              </SheetHeader>
+
+              <div className="mt-4">
+                <div className="text-[11px] font-bold uppercase text-muted-foreground">{t("menu.main")}</div>
+                <nav className="mt-2 flex flex-col gap-1">
+                  {mainNav.map(({ to, label, Icon }) => (
+                    <SheetClose asChild key={to}>
+                      <Link
+                        to={to}
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/60"
+                        activeProps={{ className: "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold bg-primary/10 text-foreground" }}
+                      >
+                        <Icon className="h-4 w-4 text-primary" />
+                        {label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                </nav>
+              </div>
+
+              <div className="mt-6 border-t border-border/50 pt-4">
+                <div className="flex items-center gap-2 text-[11px] font-bold uppercase text-muted-foreground">
+                  <SettingsIcon className="h-3.5 w-3.5" />
+                  {t("menu.settings")}
+                </div>
+                <div className="mt-3 space-y-3">
+                  <div className="rounded-lg border border-border/60 bg-card/40 p-3">
+                    <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                      <Languages className="h-3.5 w-3.5" />
+                      {t("menu.language")}
+                    </label>
+                    <select
+                      value={lang}
+                      onChange={(e) => setLang(e.target.value as Lang)}
+                      aria-label={t("menu.language")}
+                      className="mt-2 h-9 w-full rounded-md border border-border/60 bg-background px-2 text-sm font-bold text-foreground"
+                    >
+                      {LANGS.map((l) => (
+                        <option key={l.code} value={l.code} className="bg-background text-foreground">
+                          {l.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="rounded-lg border border-border/60 bg-card/40 p-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-muted-foreground">{t("menu.theme")}</span>
+                      <ThemeToggle />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 border-t border-border/50 pt-4">
+                <div className="text-[11px] font-bold uppercase text-muted-foreground">{t("menu.legal")}</div>
+                <nav className="mt-2 flex flex-col gap-1">
+                  {legalNav.map(({ to, label, Icon }) => (
+                    <SheetClose asChild key={to}>
+                      <Link
+                        to={to}
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/60"
+                      >
+                        <Icon className="h-4 w-4 text-primary" />
+                        {label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                </nav>
+              </div>
+
+              <div className="mt-6 border-t border-border/50 pt-4">
+                <SheetClose asChild>
+                  <Link
+                    to={signedIn ? "/admin" : "/login"}
+                    className="block w-full rounded-lg bg-primary px-3 py-2 text-center text-sm font-bold text-primary-foreground hover:opacity-90"
+                  >
+                    {signedIn ? t("nav.admin") : t("nav.login")}
+                  </Link>
+                </SheetClose>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+
         <Link to="/" className="flex items-center gap-2">
           <img
             src={avatarUrl}
@@ -37,51 +147,6 @@ export function SiteHeader() {
           />
           <span className="text-xl font-extrabold text-foreground md:text-2xl">{t("site.name")}</span>
         </Link>
-        <nav className="hidden items-center gap-1 md:flex">
-          {nav.map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "rounded-md px-3 py-1.5 text-sm font-semibold text-foreground bg-muted/50" }}
-            >
-              {n.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="flex items-center gap-2">
-          <select
-            value={lang}
-            onChange={(e) => setLang(e.target.value as Lang)}
-            aria-label="language"
-            className="inline-flex h-9 items-center justify-center rounded-md border border-border/70 bg-card/40 px-2 text-xs font-bold text-foreground hover:bg-muted/50"
-          >
-            {LANGS.map((l) => (
-              <option key={l.code} value={l.code} className="bg-background text-foreground">
-                {l.label}
-              </option>
-            ))}
-          </select>
-          <ThemeToggle />
-          <Link
-            to={signedIn ? "/admin" : "/login"}
-            className="rounded-md border border-border/70 bg-card/40 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted/50"
-          >
-            {signedIn ? t("nav.admin") : t("nav.login")}
-          </Link>
-        </div>
-      </div>
-      <div className="flex gap-1 overflow-x-auto px-4 pb-2 md:hidden">
-        {nav.map((n) => (
-          <Link
-            key={n.to}
-            to={n.to}
-            className="whitespace-nowrap rounded-md px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground"
-            activeProps={{ className: "whitespace-nowrap rounded-md px-3 py-1 text-xs font-semibold text-foreground bg-muted/50" }}
-          >
-            {n.label}
-          </Link>
-        ))}
       </div>
     </header>
   );
