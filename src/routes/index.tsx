@@ -116,20 +116,6 @@ function Index() {
       <section className="mx-auto max-w-7xl px-4 py-6">
         <AdBanner468x60 />
       </section>
-
-      {/* Native Banner Ad */}
-      <section className="mx-auto max-w-7xl px-4 py-8">
-        <div className="flex justify-center">
-          <div className="w-full max-w-[728px]">
-            <script
-              async
-              data-cfasync="false"
-              src="https://pl29600563.effectivecpmnetwork.com/1fd3de437d60db326297432f6ed0be74/invoke.js"
-            />
-            <div id="container-1fd3de437d60db326297432f6ed0be74" />
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
