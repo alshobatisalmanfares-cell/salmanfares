@@ -14,6 +14,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as GamesRouteImport } from './routes/games'
+import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AppsRouteImport } from './routes/apps'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -43,6 +44,11 @@ const LoginRoute = LoginRouteImport.update({
 const GamesRoute = GamesRouteImport.update({
   id: '/games',
   path: '/games',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
+  '/favorites': typeof FavoritesRoute
   '/games': typeof GamesRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
+  '/favorites': typeof FavoritesRoute
   '/games': typeof GamesRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
+  '/favorites': typeof FavoritesRoute
   '/games': typeof GamesRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apps'
     | '/contact'
+    | '/favorites'
     | '/games'
     | '/login'
     | '/privacy'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apps'
     | '/contact'
+    | '/favorites'
     | '/games'
     | '/login'
     | '/privacy'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/apps'
     | '/contact'
+    | '/favorites'
     | '/games'
     | '/login'
     | '/privacy'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AppsRoute: typeof AppsRoute
   ContactRoute: typeof ContactRoute
+  FavoritesRoute: typeof FavoritesRoute
   GamesRoute: typeof GamesRoute
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/games'
       fullPath: '/games'
       preLoaderRoute: typeof GamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AppsRoute: AppsRoute,
   ContactRoute: ContactRoute,
+  FavoritesRoute: FavoritesRoute,
   GamesRoute: GamesRoute,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
@@ -250,13 +271,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

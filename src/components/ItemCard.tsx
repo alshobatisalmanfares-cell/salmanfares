@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, Eye, Lock, Star, StarHalf } from "lucide-react";
+import { ExternalLink, Eye, Heart, Lock, Star, StarHalf } from "lucide-react";
 import type { Item } from "@/lib/items";
 import { socials, type SocialKey } from "./SocialLinks";
 import { useI18n } from "@/lib/i18n";
+import { useFavorite } from "@/lib/favorites";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -43,6 +45,14 @@ export function ItemCard({ item }: { item: Item }) {
   const [followOpen, setFollowOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [clickedKeys, setClickedKeys] = useState<SocialKey[]>([]);
+  const { isFav, toggle: toggleFav, loading: favLoading } = useFavorite(item.id);
+
+  async function handleFavClick(e: React.MouseEvent) {
+    e.stopPropagation();
+    e.preventDefault();
+    const res = await toggleFav();
+    if (res.needLogin) toast.error(t("favorites.loginRequired"));
+  }
 
   const requiredKeys = (item.required_follows ?? []) as SocialKey[];
   const requiresFollow = requiredKeys.length > 0;
@@ -93,11 +103,26 @@ export function ItemCard({ item }: { item: Item }) {
             <span>{item.emoji}</span>
           )}
         </div>
-        {item.badge && (
-          <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-foreground">
-            {item.badge}
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {item.badge && (
+            <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-foreground">
+              {item.badge}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={handleFavClick}
+            disabled={favLoading}
+            aria-label={isFav ? t("favorites.remove") : t("favorites.add")}
+            className={`inline-flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${
+              isFav
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border/60 bg-card/40 text-muted-foreground hover:text-primary"
+            }`}
+          >
+            <Heart className={`h-4 w-4 ${isFav ? "fill-current" : ""}`} />
+          </button>
+        </div>
       </div>
       <h3 className="mt-4 text-lg font-bold text-foreground">{item.title}</h3>
       <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground line-clamp-3">

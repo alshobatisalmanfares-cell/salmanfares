@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, Home, AppWindow, Globe, Gamepad2, Info, Mail, Shield, FileText, Languages, Settings as SettingsIcon } from "lucide-react";
+import { Menu, Home, AppWindow, Globe, Gamepad2, Info, Mail, Shield, FileText, Languages, Settings as SettingsIcon, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import avatarUrl from "@/assets/avatar.jpg";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -32,6 +32,7 @@ export function SiteHeader() {
     { to: "/apps", label: t("nav.apps"), Icon: AppWindow },
     { to: "/websites", label: t("nav.websites"), Icon: Globe },
     { to: "/games", label: t("nav.games"), Icon: Gamepad2 },
+    { to: "/favorites", label: t("favorites.title"), Icon: Heart },
     { to: "/about", label: t("nav.about"), Icon: Info },
     { to: "/contact", label: t("nav.contact"), Icon: Mail },
   ] as const;
