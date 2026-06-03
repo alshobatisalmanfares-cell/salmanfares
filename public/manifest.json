@@ -1,0 +1,27 @@
+{
+  "name": "موقع سلمان للتقنية",
+  "short_name": "سلمان للتقنية",
+  "description": "منصتك الشاملة لاكتشاف أفضل التطبيقات، الألعاب، والمواقع التقنية المميزة",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#0b0f19",
+  "orientation": "any",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/avatar.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/avatar.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ],
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["technology", "utilities"],
+  "prefer_related_applications": false
+}

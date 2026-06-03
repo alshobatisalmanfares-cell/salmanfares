@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://salmanfares.lovable.app/sitemap.xml
