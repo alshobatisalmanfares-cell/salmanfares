@@ -125,6 +125,12 @@ const dict: Record<string, Tr> = {
   "terms.liability.body": { ar: "نوفر الروابط والمعلومات كما هي دون أي ضمان. الموقع غير مسؤول عن أي ضرر ناتج عن استخدام محتوى طرف ثالث.", en: "Links and content are provided as-is without warranty. We are not liable for any damage caused by third-party content." },
   "terms.changes.title": { ar: "تعديل الشروط", en: "Changes to terms" },
   "terms.changes.body": { ar: "قد نُحدّث هذه الشروط من حين لآخر. استمرارك في استخدام الموقع يُعد قبولاً للتحديثات.", en: "We may update these terms occasionally. Continued use of the site constitutes acceptance of the updates." },
+
+  "favorites.title": { ar: "المفضلة", en: "Favorites", es: "Favoritos", nl: "Favorieten", tr: "Favoriler", ur: "پسندیدہ", pt: "Favoritos", fr: "Favoris", de: "Favoriten" },
+  "favorites.add": { ar: "إضافة إلى المفضلة", en: "Add to favorites" },
+  "favorites.remove": { ar: "إزالة من المفضلة", en: "Remove from favorites" },
+  "favorites.empty": { ar: "لا توجد عناصر في المفضلة بعد.", en: "No favorites yet." },
+  "favorites.loginRequired": { ar: "يجب تسجيل الدخول لاستخدام المفضلة.", en: "You must log in to use favorites." },
 };
 
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: string) => string };
