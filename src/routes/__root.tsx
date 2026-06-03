@@ -75,6 +75,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "theme-color", content: "#0b0f19" },
       { name: "google-site-verification", content: "La90iHMhtvnYwBk1mnhonFebPOlu3J5Vb4YlO2CrGQQ" },
       { title: "موقع سلمان للتقنية" },
       { name: "description", content: "​موقع سلمان للتقنية - منصتك الشاملة لاكتشاف أفضل التطبيقات، الألعاب، والمواقع التقنية المميزة والمحدثة باستمرار." },
@@ -88,11 +89,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "​موقع سلمان للتقنية - منصتك الشاملة لاكتشاف أفضل التطبيقات، الألعاب، والمواقع التقنية المميزة والمحدثة باستمرار." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/bU3DOz3UDyU9X5DCn1DZLGCLn4D3/social-images/social-1778618125921-1000085693.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/bU3DOz3UDyU9X5DCn1DZLGCLn4D3/social-images/social-1778618125921-1000085693.webp" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "سلمان للتقنية" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "manifest",
+        href: "/manifest.json",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/avatar.jpg",
       },
     ],
     scripts: [
