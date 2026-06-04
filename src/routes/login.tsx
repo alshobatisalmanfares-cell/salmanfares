@@ -35,6 +35,8 @@ function LoginPage() {
         if (error) throw error;
         toast.success(t("auth.success.signup"));
       } else {
+        // Clear any stale session before signing in with new credentials
+        await supabase.auth.signOut();
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success(t("auth.success.signin"));
