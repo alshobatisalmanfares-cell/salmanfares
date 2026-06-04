@@ -32,12 +32,21 @@ type FormState = {
   rating: string;
   required_follows: SocialKey[];
   gallery: string[];
+  developer: string;
+  license: string;
+  language: string;
+  os: string;
+  file_type: string;
+  file_size: string;
+  update_date: string;
 };
 
 const empty: FormState = {
   title: "", description: "", category: "apps", url: "",
   cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
   required_follows: [], gallery: [],
+  developer: "", license: "", language: "", os: "",
+  file_type: "", file_size: "", update_date: "",
 };
 
 function AdminPage() {
@@ -89,6 +98,13 @@ function AdminPage() {
         rating: form.rating.trim() ? Number(form.rating) : null,
         required_follows: form.required_follows,
         gallery: form.gallery,
+        developer: form.developer.trim() || null,
+        license: form.license.trim() || null,
+        language: form.language.trim() || null,
+        os: form.os.trim() || null,
+        file_type: form.file_type.trim() || null,
+        file_size: form.file_size.trim() || null,
+        update_date: form.update_date.trim() || null,
       };
       if (form.id) {
         const { error } = await supabase.from("items").update(payload).eq("id", form.id);
@@ -125,6 +141,13 @@ function AdminPage() {
       rating: it.rating != null ? String(it.rating) : "",
       required_follows: (it.required_follows ?? []) as SocialKey[],
       gallery: it.gallery ?? [],
+      developer: it.developer ?? "",
+      license: it.license ?? "",
+      language: it.language ?? "",
+      os: it.os ?? "",
+      file_type: it.file_type ?? "",
+      file_size: it.file_size ?? "",
+      update_date: it.update_date ?? "",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
