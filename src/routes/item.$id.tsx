@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight, ExternalLink, Eye, Heart, Lock, Star, StarHalf } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Download, ExternalLink, Eye, FileType2, Globe, HardDrive, Heart, Languages, Lock, MonitorCog, ShieldCheck, Star, StarHalf, User } from "lucide-react";
 import { fetchItem } from "@/lib/items";
 import { useI18n } from "@/lib/i18n";
 import { useFavorite } from "@/lib/favorites";
@@ -174,27 +174,57 @@ function ItemDetailsPage() {
 
         <div className="mt-6 border-t border-border/50 pt-5">
           <h2 className="text-sm font-bold uppercase text-muted-foreground">{t("details.description")}</h2>
-          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground">
-            {item.description}
-          </p>
+          {(() => {
+            const desc = item.description ?? "";
+            const mid = Math.floor(desc.length / 2);
+            const splitAt = desc.indexOf("\n\n", mid);
+            const breakAt = splitAt > -1 ? splitAt : (desc.length > 200 ? desc.indexOf(". ", mid) + 1 : -1);
+            const part1 = breakAt > 0 ? desc.slice(0, breakAt) : desc;
+            const part2 = breakAt > 0 ? desc.slice(breakAt) : "";
+            const hasGallery = item.gallery && item.gallery.length > 0;
+            return (
+              <>
+                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground">{part1}</p>
+                {hasGallery && (
+                  <div className="my-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {item.gallery.map((src, i) => (
+                      <img
+                        key={i}
+                        src={src}
+                        alt={`${item.title} ${i + 1}`}
+                        loading="lazy"
+                        className="aspect-square w-full rounded-xl border border-border/60 object-cover"
+                      />
+                    ))}
+                  </div>
+                )}
+                {part2 && (
+                  <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{part2}</p>
+                )}
+              </>
+            );
+          })()}
         </div>
 
-        {item.gallery && item.gallery.length > 0 && (
-          <div className="mt-6 border-t border-border/50 pt-5">
-            <h2 className="text-sm font-bold uppercase text-muted-foreground">{t("details.gallery")}</h2>
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {item.gallery.map((src, i) => (
-                <img
-                  key={i}
-                  src={src}
-                  alt={`${item.title} ${i + 1}`}
-                  loading="lazy"
-                  className="aspect-square w-full rounded-xl border border-border/60 object-cover"
-                />
-              ))}
-            </div>
-          </div>
-        )}
+        <SpecsSection item={item} />
+
+        <div className="mt-6 border-t border-border/50 pt-5">
+          <a
+            href={isSafeUrl(item.url) ? item.url : "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              if (requiresFollow && !followed) {
+                e.preventDefault();
+                setFollowOpen(true);
+              }
+            }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-base font-extrabold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
+          >
+            {requiresFollow && !followed ? <Lock className="h-5 w-5" /> : <Download className="h-5 w-5" />}
+            {item.cta || t("details.cta")}
+          </a>
+        </div>
       </div>
 
       <Dialog open={followOpen} onOpenChange={setFollowOpen}>
