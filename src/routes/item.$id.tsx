@@ -47,6 +47,59 @@ function isSafeUrl(url: string) {
   return /^https?:\/\//i.test(url);
 }
 
+function SpecRow({ icon: Icon, label, value }: { icon: any; label: string; value?: string | null }) {
+  if (!value) return null;
+  return (
+    <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
+      <Icon className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+      <div className="min-w-0 flex-1">
+        <div className="text-[11px] font-semibold uppercase text-muted-foreground">{label}</div>
+        <div className="text-sm font-medium text-foreground break-words">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function SpecsSection({ item }: { item: any }) {
+  const hasBasic = item.developer || item.license || item.category || item.language;
+  const hasSystem = !!item.os;
+  const hasDownload = item.file_type || item.file_size || item.update_date;
+  if (!hasBasic && !hasSystem && !hasDownload) return null;
+  return (
+    <div className="mt-6 border-t border-border/50 pt-5 space-y-5">
+      {hasBasic && (
+        <div>
+          <h3 className="text-sm font-bold text-foreground mb-3">معلومات أساسية</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <SpecRow icon={User} label="المطور" value={item.developer} />
+            <SpecRow icon={ShieldCheck} label="الترخيص" value={item.license} />
+            <SpecRow icon={Globe} label="القسم" value={item.category} />
+            <SpecRow icon={Languages} label="اللغة" value={item.language} />
+          </div>
+        </div>
+      )}
+      {hasSystem && (
+        <div>
+          <h3 className="text-sm font-bold text-foreground mb-3">متطلبات النظام</h3>
+          <div className="grid grid-cols-1 gap-2">
+            <SpecRow icon={MonitorCog} label="نظام التشغيل" value={item.os} />
+          </div>
+        </div>
+      )}
+      {hasDownload && (
+        <div>
+          <h3 className="text-sm font-bold text-foreground mb-3">معلومات عن التنزيل</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <SpecRow icon={FileType2} label="نوع الملف" value={item.file_type} />
+            <SpecRow icon={HardDrive} label="حجم الملف" value={item.file_size} />
+            <SpecRow icon={Calendar} label="تاريخ التحديث" value={item.update_date} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ItemDetailsPage() {
   const { id } = Route.useParams();
   const { t, lang } = useI18n();
