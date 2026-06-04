@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight, ExternalLink, Eye, Heart, Lock, Star, StarHalf } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Download, ExternalLink, Eye, FileType2, Globe, HardDrive, Heart, Languages, Lock, MonitorCog, ShieldCheck, Star, StarHalf, User } from "lucide-react";
 import { fetchItem } from "@/lib/items";
 import { useI18n } from "@/lib/i18n";
 import { useFavorite } from "@/lib/favorites";
@@ -45,6 +45,59 @@ function StarRating({ value }: { value: number }) {
 
 function isSafeUrl(url: string) {
   return /^https?:\/\//i.test(url);
+}
+
+function SpecRow({ icon: Icon, label, value }: { icon: any; label: string; value?: string | null }) {
+  if (!value) return null;
+  return (
+    <div className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
+      <Icon className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+      <div className="min-w-0 flex-1">
+        <div className="text-[11px] font-semibold uppercase text-muted-foreground">{label}</div>
+        <div className="text-sm font-medium text-foreground break-words">{value}</div>
+      </div>
+    </div>
+  );
+}
+
+function SpecsSection({ item }: { item: any }) {
+  const hasBasic = item.developer || item.license || item.category || item.language;
+  const hasSystem = !!item.os;
+  const hasDownload = item.file_type || item.file_size || item.update_date;
+  if (!hasBasic && !hasSystem && !hasDownload) return null;
+  return (
+    <div className="mt-6 border-t border-border/50 pt-5 space-y-5">
+      {hasBasic && (
+        <div>
+          <h3 className="text-sm font-bold text-foreground mb-3">معلومات أساسية</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <SpecRow icon={User} label="المطور" value={item.developer} />
+            <SpecRow icon={ShieldCheck} label="الترخيص" value={item.license} />
+            <SpecRow icon={Globe} label="القسم" value={item.category} />
+            <SpecRow icon={Languages} label="اللغة" value={item.language} />
+          </div>
+        </div>
+      )}
+      {hasSystem && (
+        <div>
+          <h3 className="text-sm font-bold text-foreground mb-3">متطلبات النظام</h3>
+          <div className="grid grid-cols-1 gap-2">
+            <SpecRow icon={MonitorCog} label="نظام التشغيل" value={item.os} />
+          </div>
+        </div>
+      )}
+      {hasDownload && (
+        <div>
+          <h3 className="text-sm font-bold text-foreground mb-3">معلومات عن التنزيل</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <SpecRow icon={FileType2} label="نوع الملف" value={item.file_type} />
+            <SpecRow icon={HardDrive} label="حجم الملف" value={item.file_size} />
+            <SpecRow icon={Calendar} label="تاريخ التحديث" value={item.update_date} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function ItemDetailsPage() {
@@ -174,27 +227,57 @@ function ItemDetailsPage() {
 
         <div className="mt-6 border-t border-border/50 pt-5">
           <h2 className="text-sm font-bold uppercase text-muted-foreground">{t("details.description")}</h2>
-          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground">
-            {item.description}
-          </p>
+          {(() => {
+            const desc = item.description ?? "";
+            const mid = Math.floor(desc.length / 2);
+            const splitAt = desc.indexOf("\n\n", mid);
+            const breakAt = splitAt > -1 ? splitAt : (desc.length > 200 ? desc.indexOf(". ", mid) + 1 : -1);
+            const part1 = breakAt > 0 ? desc.slice(0, breakAt) : desc;
+            const part2 = breakAt > 0 ? desc.slice(breakAt) : "";
+            const hasGallery = item.gallery && item.gallery.length > 0;
+            return (
+              <>
+                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground">{part1}</p>
+                {hasGallery && (
+                  <div className="my-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {item.gallery.map((src, i) => (
+                      <img
+                        key={i}
+                        src={src}
+                        alt={`${item.title} ${i + 1}`}
+                        loading="lazy"
+                        className="aspect-square w-full rounded-xl border border-border/60 object-cover"
+                      />
+                    ))}
+                  </div>
+                )}
+                {part2 && (
+                  <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{part2}</p>
+                )}
+              </>
+            );
+          })()}
         </div>
 
-        {item.gallery && item.gallery.length > 0 && (
-          <div className="mt-6 border-t border-border/50 pt-5">
-            <h2 className="text-sm font-bold uppercase text-muted-foreground">{t("details.gallery")}</h2>
-            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {item.gallery.map((src, i) => (
-                <img
-                  key={i}
-                  src={src}
-                  alt={`${item.title} ${i + 1}`}
-                  loading="lazy"
-                  className="aspect-square w-full rounded-xl border border-border/60 object-cover"
-                />
-              ))}
-            </div>
-          </div>
-        )}
+        <SpecsSection item={item} />
+
+        <div className="mt-6 border-t border-border/50 pt-5">
+          <a
+            href={isSafeUrl(item.url) ? item.url : "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              if (requiresFollow && !followed) {
+                e.preventDefault();
+                setFollowOpen(true);
+              }
+            }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-base font-extrabold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
+          >
+            {requiresFollow && !followed ? <Lock className="h-5 w-5" /> : <Download className="h-5 w-5" />}
+            {item.cta || t("details.cta")}
+          </a>
+        </div>
       </div>
 
       <Dialog open={followOpen} onOpenChange={setFollowOpen}>

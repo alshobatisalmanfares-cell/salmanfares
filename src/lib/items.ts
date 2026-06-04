@@ -18,6 +18,13 @@ export type Item = {
   gallery: string[];
   sort_order: number;
   created_at: string;
+  developer?: string | null;
+  license?: string | null;
+  language?: string | null;
+  os?: string | null;
+  file_type?: string | null;
+  file_size?: string | null;
+  update_date?: string | null;
 };
 
 export async function fetchItems(category?: ItemCategory): Promise<Item[]> {
