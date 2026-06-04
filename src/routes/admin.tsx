@@ -371,6 +371,45 @@ function AdminPage() {
           </div>
         </div>
         <div className="md:col-span-2 flex gap-2">
+        </div>
+        <div className="md:col-span-2 pt-2 border-t border-border/40">
+          <h3 className="text-sm font-bold text-muted-foreground">معلومات أساسية</h3>
+        </div>
+        <div>
+          <Label>المطور (Developer)</Label>
+          <Input value={form.developer} onChange={(e) => setForm({ ...form, developer: e.target.value })} />
+        </div>
+        <div>
+          <Label>الترخيص (License)</Label>
+          <Input value={form.license} onChange={(e) => setForm({ ...form, license: e.target.value })} placeholder="مجاني / مدفوع" />
+        </div>
+        <div>
+          <Label>اللغة (Language)</Label>
+          <Input value={form.language} onChange={(e) => setForm({ ...form, language: e.target.value })} placeholder="العربية، الإنجليزية" />
+        </div>
+        <div className="md:col-span-2 pt-2 border-t border-border/40">
+          <h3 className="text-sm font-bold text-muted-foreground">متطلبات النظام</h3>
+        </div>
+        <div className="md:col-span-2">
+          <Label>نظام التشغيل (OS)</Label>
+          <Input value={form.os} onChange={(e) => setForm({ ...form, os: e.target.value })} placeholder="Android 7+ / Windows 10+" />
+        </div>
+        <div className="md:col-span-2 pt-2 border-t border-border/40">
+          <h3 className="text-sm font-bold text-muted-foreground">معلومات عن التنزيل</h3>
+        </div>
+        <div>
+          <Label>نوع الملف (File Type)</Label>
+          <Input value={form.file_type} onChange={(e) => setForm({ ...form, file_type: e.target.value })} placeholder="APK / EXE" />
+        </div>
+        <div>
+          <Label>حجم الملف (File Size)</Label>
+          <Input value={form.file_size} onChange={(e) => setForm({ ...form, file_size: e.target.value })} placeholder="25 MB" />
+        </div>
+        <div>
+          <Label>تاريخ التحديث (Update Date)</Label>
+          <Input value={form.update_date} onChange={(e) => setForm({ ...form, update_date: e.target.value })} placeholder="2026-06-01" />
+        </div>
+        <div className="md:col-span-2 flex gap-2 pt-2">
           <Button type="submit" disabled={saving}>
             <Plus className="ml-1 h-4 w-4" />
             {form.id ? "حفظ التعديل" : "إضافة"}
