@@ -50,14 +50,21 @@ export type Database = {
           created_at: string
           cta: string
           description: string
+          developer: string | null
           emoji: string
+          file_size: string | null
+          file_type: string | null
           gallery: string[]
           id: string
           image_url: string | null
+          language: string | null
+          license: string | null
+          os: string | null
           rating: number | null
           required_follows: string[]
           sort_order: number
           title: string
+          update_date: string | null
           updated_at: string
           url: string
           views: string | null
@@ -68,14 +75,21 @@ export type Database = {
           created_at?: string
           cta?: string
           description?: string
+          developer?: string | null
           emoji?: string
+          file_size?: string | null
+          file_type?: string | null
           gallery?: string[]
           id?: string
           image_url?: string | null
+          language?: string | null
+          license?: string | null
+          os?: string | null
           rating?: number | null
           required_follows?: string[]
           sort_order?: number
           title: string
+          update_date?: string | null
           updated_at?: string
           url: string
           views?: string | null
@@ -86,14 +100,21 @@ export type Database = {
           created_at?: string
           cta?: string
           description?: string
+          developer?: string | null
           emoji?: string
+          file_size?: string | null
+          file_type?: string | null
           gallery?: string[]
           id?: string
           image_url?: string | null
+          language?: string | null
+          license?: string | null
+          os?: string | null
           rating?: number | null
           required_follows?: string[]
           sort_order?: number
           title?: string
+          update_date?: string | null
           updated_at?: string
           url?: string
           views?: string | null
