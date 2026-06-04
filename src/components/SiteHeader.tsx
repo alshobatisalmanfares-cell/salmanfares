@@ -18,14 +18,31 @@ import {
 export function SiteHeader() {
   const { t, lang, setLang } = useI18n();
   const [signedIn, setSignedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [open, setOpen] = useState(false);
+
+  async function refreshRole(userId: string | undefined) {
+    if (!userId) { setIsAdmin(false); return; }
+    const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+    setIsAdmin((data ?? []).some((r) => r.role === "admin"));
+  }
+
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setSignedIn(!!session);
+      refreshRole(session?.user?.id);
     });
-    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    supabase.auth.getSession().then(({ data }) => {
+      setSignedIn(!!data.session);
+      refreshRole(data.session?.user?.id);
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    setOpen(false);
+  }
 
   const mainNav = [
     { to: "/", label: t("nav.home"), Icon: Home },
@@ -127,14 +144,32 @@ export function SiteHeader() {
               </div>
 
               <div className="mt-6 border-t border-border/50 pt-4">
-                <SheetClose asChild>
-                  <Link
-                    to={signedIn ? "/admin" : "/login"}
-                    className="block w-full rounded-lg bg-primary px-3 py-2 text-center text-sm font-bold text-primary-foreground hover:opacity-90"
+                {signedIn && isAdmin ? (
+                  <SheetClose asChild>
+                    <Link
+                      to="/admin"
+                      className="block w-full rounded-lg bg-primary px-3 py-2 text-center text-sm font-bold text-primary-foreground hover:opacity-90"
+                    >
+                      {t("nav.admin")}
+                    </Link>
+                  </SheetClose>
+                ) : signedIn ? (
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full rounded-lg border border-border/70 bg-card/40 px-3 py-2 text-center text-sm font-bold text-foreground hover:bg-muted/60"
                   >
-                    {signedIn ? t("nav.admin") : t("nav.login")}
-                  </Link>
-                </SheetClose>
+                    {t("nav.logout")}
+                  </button>
+                ) : (
+                  <SheetClose asChild>
+                    <Link
+                      to="/login"
+                      className="block w-full rounded-lg bg-primary px-3 py-2 text-center text-sm font-bold text-primary-foreground hover:opacity-90"
+                    >
+                      {t("nav.login")}
+                    </Link>
+                  </SheetClose>
+                )}
               </div>
             </SheetContent>
           </Sheet>
