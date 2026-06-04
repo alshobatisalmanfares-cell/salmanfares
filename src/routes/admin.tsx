@@ -60,7 +60,7 @@ function AdminPage() {
       const admin = (data ?? []).some((r) => r.role === "admin");
       setIsAdmin(admin);
       setAuthChecked(true);
-      if (!admin) toast.error("هذا الحساب ليس مسؤولاً");
+      if (!admin) navigate({ to: "/" });
     }
     check();
     return () => { mounted = false; };
