@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { ExternalLink, Eye, Heart, Lock, Star, StarHalf } from "lucide-react";
 import type { Item } from "@/lib/items";
 import { socials, type SocialKey } from "./SocialLinks";
@@ -42,8 +43,8 @@ function isSafeUrl(url: string) {
 
 export function ItemCard({ item }: { item: Item }) {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [followOpen, setFollowOpen] = useState(false);
-  const [detailsOpen, setDetailsOpen] = useState(false);
   const [clickedKeys, setClickedKeys] = useState<SocialKey[]>([]);
   const { isFav, toggle: toggleFav, loading: favLoading } = useFavorite(item.id);
 
@@ -82,15 +83,19 @@ export function ItemCard({ item }: { item: Item }) {
     }
   }
 
+  function openDetails() {
+    navigate({ to: "/item/$id", params: { id: item.id } });
+  }
+
   return (
     <div
       role="button"
       tabIndex={0}
-      onClick={() => setDetailsOpen(true)}
+      onClick={openDetails}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          setDetailsOpen(true);
+          openDetails();
         }
       }}
       className="group flex cursor-pointer flex-col rounded-2xl border border-border/60 bg-card/60 p-5 card-elevated hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/60"
@@ -152,74 +157,6 @@ export function ItemCard({ item }: { item: Item }) {
           {item.cta}
         </a>
       </div>
-
-      {/* Details modal */}
-      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent
-          className="max-w-lg"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <DialogHeader>
-            <div className="flex items-center gap-3">
-              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-muted/30 text-2xl">
-                {item.image_url ? (
-                  <img src={item.image_url} alt={item.title} className="h-full w-full object-cover" />
-                ) : (
-                  <span>{item.emoji}</span>
-                )}
-              </div>
-              <div className="text-start">
-                <DialogTitle className="text-lg font-extrabold">{item.title}</DialogTitle>
-                {item.rating != null && (
-                  <div className="mt-1 flex items-center gap-1">
-                    <StarRating value={item.rating} />
-                    <span className="ms-1 text-xs text-muted-foreground">{item.rating.toFixed(1)}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </DialogHeader>
-          <DialogDescription className="max-h-[40vh] overflow-y-auto whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-            {item.description}
-          </DialogDescription>
-          {item.gallery && item.gallery.length > 0 && (
-            <div className="mt-2">
-              <div className="text-xs font-semibold text-muted-foreground">{t("details.gallery")}</div>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {item.gallery.map((src, i) => (
-                  <img
-                    key={i}
-                    src={src}
-                    alt={`${item.title} ${i + 1}`}
-                    loading="lazy"
-                    className="aspect-square w-full rounded-lg object-cover"
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-          <DialogFooter className="flex flex-row justify-between gap-2">
-            <Button variant="ghost" onClick={() => setDetailsOpen(false)}>{t("details.close")}</Button>
-            <Button asChild>
-              <a
-                href={isSafeUrl(item.url) ? item.url : "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                  if (requiresFollow && !followed) {
-                    e.preventDefault();
-                    setDetailsOpen(false);
-                    setFollowOpen(true);
-                  }
-                }}
-              >
-                <ExternalLink className="h-4 w-4" />
-                {item.cta || t("details.cta")}
-              </a>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={followOpen} onOpenChange={setFollowOpen}>
         <DialogContent onClick={(e) => e.stopPropagation()}>

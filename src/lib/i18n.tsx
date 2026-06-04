@@ -25,6 +25,7 @@ const dict: Record<string, Tr> = {
   "nav.contact": { ar: "تواصل", en: "Contact", es: "Contacto", nl: "Contact", tr: "İletişim", ur: "رابطہ", pt: "Contato", fr: "Contact", de: "Kontakt" },
   "nav.admin": { ar: "لوحة التحكم", en: "Admin", es: "Panel", nl: "Beheer", tr: "Yönetim", ur: "ایڈمن", pt: "Painel", fr: "Admin", de: "Verwaltung" },
   "nav.login": { ar: "دخول", en: "Login", es: "Entrar", nl: "Inloggen", tr: "Giriş", ur: "لاگ ان", pt: "Entrar", fr: "Connexion", de: "Anmelden" },
+  "nav.logout": { ar: "تسجيل الخروج", en: "Logout", es: "Salir", nl: "Uitloggen", tr: "Çıkış", ur: "لاگ آؤٹ", pt: "Sair", fr: "Déconnexion", de: "Abmelden" },
 
   "home.badge": { ar: "موقع سلمان فارس", en: "Salman Faris Hub", es: "Hub Salman Faris", nl: "Salman Faris Hub", tr: "Salman Faris Merkezi", ur: "سلمان فارس ہب", pt: "Hub Salman Faris", fr: "Plateforme Salman Faris", de: "Salman Faris Hub" },
   "home.title.1": { ar: "اكتشف", en: "Discover", es: "Descubre", nl: "Ontdek", tr: "Keşfet", ur: "دریافت کریں", pt: "Descubra", fr: "Découvrez", de: "Entdecke" },
@@ -103,6 +104,9 @@ const dict: Record<string, Tr> = {
   "details.close": { ar: "إغلاق", en: "Close" },
   "details.gallery": { ar: "صور", en: "Gallery" },
   "details.rating": { ar: "التقييم", en: "Rating" },
+  "details.back": { ar: "العودة إلى الرئيسية", en: "Back to Home", es: "Volver al inicio", nl: "Terug naar Home", tr: "Ana sayfaya dön", ur: "ہوم پر واپس", pt: "Voltar ao início", fr: "Retour à l'accueil", de: "Zurück zur Startseite" },
+  "details.notFound": { ar: "العنصر غير موجود.", en: "Item not found.", es: "Elemento no encontrado.", nl: "Item niet gevonden.", tr: "Öğe bulunamadı.", ur: "آئٹم نہیں ملا۔", pt: "Item não encontrado.", fr: "Élément introuvable.", de: "Element nicht gefunden." },
+  "details.description": { ar: "الوصف", en: "Description", es: "Descripción", nl: "Beschrijving", tr: "Açıklama", ur: "تفصیل", pt: "Descrição", fr: "Description", de: "Beschreibung" },
 
   "privacy.title": { ar: "سياسة الخصوصية", en: "Privacy Policy" },
   "privacy.intro": { ar: "نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. توضح هذه السياسة كيفية جمع واستخدام المعلومات عند استخدامك للموقع.", en: "We respect your privacy and protect your personal data. This policy explains how we collect and use information on the site." },

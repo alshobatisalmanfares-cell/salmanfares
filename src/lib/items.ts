@@ -27,3 +27,9 @@ export async function fetchItems(category?: ItemCategory): Promise<Item[]> {
   if (error) throw error;
   return (data ?? []) as Item[];
 }
+
+export async function fetchItem(id: string): Promise<Item | null> {
+  const { data, error } = await supabase.from("items").select("*").eq("id", id).maybeSingle();
+  if (error) throw error;
+  return (data as Item) ?? null;
+}

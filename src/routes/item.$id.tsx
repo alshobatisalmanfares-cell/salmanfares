@@ -1,0 +1,241 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, ArrowRight, ExternalLink, Eye, Heart, Lock, Star, StarHalf } from "lucide-react";
+import { fetchItem } from "@/lib/items";
+import { useI18n } from "@/lib/i18n";
+import { useFavorite } from "@/lib/favorites";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { socials, type SocialKey } from "@/components/SocialLinks";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
+
+export const Route = createFileRoute("/item/$id")({
+  head: () => ({ meta: [{ title: "تفاصيل | سلمان فارس" }] }),
+  component: ItemDetailsPage,
+});
+
+function StarRating({ value }: { value: number }) {
+  const v = Math.max(0, Math.min(5, value));
+  return (
+    <div className="flex items-center gap-0.5">
+      {[0, 1, 2, 3, 4].map((i) => {
+        const fill = v - i;
+        if (fill >= 1)
+          return <Star key={i} className="h-4 w-4 fill-primary text-primary" />;
+        if (fill >= 0.25 && fill < 1)
+          return (
+            <span key={i} className="relative inline-flex">
+              <Star className="h-4 w-4 text-muted-foreground/40" />
+              <StarHalf className="absolute inset-0 h-4 w-4 fill-primary text-primary" />
+            </span>
+          );
+        return <Star key={i} className="h-4 w-4 text-muted-foreground/40" />;
+      })}
+    </div>
+  );
+}
+
+function isSafeUrl(url: string) {
+  return /^https?:\/\//i.test(url);
+}
+
+function ItemDetailsPage() {
+  const { id } = Route.useParams();
+  const { t, lang } = useI18n();
+  const navigate = useNavigate();
+  const isRtl = lang === "ar" || lang === "ur";
+  const BackIcon = isRtl ? ArrowRight : ArrowLeft;
+
+  const { data: item, isLoading } = useQuery({
+    queryKey: ["item", id],
+    queryFn: () => fetchItem(id),
+  });
+
+  const { isFav, toggle: toggleFav, loading: favLoading } = useFavorite(id);
+
+  const [followOpen, setFollowOpen] = useState(false);
+  const [clickedKeys, setClickedKeys] = useState<SocialKey[]>([]);
+  const requiredKeys = ((item?.required_follows ?? []) as SocialKey[]);
+  const requiresFollow = requiredKeys.length > 0;
+  const followStorageKey = `follow:${id}`;
+  const [followed, setFollowed] = useState(false);
+  useEffect(() => {
+    setFollowed(localStorage.getItem(followStorageKey) === "1");
+  }, [followStorageKey]);
+  const allClicked = requiredKeys.every((k) => clickedKeys.includes(k));
+
+  function confirmFollowed() {
+    if (!allClicked || !item) return;
+    localStorage.setItem(followStorageKey, "1");
+    setFollowed(true);
+    setFollowOpen(false);
+    if (isSafeUrl(item.url)) window.open(item.url, "_blank", "noopener,noreferrer");
+  }
+
+  async function handleFav() {
+    const res = await toggleFav();
+    if (res.needLogin) toast.error(t("favorites.loginRequired"));
+  }
+
+  if (isLoading) {
+    return <div className="mx-auto max-w-3xl px-4 py-16 text-center text-sm text-muted-foreground">...</div>;
+  }
+
+  if (!item) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16 text-center">
+        <p className="text-lg font-bold text-foreground">{t("details.notFound")}</p>
+        <Link to="/" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">
+          <BackIcon className="h-4 w-4" /> {t("details.back")}
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-8">
+      <button
+        onClick={() => navigate({ to: "/" })}
+        className="mb-6 inline-flex items-center gap-2 rounded-lg border border-border/60 bg-card/40 px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted/60"
+      >
+        <BackIcon className="h-4 w-4" />
+        {t("details.back")}
+      </button>
+
+      <div className="rounded-2xl border border-border/60 bg-card/60 p-6 card-elevated">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+          <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border/60 bg-muted/30 text-5xl">
+            {item.image_url ? (
+              <img src={item.image_url} alt={item.title} className="h-full w-full object-cover" />
+            ) : (
+              <span>{item.emoji}</span>
+            )}
+          </div>
+          <div className="flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-extrabold text-foreground md:text-3xl">{item.title}</h1>
+              {item.badge && (
+                <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-foreground">
+                  {item.badge}
+                </span>
+              )}
+            </div>
+            {item.rating != null && (
+              <div className="mt-2 flex items-center gap-2">
+                <StarRating value={item.rating} />
+                <span className="text-xs text-muted-foreground">{item.rating.toFixed(1)}</span>
+              </div>
+            )}
+            {item.views && (
+              <div className="mt-2 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Eye className="h-3.5 w-3.5" /> {item.views}
+              </div>
+            )}
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a
+                href={isSafeUrl(item.url) ? item.url : "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  if (requiresFollow && !followed) {
+                    e.preventDefault();
+                    setFollowOpen(true);
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                {requiresFollow && !followed ? <Lock className="h-4 w-4" /> : <ExternalLink className="h-4 w-4" />}
+                {item.cta || t("details.cta")}
+              </a>
+              <button
+                type="button"
+                onClick={handleFav}
+                disabled={favLoading}
+                className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors ${
+                  isFav
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border/60 bg-card/40 text-foreground hover:bg-muted/60"
+                }`}
+              >
+                <Heart className={`h-4 w-4 ${isFav ? "fill-current" : ""}`} />
+                {isFav ? t("favorites.remove") : t("favorites.add")}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 border-t border-border/50 pt-5">
+          <h2 className="text-sm font-bold uppercase text-muted-foreground">{t("details.description")}</h2>
+          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground">
+            {item.description}
+          </p>
+        </div>
+
+        {item.gallery && item.gallery.length > 0 && (
+          <div className="mt-6 border-t border-border/50 pt-5">
+            <h2 className="text-sm font-bold uppercase text-muted-foreground">{t("details.gallery")}</h2>
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {item.gallery.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={`${item.title} ${i + 1}`}
+                  loading="lazy"
+                  className="aspect-square w-full rounded-xl border border-border/60 object-cover"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <Dialog open={followOpen} onOpenChange={setFollowOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("lock.follow.title")}</DialogTitle>
+            <DialogDescription>{t("lock.follow.desc")}</DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-wrap justify-center gap-3 py-2">
+            {requiredKeys.map((k) => {
+              const s = socials.find((x) => x.key === k);
+              if (!s) return null;
+              const Icon = s.Icon;
+              const done = clickedKeys.includes(k);
+              return (
+                <a
+                  key={k}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setClickedKeys((prev) => (prev.includes(k) ? prev : [...prev, k]))}
+                  className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+                    done
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border/70 bg-card/40 hover:bg-primary hover:text-primary-foreground"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {s.label}
+                  {done && <span aria-hidden>✓</span>}
+                </a>
+              );
+            })}
+          </div>
+          <DialogFooter>
+            <Button onClick={confirmFollowed} disabled={!allClicked}>
+              {allClicked ? t("lock.follow.confirm") : t("lock.follow.pending")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
