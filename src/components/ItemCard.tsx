@@ -91,7 +91,11 @@ export function ItemCard({ item }: { item: Item }) {
     <div
       role="button"
       tabIndex={0}
-      onClick={openDetails}
+      onClick={(e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest("a,button,[role=dialog]")) return;
+        openDetails();
+      }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
