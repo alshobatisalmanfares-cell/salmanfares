@@ -67,10 +67,12 @@ export function ItemCard({ item }: { item: Item }) {
 
   function handleCtaClick(e: React.MouseEvent) {
     e.stopPropagation();
+    e.preventDefault();
     if (requiresFollow && !followed) {
-      e.preventDefault();
       setFollowOpen(true);
+      return;
     }
+    openDetails();
   }
 
   function confirmFollowed() {
@@ -78,9 +80,7 @@ export function ItemCard({ item }: { item: Item }) {
     localStorage.setItem(followStorageKey, "1");
     setFollowed(true);
     setFollowOpen(false);
-    if (isSafeUrl(item.url)) {
-      window.open(item.url, "_blank", "noopener,noreferrer");
-    }
+    openDetails();
   }
 
   function openDetails() {
