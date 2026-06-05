@@ -455,7 +455,7 @@ function AdminPage() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate font-semibold">{it.title}</span>
-                  <span className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground">{it.category}</span>
+                  <span className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground">{(it.categories ?? []).join(", ")}</span>
                 </div>
                 <p className="truncate text-xs text-muted-foreground">{it.description}</p>
               </div>
