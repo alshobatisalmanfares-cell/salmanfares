@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Item, ItemCategory } from "@/lib/items";
-import { fetchItems } from "@/lib/items";
+import { fetchItems, ALL_CATEGORIES } from "@/lib/items";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
 import { socials, type SocialKey } from "@/components/SocialLinks";
@@ -22,7 +22,7 @@ type FormState = {
   id?: string;
   title: string;
   description: string;
-  category: ItemCategory;
+  categories: ItemCategory[];
   url: string;
   cta: string;
   emoji: string;
@@ -42,11 +42,18 @@ type FormState = {
 };
 
 const empty: FormState = {
-  title: "", description: "", category: "apps", url: "",
+  title: "", description: "", categories: ["apps"], url: "",
   cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
   required_follows: [], gallery: [],
   developer: "", license: "", language: "", os: "",
   file_type: "", file_size: "", update_date: "",
+};
+
+const CATEGORY_LABELS: Record<ItemCategory, string> = {
+  apps: "تطبيقات",
+  games: "ألعاب",
+  websites: "مواقع",
+  ai: "أدوات الذكاء الاصطناعي",
 };
 
 function AdminPage() {
@@ -88,7 +95,7 @@ function AdminPage() {
       const payload = {
         title: form.title.trim(),
         description: form.description.trim(),
-        category: form.category,
+        categories: form.categories,
         url: form.url.trim(),
         cta: form.cta.trim() || "تحميل التطبيق",
         emoji: form.emoji || "✨",
@@ -135,7 +142,7 @@ function AdminPage() {
   function edit(it: Item) {
     setForm({
       id: it.id, title: it.title, description: it.description,
-      category: it.category, url: it.url, cta: it.cta,
+      categories: (it.categories ?? []) as ItemCategory[], url: it.url, cta: it.cta,
       emoji: it.emoji, badge: it.badge ?? "", views: it.views ?? "",
       image_url: it.image_url ?? "",
       rating: it.rating != null ? String(it.rating) : "",
@@ -251,16 +258,29 @@ function AdminPage() {
           <Label>العنوان</Label>
           <Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         </div>
-        <div>
-          <Label>القسم</Label>
-          <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as ItemCategory })}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="games">ألعاب</SelectItem>
-              <SelectItem value="apps">تطبيقات</SelectItem>
-              <SelectItem value="websites">مواقع</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="md:col-span-1">
+          <Label>الأقسام (يمكن اختيار أكثر من قسم)</Label>
+          <div className="mt-2 grid grid-cols-2 gap-2 rounded-lg border border-border/60 bg-card/40 p-3">
+            {ALL_CATEGORIES.map((c) => {
+              const checked = form.categories.includes(c);
+              return (
+                <label key={c} className="flex cursor-pointer items-center gap-2 text-sm">
+                  <Checkbox
+                    checked={checked}
+                    onCheckedChange={(v) =>
+                      setForm((f) => ({
+                        ...f,
+                        categories: v
+                          ? Array.from(new Set([...f.categories, c]))
+                          : f.categories.filter((x) => x !== c),
+                      }))
+                    }
+                  />
+                  <span className="font-medium">{CATEGORY_LABELS[c]}</span>
+                </label>
+              );
+            })}
+          </div>
         </div>
         <div className="md:col-span-2">
           <Label>الوصف</Label>
@@ -435,7 +455,7 @@ function AdminPage() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate font-semibold">{it.title}</span>
-                  <span className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground">{it.category}</span>
+                  <span className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground">{(it.categories ?? []).join(", ")}</span>
                 </div>
                 <p className="truncate text-xs text-muted-foreground">{it.description}</p>
               </div>

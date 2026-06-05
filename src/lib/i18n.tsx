@@ -21,6 +21,7 @@ const dict: Record<string, Tr> = {
   "nav.apps": { ar: "التطبيقات", en: "Apps", es: "Aplicaciones", nl: "Apps", tr: "Uygulamalar", ur: "ایپس", pt: "Apps", fr: "Applications", de: "Apps" },
   "nav.websites": { ar: "المواقع", en: "Websites", es: "Sitios web", nl: "Websites", tr: "Web siteleri", ur: "ویب سائٹس", pt: "Sites", fr: "Sites web", de: "Webseiten" },
   "nav.games": { ar: "الألعاب", en: "Games", es: "Juegos", nl: "Games", tr: "Oyunlar", ur: "گیمز", pt: "Jogos", fr: "Jeux", de: "Spiele" },
+  "nav.ai": { ar: "أدوات الذكاء الاصطناعي", en: "AI Tools", es: "Herramientas IA", nl: "AI-tools", tr: "Yapay Zeka", ur: "اے آئی ٹولز", pt: "Ferramentas IA", fr: "Outils IA", de: "KI-Tools" },
   "nav.about": { ar: "من نحن", en: "About", es: "Acerca", nl: "Over ons", tr: "Hakkımızda", ur: "تعارف", pt: "Sobre", fr: "À propos", de: "Über uns" },
   "nav.contact": { ar: "تواصل", en: "Contact", es: "Contacto", nl: "Contact", tr: "İletişim", ur: "رابطہ", pt: "Contato", fr: "Contact", de: "Kontakt" },
   "nav.admin": { ar: "لوحة التحكم", en: "Admin", es: "Panel", nl: "Beheer", tr: "Yönetim", ur: "ایڈمن", pt: "Painel", fr: "Admin", de: "Verwaltung" },

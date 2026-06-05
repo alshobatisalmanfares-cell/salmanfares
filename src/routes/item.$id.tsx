@@ -61,7 +61,8 @@ function SpecRow({ icon: Icon, label, value }: { icon: any; label: string; value
 }
 
 function SpecsSection({ item }: { item: any }) {
-  const hasBasic = item.developer || item.license || item.category || item.language;
+  const cats: string[] = item.categories ?? [];
+  const hasBasic = item.developer || item.license || cats.length > 0 || item.language;
   const hasSystem = !!item.os;
   const hasDownload = item.file_type || item.file_size || item.update_date;
   if (!hasBasic && !hasSystem && !hasDownload) return null;
@@ -73,7 +74,7 @@ function SpecsSection({ item }: { item: any }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <SpecRow icon={User} label="المطور" value={item.developer} />
             <SpecRow icon={ShieldCheck} label="الترخيص" value={item.license} />
-            <SpecRow icon={Globe} label="القسم" value={item.category} />
+            <SpecRow icon={Globe} label="القسم" value={cats.join(", ") || null} />
             <SpecRow icon={Languages} label="اللغة" value={item.language} />
           </div>
         </div>
@@ -181,6 +182,26 @@ function ItemDetailsPage() {
                 </span>
               )}
             </div>
+            {(item.categories ?? []).length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {(item.categories ?? []).map((c) => {
+                  const label =
+                    c === "ai" ? "أدوات الذكاء الاصطناعي"
+                    : c === "apps" ? "تطبيقات"
+                    : c === "websites" ? "مواقع"
+                    : c === "games" ? "ألعاب"
+                    : c;
+                  return (
+                    <span
+                      key={c}
+                      className="rounded-full border border-primary/40 bg-gradient-to-r from-primary/15 to-primary/5 px-2.5 py-0.5 text-[11px] font-semibold text-foreground"
+                    >
+                      {label}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
             {item.rating != null && (
               <div className="mt-2 flex items-center gap-2">
                 <StarRating value={item.rating} />
