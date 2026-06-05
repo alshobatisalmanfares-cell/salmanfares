@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Item, ItemCategory } from "@/lib/items";
-import { fetchItems } from "@/lib/items";
+import { fetchItems, ALL_CATEGORIES } from "@/lib/items";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
 import { socials, type SocialKey } from "@/components/SocialLinks";
@@ -22,7 +22,7 @@ type FormState = {
   id?: string;
   title: string;
   description: string;
-  category: ItemCategory;
+  categories: ItemCategory[];
   url: string;
   cta: string;
   emoji: string;
@@ -42,11 +42,18 @@ type FormState = {
 };
 
 const empty: FormState = {
-  title: "", description: "", category: "apps", url: "",
+  title: "", description: "", categories: ["apps"], url: "",
   cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
   required_follows: [], gallery: [],
   developer: "", license: "", language: "", os: "",
   file_type: "", file_size: "", update_date: "",
+};
+
+const CATEGORY_LABELS: Record<ItemCategory, string> = {
+  apps: "تطبيقات",
+  games: "ألعاب",
+  websites: "مواقع",
+  ai: "أدوات الذكاء الاصطناعي",
 };
 
 function AdminPage() {
@@ -88,7 +95,7 @@ function AdminPage() {
       const payload = {
         title: form.title.trim(),
         description: form.description.trim(),
-        category: form.category,
+        categories: form.categories,
         url: form.url.trim(),
         cta: form.cta.trim() || "تحميل التطبيق",
         emoji: form.emoji || "✨",
@@ -135,7 +142,7 @@ function AdminPage() {
   function edit(it: Item) {
     setForm({
       id: it.id, title: it.title, description: it.description,
-      category: it.category, url: it.url, cta: it.cta,
+      categories: (it.categories ?? []) as ItemCategory[], url: it.url, cta: it.cta,
       emoji: it.emoji, badge: it.badge ?? "", views: it.views ?? "",
       image_url: it.image_url ?? "",
       rating: it.rating != null ? String(it.rating) : "",
