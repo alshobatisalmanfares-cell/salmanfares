@@ -46,7 +46,7 @@ export type Database = {
       items: {
         Row: {
           badge: string | null
-          category: string
+          categories: string[]
           created_at: string
           cta: string
           description: string
@@ -71,7 +71,7 @@ export type Database = {
         }
         Insert: {
           badge?: string | null
-          category: string
+          categories?: string[]
           created_at?: string
           cta?: string
           description?: string
@@ -96,7 +96,7 @@ export type Database = {
         }
         Update: {
           badge?: string | null
-          category?: string
+          categories?: string[]
           created_at?: string
           cta?: string
           description?: string
