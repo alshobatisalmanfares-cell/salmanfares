@@ -182,6 +182,26 @@ function ItemDetailsPage() {
                 </span>
               )}
             </div>
+            {(item.categories ?? []).length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {(item.categories ?? []).map((c) => {
+                  const label =
+                    c === "ai" ? "أدوات الذكاء الاصطناعي"
+                    : c === "apps" ? "تطبيقات"
+                    : c === "websites" ? "مواقع"
+                    : c === "games" ? "ألعاب"
+                    : c;
+                  return (
+                    <span
+                      key={c}
+                      className="rounded-full border border-primary/40 bg-gradient-to-r from-primary/15 to-primary/5 px-2.5 py-0.5 text-[11px] font-semibold text-foreground"
+                    >
+                      {label}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
             {item.rating != null && (
               <div className="mt-2 flex items-center gap-2">
                 <StarRating value={item.rating} />
