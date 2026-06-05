@@ -174,16 +174,30 @@ function ItemDetailsPage() {
             )}
           </div>
           <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-start justify-between gap-3">
               <h1 className="text-2xl font-extrabold text-foreground md:text-3xl">{item.title}</h1>
-              {item.badge && (
-                <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-foreground">
-                  {item.badge}
-                </span>
-              )}
+              <button
+                type="button"
+                onClick={handleFav}
+                disabled={favLoading}
+                className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  isFav
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border/60 bg-card/40 text-foreground hover:bg-muted/60"
+                }`}
+              >
+                <Heart className={`h-4 w-4 ${isFav ? "fill-current" : ""}`} />
+                {isFav ? t("favorites.remove") : t("favorites.add")}
+              </button>
             </div>
-            {(item.categories ?? []).length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1.5">
+
+            {((item.categories ?? []).length > 0 || item.badge) && (
+              <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                {item.badge && (
+                  <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-foreground">
+                    {item.badge}
+                  </span>
+                )}
                 {(item.categories ?? []).map((c) => {
                   const label =
                     c === "ai" ? "أدوات الذكاء الاصطناعي"
@@ -202,47 +216,22 @@ function ItemDetailsPage() {
                 })}
               </div>
             )}
-            {item.rating != null && (
-              <div className="mt-2 flex items-center gap-2">
-                <StarRating value={item.rating} />
-                <span className="text-xs text-muted-foreground">{item.rating.toFixed(1)}</span>
+
+            {(item.rating != null || item.views) && (
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+                {item.rating != null && (
+                  <div className="inline-flex items-center gap-1.5">
+                    <span className="text-sm font-bold text-foreground">{item.rating.toFixed(1)}</span>
+                    <StarRating value={item.rating} />
+                  </div>
+                )}
+                {item.views && (
+                  <div className="inline-flex items-center gap-1.5">
+                    <Eye className="h-3.5 w-3.5" /> {item.views}
+                  </div>
+                )}
               </div>
             )}
-            {item.views && (
-              <div className="mt-2 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Eye className="h-3.5 w-3.5" /> {item.views}
-              </div>
-            )}
-            <div className="mt-4 flex flex-wrap gap-2">
-              <a
-                href={isSafeUrl(item.url) ? item.url : "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => {
-                  if (requiresFollow && !followed) {
-                    e.preventDefault();
-                    setFollowOpen(true);
-                  }
-                }}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
-              >
-                {requiresFollow && !followed ? <Lock className="h-4 w-4" /> : <ExternalLink className="h-4 w-4" />}
-                {item.cta || t("details.cta")}
-              </a>
-              <button
-                type="button"
-                onClick={handleFav}
-                disabled={favLoading}
-                className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors ${
-                  isFav
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border/60 bg-card/40 text-foreground hover:bg-muted/60"
-                }`}
-              >
-                <Heart className={`h-4 w-4 ${isFav ? "fill-current" : ""}`} />
-                {isFav ? t("favorites.remove") : t("favorites.add")}
-              </button>
-            </div>
           </div>
         </div>
 
