@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/lib/i18n";
+import { PwaBoot } from "@/components/PwaBoot";
 
 function NotFoundComponent() {
   return (
@@ -154,6 +155,7 @@ function RootComponent() {
           </main>
           <SiteFooter />
         </div>
+        <PwaBoot />
         <Toaster richColors position="top-center" />
       </I18nProvider>
     </QueryClientProvider>

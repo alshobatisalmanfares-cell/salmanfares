@@ -41,11 +41,11 @@ function Index() {
         <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/40 px-3 py-1 text-[11px] font-semibold text-muted-foreground">
           {t("home.badge")}
         </span>
-        <h1 className="mx-auto mt-5 max-w-3xl text-3xl font-extrabold leading-tight md:text-5xl">
-          {t("home.title.1")} <span className="text-gradient-primary">{t("home.title.2")}</span>
+        <h1 className="mx-auto mt-5 max-w-4xl text-3xl font-extrabold leading-tight md:text-5xl">
+          {t("home.hero.lead")} <span className="text-gradient-primary">{t("home.hero.keywords")}</span>
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground md:text-base">
-          {t("home.subtitle")}
+        <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
+          {t("home.hero.subtitle")}
         </p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
           <Link
@@ -87,10 +87,11 @@ function Index() {
           title={`${t("home.results")}: ${q}`}
           items={filterItems(all, q)}
           emptyText={t("home.noresults")}
+          loading={latest.isLoading}
         />
       ) : (
         <>
-          <CategorySection title={t("home.latest")} items={all.slice(0, 9)} />
+          <CategorySection title={t("home.latest")} items={all.slice(0, 9)} loading={latest.isLoading} />
           {byCat.ai.length > 0 && (
             <CategorySection title={t("nav.ai")} items={byCat.ai} />
           )}

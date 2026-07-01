@@ -32,6 +32,17 @@ const dict: Record<string, Tr> = {
   "home.title.1": { ar: "اكتشف", en: "Discover", es: "Descubre", nl: "Ontdek", tr: "Keşfet", ur: "دریافت کریں", pt: "Descubra", fr: "Découvrez", de: "Entdecke" },
   "home.title.2": { ar: "أفضل التطبيقات والمواقع والألعاب", en: "the best apps, websites & games", es: "las mejores apps, sitios y juegos", nl: "de beste apps, sites & games", tr: "en iyi uygulamalar, siteler ve oyunlar", ur: "بہترین ایپس، ویب سائٹس اور گیمز", pt: "os melhores apps, sites e jogos", fr: "les meilleures apps, sites et jeux", de: "die besten Apps, Webseiten & Spiele" },
   "home.subtitle": { ar: "مكتبة مختارة من الأدوات الرقمية المفيدة، تُحدَّث باستمرار.", en: "A curated library of useful digital tools, updated regularly.", es: "Biblioteca seleccionada de herramientas digitales útiles.", nl: "Een zorgvuldig samengestelde bibliotheek van handige digitale tools.", tr: "Sürekli güncellenen seçkin dijital araçlar kütüphanesi.", ur: "مفید ڈیجیٹل ٹولز کی منتخب لائبریری۔", pt: "Biblioteca selecionada de ferramentas digitais úteis.", fr: "Une bibliothèque d'outils numériques utiles, mise à jour régulièrement.", de: "Eine kuratierte Bibliothek nützlicher digitaler Tools." },
+  "home.hero.lead": { ar: "تصفح واكتشف أحدث", en: "Browse and Discover the Latest" },
+  "home.hero.keywords": { ar: "التطبيقات، الألعاب، المواقع، وأدوات الذكاء الاصطناعي", en: "Apps, Games, Websites, and AI Tools" },
+  "home.hero.subtitle": { ar: "منصتك الموثوقة للوصول إلى أقوى البرمجيات والحلول الرقمية المنتقاة بدقة والمحدثة يومياً بضغطة زر.", en: "Your trusted platform to access the most powerful, carefully selected, and daily updated software and digital solutions at the click of a button." },
+
+  "loading.wait": { ar: "يرجى الانتظار...", en: "Please wait...", es: "Por favor espera...", nl: "Even geduld...", tr: "Lütfen bekleyin...", ur: "براہ کرم انتظار کریں...", pt: "Aguarde...", fr: "Veuillez patienter...", de: "Bitte warten..." },
+
+  "auth.google": { ar: "المتابعة باستخدام Google", en: "Continue with Google", es: "Continuar con Google", nl: "Doorgaan met Google", tr: "Google ile devam et", ur: "گوگل کے ساتھ جاری رکھیں", pt: "Continuar com Google", fr: "Continuer avec Google", de: "Mit Google fortfahren" },
+  "auth.or": { ar: "أو", en: "or", es: "o", nl: "of", tr: "veya", ur: "یا", pt: "ou", fr: "ou", de: "oder" },
+
+  "pwa.install": { ar: "تثبيت التطبيق", en: "Install App", es: "Instalar app", nl: "App installeren", tr: "Uygulamayı yükle", ur: "ایپ انسٹال کریں", pt: "Instalar app", fr: "Installer l'app", de: "App installieren" },
+  "pwa.dismiss": { ar: "لاحقاً", en: "Later" },
   "home.browse.apps": { ar: "تصفح التطبيقات", en: "Browse Apps", es: "Ver apps", nl: "Apps bekijken", tr: "Uygulamalara göz at", ur: "ایپس دیکھیں", pt: "Ver apps", fr: "Voir les apps", de: "Apps ansehen" },
   "home.browse.websites": { ar: "تصفح المواقع", en: "Browse Websites", es: "Ver sitios", nl: "Sites bekijken", tr: "Sitelere göz at", ur: "ویب سائٹس دیکھیں", pt: "Ver sites", fr: "Voir les sites", de: "Webseiten ansehen" },
   "home.browse.games": { ar: "تصفح الألعاب", en: "Browse Games", es: "Ver juegos", nl: "Games bekijken", tr: "Oyunlara göz at", ur: "گیمز دیکھیں", pt: "Ver jogos", fr: "Voir les jeux", de: "Spiele ansehen" },

@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight, Calendar, Download, ExternalLink, Eye, FileType2, Globe, HardDrive, Heart, Languages, Lock, MonitorCog, ShieldCheck, Star, StarHalf, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Download, ExternalLink, Eye, FileType2, Globe, HardDrive, Heart, Home as HomeIcon, Languages, Loader2, Lock, MonitorCog, ShieldCheck, Star, StarHalf, User } from "lucide-react";
 import { fetchItem } from "@/lib/items";
 import { useI18n } from "@/lib/i18n";
 import { useFavorite } from "@/lib/favorites";
@@ -140,7 +140,12 @@ function ItemDetailsPage() {
   }
 
   if (isLoading) {
-    return <div className="mx-auto max-w-3xl px-4 py-16 text-center text-sm text-muted-foreground">...</div>;
+    return (
+      <div className="mx-auto flex max-w-3xl flex-col items-center justify-center gap-3 px-4 py-24 text-center text-sm text-muted-foreground">
+        <Loader2 className="h-7 w-7 animate-spin text-primary" />
+        <span>{t("loading.wait")}</span>
+      </div>
+    );
   }
 
   if (!item) {
@@ -156,13 +161,25 @@ function ItemDetailsPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <button
-        onClick={() => navigate({ to: "/" })}
-        className="mb-6 inline-flex items-center gap-2 rounded-lg border border-border/60 bg-card/40 px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted/60"
-      >
-        <BackIcon className="h-4 w-4" />
-        {t("details.back")}
-      </button>
+      <div className={`mb-6 flex items-center justify-between gap-2 ${isRtl ? "flex-row-reverse" : ""}`}>
+        <button
+          type="button"
+          onClick={() => (window.history.length > 1 ? window.history.back() : navigate({ to: "/" }))}
+          aria-label={t("details.back")}
+          title={t("details.back")}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/40 text-foreground transition-colors hover:bg-muted/60"
+        >
+          <BackIcon className="h-4 w-4" />
+        </button>
+        <Link
+          to="/"
+          aria-label={t("nav.home")}
+          title={t("nav.home")}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/40 text-foreground transition-colors hover:bg-muted/60"
+        >
+          <HomeIcon className="h-4 w-4" />
+        </Link>
+      </div>
 
       <div className="rounded-2xl border border-border/60 bg-card/60 p-6 card-elevated">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
