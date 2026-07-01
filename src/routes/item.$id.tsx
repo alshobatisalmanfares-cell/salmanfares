@@ -162,23 +162,24 @@ function ItemDetailsPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="mb-6 flex items-center justify-between gap-2">
-        <button
-          type="button"
-          onClick={() => window.history.length > 1 ? window.history.back() : navigate({ to: "/" })}
-          aria-label={t("details.back")}
-          title={t("details.back")}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/40 text-foreground transition-colors hover:bg-muted/60"
-        >
-          <BackIcon className="h-4 w-4" />
-        </button>
+        {/* Left visual: Back — in RTL first-in-DOM = right, so use ms-auto/order */}
         <Link
           to="/"
           aria-label={t("nav.home")}
           title={t("nav.home")}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/40 text-foreground transition-colors hover:bg-muted/60"
+          className="order-2 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/40 text-foreground transition-colors hover:bg-muted/60 rtl:order-1"
         >
           <HomeIcon className="h-4 w-4" />
         </Link>
+        <button
+          type="button"
+          onClick={() => (window.history.length > 1 ? window.history.back() : navigate({ to: "/" }))}
+          aria-label={t("details.back")}
+          title={t("details.back")}
+          className="order-1 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-card/40 text-foreground transition-colors hover:bg-muted/60 rtl:order-2"
+        >
+          <BackIcon className="h-4 w-4" />
+        </button>
       </div>
 
       <div className="rounded-2xl border border-border/60 bg-card/60 p-6 card-elevated">
