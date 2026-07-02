@@ -22,6 +22,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ItemIdRouteImport } from './routes/item.$id'
+import { Route as GuidesAndroidOnPcRouteImport } from './routes/guides.android-on-pc'
 
 const WebsitesRoute = WebsitesRouteImport.update({
   id: '/websites',
@@ -88,6 +89,11 @@ const ItemIdRoute = ItemIdRouteImport.update({
   path: '/item/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesAndroidOnPcRoute = GuidesAndroidOnPcRouteImport.update({
+  id: '/guides/android-on-pc',
+  path: '/guides/android-on-pc',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/websites': typeof WebsitesRoute
+  '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
 }
 export interface FileRoutesByTo {
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/websites': typeof WebsitesRoute
+  '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
 }
 export interface FileRoutesById {
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/websites': typeof WebsitesRoute
+  '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
 }
 export interface FileRouteTypes {
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/websites'
+    | '/guides/android-on-pc'
     | '/item/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/websites'
+    | '/guides/android-on-pc'
     | '/item/$id'
   id:
     | '__root__'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/websites'
+    | '/guides/android-on-pc'
     | '/item/$id'
   fileRoutesById: FileRoutesById
 }
@@ -196,6 +208,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   WebsitesRoute: typeof WebsitesRoute
+  GuidesAndroidOnPcRoute: typeof GuidesAndroidOnPcRoute
   ItemIdRoute: typeof ItemIdRoute
 }
 
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ItemIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/android-on-pc': {
+      id: '/guides/android-on-pc'
+      path: '/guides/android-on-pc'
+      fullPath: '/guides/android-on-pc'
+      preLoaderRoute: typeof GuidesAndroidOnPcRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -308,6 +328,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   WebsitesRoute: WebsitesRoute,
+  GuidesAndroidOnPcRoute: GuidesAndroidOnPcRoute,
   ItemIdRoute: ItemIdRoute,
 }
 export const routeTree = rootRouteImport
