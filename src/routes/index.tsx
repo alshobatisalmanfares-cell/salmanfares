@@ -13,8 +13,12 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "سلمان فارس | تطبيقات ومواقع وألعاب" },
-      { name: "description", content: "اكتشف أفضل التطبيقات والمواقع والألعاب المختارة بعناية." },
+      { name: "description", content: "موقع سلمان فارس: دليل شامل لأفضل التطبيقات، الألعاب، المواقع التقنية وأدوات الذكاء الاصطناعي المختارة بعناية باللغة العربية." },
+      { property: "og:title", content: "سلمان فارس | تطبيقات ومواقع وألعاب وأدوات ذكاء اصطناعي" },
+      { property: "og:description", content: "اكتشف أفضل التطبيقات والألعاب والمواقع وأدوات الذكاء الاصطناعي على موقع سلمان فارس." },
+      { property: "og:url", content: "https://salmanfares.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://salmanfares.lovable.app/" }],
   }),
   component: Index,
 });

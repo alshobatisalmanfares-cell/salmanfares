@@ -7,7 +7,17 @@ import { ItemCard } from "@/components/ItemCard";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/favorites")({
-  head: () => ({ meta: [{ title: "المفضلة | سلمان فارس" }] }),
+  head: () => ({
+    meta: [
+      { title: "المفضلة | سلمان فارس" },
+      { name: "description", content: "صفحة المفضلة الخاصة بك على موقع سلمان فارس — احفظ التطبيقات، الألعاب، المواقع، وأدوات الذكاء الاصطناعي للرجوع إليها لاحقاً." },
+      { property: "og:title", content: "المفضلة | سلمان فارس" },
+      { property: "og:description", content: "احفظ تطبيقاتك ومواقعك المفضلة وارجع إليها في أي وقت." },
+      { property: "og:url", content: "https://salmanfares.lovable.app/favorites" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://salmanfares.lovable.app/favorites" }],
+  }),
   component: FavoritesPage,
 });
 

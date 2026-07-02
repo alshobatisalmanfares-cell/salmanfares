@@ -120,6 +120,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         async: true,
         crossOrigin: "anonymous",
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "موقع سلمان للتقنية",
+          alternateName: "Salman Faris",
+          url: "https://salmanfares.lovable.app",
+          inLanguage: "ar",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://salmanfares.lovable.app/?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: "Salman Faris",
+          alternateName: "سلمان فارس",
+          url: "https://salmanfares.lovable.app",
+          jobTitle: "Tech Content Creator",
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,

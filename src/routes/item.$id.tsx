@@ -18,7 +18,69 @@ import {
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/item/$id")({
-  head: () => ({ meta: [{ title: "تفاصيل | سلمان فارس" }] }),
+  loader: async ({ params, context }) => {
+    return context.queryClient.ensureQueryData({
+      queryKey: ["item", params.id],
+      queryFn: () => fetchItem(params.id),
+    });
+  },
+  head: ({ params, loaderData }) => {
+    const item: any = loaderData;
+    const url = `https://salmanfares.lovable.app/item/${params.id}`;
+    const title = item?.title ? `${item.title} | سلمان فارس` : "تفاصيل | سلمان فارس";
+    const rawDesc = (item?.description ?? "").replace(/\s+/g, " ").trim();
+    const description = rawDesc
+      ? rawDesc.slice(0, 155) + (rawDesc.length > 155 ? "…" : "")
+      : "تفاصيل العنصر على موقع سلمان فارس — الوصف، المواصفات، والمعرض.";
+    const image = item?.image_url || undefined;
+    const meta: Array<Record<string, string>> = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: item?.title ?? title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: url },
+    ];
+    if (image) {
+      meta.push({ property: "og:image", content: image });
+      meta.push({ name: "twitter:image", content: image });
+    }
+    const scripts = item
+      ? [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: item.title,
+              description: description,
+              url,
+              image: image,
+              applicationCategory: (item.categories ?? []).includes("games")
+                ? "GameApplication"
+                : "WebApplication",
+              operatingSystem: item.os ?? undefined,
+              ...(item.rating != null
+                ? {
+                    aggregateRating: {
+                      "@type": "AggregateRating",
+                      ratingValue: item.rating,
+                      ratingCount: 1,
+                      bestRating: 5,
+                    },
+                  }
+                : {}),
+              offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+            }),
+          },
+        ]
+      : undefined;
+    return {
+      meta,
+      links: [{ rel: "canonical", href: url }],
+      ...(scripts ? { scripts } : {}),
+    };
+  },
   component: ItemDetailsPage,
 });
 
