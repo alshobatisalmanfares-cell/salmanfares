@@ -10,8 +10,12 @@ export const Route = createFileRoute("/apps")({
   head: () => ({
     meta: [
       { title: "أفضل التطبيقات | سلمان فارس" },
-      { name: "description", content: "أفضل التطبيقات التقنية المختارة." },
+      { name: "description", content: "تصفح مجموعة مختارة من أفضل التطبيقات للأندرويد والآيفون: أدوات إنتاجية، تصميم، تواصل اجتماعي، وترفيه، محدثة باستمرار على موقع سلمان فارس." },
+      { property: "og:title", content: "أفضل التطبيقات | سلمان فارس" },
+      { property: "og:description", content: "قائمة مختارة لأفضل تطبيقات الهاتف — إنتاجية وتصميم وترفيه — بمراجعات موجزة." },
+      { property: "og:url", content: "https://salmanfares.lovable.app/apps" },
     ],
+    links: [{ rel: "canonical", href: "https://salmanfares.lovable.app/apps" }],
   }),
   component: AppsPage,
 });
@@ -23,6 +27,7 @@ function AppsPage() {
   return (
     <div>
       <div className="mx-auto max-w-7xl px-4 pt-8">
+        <h1 className="mb-4 text-2xl font-extrabold text-foreground md:text-3xl">أفضل التطبيقات</h1>
         <SearchBar value={q} onChange={setQ} placeholder={t("search.app")} />
       </div>
       <CategorySection title={t("section.apps")} items={filterItems(data ?? [], q)} emptyText={t("section.empty")} />
