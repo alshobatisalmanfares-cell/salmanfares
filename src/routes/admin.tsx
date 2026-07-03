@@ -403,6 +403,21 @@ function AdminPage() {
         </div>
         <div className="md:col-span-2 flex gap-2">
         </div>
+        <div className="md:col-span-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
+          <label className="flex cursor-pointer items-center gap-3">
+            <Checkbox
+              checked={form.featured}
+              onCheckedChange={(v) => setForm((f) => ({ ...f, featured: !!v }))}
+            />
+            <div className="flex-1">
+              <div className="flex items-center gap-1.5 text-sm font-bold">
+                <Star className="h-4 w-4 text-primary" />
+                عرض في الصفحة الرئيسية (Featured)
+              </div>
+              <p className="text-xs text-muted-foreground">فعّل هذا الخيار لإظهار العنصر ضمن قائمة العناصر المميّزة في الصفحة الرئيسية.</p>
+            </div>
+          </label>
+        </div>
         <div className="md:col-span-2 pt-2 border-t border-border/40">
           <h3 className="text-sm font-bold text-muted-foreground">معلومات أساسية</h3>
         </div>
