@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ExternalLink, Eye, Heart, Lock, Star, StarHalf } from "lucide-react";
 import type { Item } from "@/lib/items";
+import { itemPath } from "@/lib/items";
 import { socials, type SocialKey } from "./SocialLinks";
 import { useI18n } from "@/lib/i18n";
 import { useFavorite } from "@/lib/favorites";
@@ -84,7 +85,8 @@ export function ItemCard({ item }: { item: Item }) {
   }
 
   function openDetails() {
-    navigate({ to: "/item/$id", params: { id: item.id } });
+    const p = itemPath(item);
+    navigate({ to: p.to as any, params: p.params as any });
   }
 
   return (

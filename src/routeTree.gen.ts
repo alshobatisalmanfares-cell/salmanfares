@@ -22,8 +22,12 @@ import { Route as AiRouteImport } from './routes/ai'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WebsitesSlugRouteImport } from './routes/websites.$slug'
 import { Route as ItemIdRouteImport } from './routes/item.$id'
 import { Route as GuidesAndroidOnPcRouteImport } from './routes/guides.android-on-pc'
+import { Route as GamesSlugRouteImport } from './routes/games.$slug'
+import { Route as AppsSlugRouteImport } from './routes/apps.$slug'
+import { Route as AiSlugRouteImport } from './routes/ai.$slug'
 
 const WebsitesRoute = WebsitesRouteImport.update({
   id: '/websites',
@@ -90,6 +94,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WebsitesSlugRoute = WebsitesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => WebsitesRoute,
+} as any)
 const ItemIdRoute = ItemIdRouteImport.update({
   id: '/item/$id',
   path: '/item/$id',
@@ -100,58 +109,85 @@ const GuidesAndroidOnPcRoute = GuidesAndroidOnPcRouteImport.update({
   path: '/guides/android-on-pc',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GamesSlugRoute = GamesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => GamesRoute,
+} as any)
+const AppsSlugRoute = AppsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => AppsRoute,
+} as any)
+const AiSlugRoute = AiSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => AiRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/ai': typeof AiRoute
-  '/apps': typeof AppsRoute
+  '/ai': typeof AiRouteWithChildren
+  '/apps': typeof AppsRouteWithChildren
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
-  '/games': typeof GamesRoute
+  '/games': typeof GamesRouteWithChildren
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/websites': typeof WebsitesRoute
+  '/websites': typeof WebsitesRouteWithChildren
+  '/ai/$slug': typeof AiSlugRoute
+  '/apps/$slug': typeof AppsSlugRoute
+  '/games/$slug': typeof GamesSlugRoute
   '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
+  '/websites/$slug': typeof WebsitesSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/ai': typeof AiRoute
-  '/apps': typeof AppsRoute
+  '/ai': typeof AiRouteWithChildren
+  '/apps': typeof AppsRouteWithChildren
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
-  '/games': typeof GamesRoute
+  '/games': typeof GamesRouteWithChildren
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/websites': typeof WebsitesRoute
+  '/websites': typeof WebsitesRouteWithChildren
+  '/ai/$slug': typeof AiSlugRoute
+  '/apps/$slug': typeof AppsSlugRoute
+  '/games/$slug': typeof GamesSlugRoute
   '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
+  '/websites/$slug': typeof WebsitesSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/ai': typeof AiRoute
-  '/apps': typeof AppsRoute
+  '/ai': typeof AiRouteWithChildren
+  '/apps': typeof AppsRouteWithChildren
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
-  '/games': typeof GamesRoute
+  '/games': typeof GamesRouteWithChildren
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/websites': typeof WebsitesRoute
+  '/websites': typeof WebsitesRouteWithChildren
+  '/ai/$slug': typeof AiSlugRoute
+  '/apps/$slug': typeof AppsSlugRoute
+  '/games/$slug': typeof GamesSlugRoute
   '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
+  '/websites/$slug': typeof WebsitesSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -169,8 +205,12 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/websites'
+    | '/ai/$slug'
+    | '/apps/$slug'
+    | '/games/$slug'
     | '/guides/android-on-pc'
     | '/item/$id'
+    | '/websites/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -186,8 +226,12 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/websites'
+    | '/ai/$slug'
+    | '/apps/$slug'
+    | '/games/$slug'
     | '/guides/android-on-pc'
     | '/item/$id'
+    | '/websites/$slug'
   id:
     | '__root__'
     | '/'
@@ -203,24 +247,28 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/websites'
+    | '/ai/$slug'
+    | '/apps/$slug'
+    | '/games/$slug'
     | '/guides/android-on-pc'
     | '/item/$id'
+    | '/websites/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
-  AiRoute: typeof AiRoute
-  AppsRoute: typeof AppsRoute
+  AiRoute: typeof AiRouteWithChildren
+  AppsRoute: typeof AppsRouteWithChildren
   ContactRoute: typeof ContactRoute
   FavoritesRoute: typeof FavoritesRoute
-  GamesRoute: typeof GamesRoute
+  GamesRoute: typeof GamesRouteWithChildren
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
-  WebsitesRoute: typeof WebsitesRoute
+  WebsitesRoute: typeof WebsitesRouteWithChildren
   GuidesAndroidOnPcRoute: typeof GuidesAndroidOnPcRoute
   ItemIdRoute: typeof ItemIdRoute
 }
@@ -318,6 +366,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/websites/$slug': {
+      id: '/websites/$slug'
+      path: '/$slug'
+      fullPath: '/websites/$slug'
+      preLoaderRoute: typeof WebsitesSlugRouteImport
+      parentRoute: typeof WebsitesRoute
+    }
     '/item/$id': {
       id: '/item/$id'
       path: '/item/$id'
@@ -332,23 +387,86 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesAndroidOnPcRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/games/$slug': {
+      id: '/games/$slug'
+      path: '/$slug'
+      fullPath: '/games/$slug'
+      preLoaderRoute: typeof GamesSlugRouteImport
+      parentRoute: typeof GamesRoute
+    }
+    '/apps/$slug': {
+      id: '/apps/$slug'
+      path: '/$slug'
+      fullPath: '/apps/$slug'
+      preLoaderRoute: typeof AppsSlugRouteImport
+      parentRoute: typeof AppsRoute
+    }
+    '/ai/$slug': {
+      id: '/ai/$slug'
+      path: '/$slug'
+      fullPath: '/ai/$slug'
+      preLoaderRoute: typeof AiSlugRouteImport
+      parentRoute: typeof AiRoute
+    }
   }
 }
+
+interface AiRouteChildren {
+  AiSlugRoute: typeof AiSlugRoute
+}
+
+const AiRouteChildren: AiRouteChildren = {
+  AiSlugRoute: AiSlugRoute,
+}
+
+const AiRouteWithChildren = AiRoute._addFileChildren(AiRouteChildren)
+
+interface AppsRouteChildren {
+  AppsSlugRoute: typeof AppsSlugRoute
+}
+
+const AppsRouteChildren: AppsRouteChildren = {
+  AppsSlugRoute: AppsSlugRoute,
+}
+
+const AppsRouteWithChildren = AppsRoute._addFileChildren(AppsRouteChildren)
+
+interface GamesRouteChildren {
+  GamesSlugRoute: typeof GamesSlugRoute
+}
+
+const GamesRouteChildren: GamesRouteChildren = {
+  GamesSlugRoute: GamesSlugRoute,
+}
+
+const GamesRouteWithChildren = GamesRoute._addFileChildren(GamesRouteChildren)
+
+interface WebsitesRouteChildren {
+  WebsitesSlugRoute: typeof WebsitesSlugRoute
+}
+
+const WebsitesRouteChildren: WebsitesRouteChildren = {
+  WebsitesSlugRoute: WebsitesSlugRoute,
+}
+
+const WebsitesRouteWithChildren = WebsitesRoute._addFileChildren(
+  WebsitesRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
-  AiRoute: AiRoute,
-  AppsRoute: AppsRoute,
+  AiRoute: AiRouteWithChildren,
+  AppsRoute: AppsRouteWithChildren,
   ContactRoute: ContactRoute,
   FavoritesRoute: FavoritesRoute,
-  GamesRoute: GamesRoute,
+  GamesRoute: GamesRouteWithChildren,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
-  WebsitesRoute: WebsitesRoute,
+  WebsitesRoute: WebsitesRouteWithChildren,
   GuidesAndroidOnPcRoute: GuidesAndroidOnPcRoute,
   ItemIdRoute: ItemIdRoute,
 }
