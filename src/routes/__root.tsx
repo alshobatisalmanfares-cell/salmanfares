@@ -106,6 +106,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Almarai:wght@300;400;700;800&display=swap",
       },
       {
+        rel: "preload",
+        as: "image",
+        href: "/avatar.jpg",
+        fetchpriority: "high",
+      } as any,
+      {
         rel: "manifest",
         href: "/manifest.json",
       },
