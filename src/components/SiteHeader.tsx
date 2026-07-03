@@ -180,6 +180,10 @@ export function SiteHeader() {
           <img
             src={avatarUrl}
             alt={t("site.name")}
+            width={40}
+            height={40}
+            fetchPriority="high"
+            decoding="async"
             className="h-10 w-10 rounded-full object-cover ring-1 ring-border/70"
           />
           <span className="text-xl font-extrabold text-foreground md:text-2xl">{t("site.name")}</span>
