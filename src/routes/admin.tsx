@@ -482,9 +482,21 @@ function AdminPage() {
                 <div className="flex items-center gap-2">
                   <span className="truncate font-semibold">{it.title}</span>
                   <span className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground">{(it.categories ?? []).join(", ")}</span>
+                  {it.featured && (
+                    <span className="inline-flex items-center gap-1 rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                      <Star className="h-3 w-3 fill-current" /> مميّز
+                    </span>
+                  )}
                 </div>
                 <p className="truncate text-xs text-muted-foreground">{it.description}</p>
               </div>
+              <label className="inline-flex cursor-pointer items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+                <Checkbox
+                  checked={!!it.featured}
+                  onCheckedChange={(v) => toggleFeatured(it, !!v)}
+                />
+                Featured
+              </label>
               <Button size="sm" variant="outline" onClick={() => edit(it)}><Pencil className="h-3.5 w-3.5" /></Button>
               <Button size="sm" variant="outline" onClick={() => remove(it.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
             </div>
