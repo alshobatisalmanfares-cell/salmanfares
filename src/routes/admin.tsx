@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
+import { LogOut, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import { socials, type SocialKey } from "@/components/SocialLinks";
 
 export const Route = createFileRoute("/admin")({
@@ -39,6 +39,7 @@ type FormState = {
   file_type: string;
   file_size: string;
   update_date: string;
+  featured: boolean;
 };
 
 const empty: FormState = {
@@ -47,6 +48,7 @@ const empty: FormState = {
   required_follows: [], gallery: [],
   developer: "", license: "", language: "", os: "",
   file_type: "", file_size: "", update_date: "",
+  featured: false,
 };
 
 const CATEGORY_LABELS: Record<ItemCategory, string> = {
@@ -112,6 +114,7 @@ function AdminPage() {
         file_type: form.file_type.trim() || null,
         file_size: form.file_size.trim() || null,
         update_date: form.update_date.trim() || null,
+        featured: form.featured,
       };
       if (form.id) {
         const { error } = await supabase.from("items").update(payload).eq("id", form.id);
@@ -155,6 +158,7 @@ function AdminPage() {
       file_type: it.file_type ?? "",
       file_size: it.file_size ?? "",
       update_date: it.update_date ?? "",
+      featured: !!it.featured,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -229,6 +233,13 @@ function AdminPage() {
 
   function removeGalleryImage(url: string) {
     setForm((f) => ({ ...f, gallery: f.gallery.filter((u) => u !== url) }));
+  }
+
+  async function toggleFeatured(it: Item, next: boolean) {
+    const { error } = await supabase.from("items").update({ featured: next }).eq("id", it.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(next ? "تم التمييز في الصفحة الرئيسية" : "تم إلغاء التمييز");
+    qc.invalidateQueries({ queryKey: ["items"] });
   }
 
   if (!authChecked) return <div className="p-12 text-center text-sm text-muted-foreground">...</div>;
