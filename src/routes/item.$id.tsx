@@ -27,7 +27,7 @@ function ItemByIdPage() {
   useEffect(() => {
     if (item?.slug) {
       const p = itemPath(item);
-      navigate({ to: p.to as any, params: p.params, replace: true });
+      navigate({ to: p.to as any, params: p.params as any, replace: true });
     }
   }, [item, navigate]);
 

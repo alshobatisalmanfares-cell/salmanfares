@@ -86,7 +86,7 @@ export function ItemCard({ item }: { item: Item }) {
 
   function openDetails() {
     const p = itemPath(item);
-    navigate({ to: p.to as any, params: p.params });
+    navigate({ to: p.to as any, params: p.params as any });
   }
 
   return (
