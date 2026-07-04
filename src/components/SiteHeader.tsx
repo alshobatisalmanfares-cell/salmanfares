@@ -51,10 +51,10 @@ export function SiteHeader() {
     { to: "/games", label: t("nav.games"), Icon: Gamepad2 },
     { to: "/ai", label: t("nav.ai"), Icon: Sparkles },
     { to: "/favorites", label: t("favorites.title"), Icon: Heart },
-    { to: "/about", label: t("nav.about"), Icon: Info },
-    { to: "/contact", label: t("nav.contact"), Icon: Mail },
   ] as const;
   const legalNav = [
+    { to: "/about", label: t("nav.about"), Icon: Info },
+    { to: "/contact", label: t("nav.contact"), Icon: Mail },
     { to: "/privacy", label: t("nav.privacy"), Icon: Shield },
     { to: "/terms", label: t("nav.terms"), Icon: FileText },
   ] as const;
