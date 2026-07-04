@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "salmanfares-mcp",
+      "version": "0.1.0",
+      "title": "Salman Fares MCP"
+    },
+    "tools": [
+      {
+        "name": "list_items",
+        "title": "List items on Salman Fares",
+        "description": "List curated apps, games, websites, or AI tools published on the Salman Fares platform. Filter by category when useful.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "category": {
+              "description": "Optional category filter.",
+              "type": "string",
+              "enum": [
+                "apps",
+                "games",
+                "websites",
+                "ai"
+              ]
+            },
+            "limit": {
+              "description": "Max items to return (default 10).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

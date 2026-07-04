@@ -14,6 +14,7 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import { AiChat } from "@/components/AiChat";
 
 export function SiteHeader() {
   const { t, lang, setLang } = useI18n();
@@ -64,6 +65,7 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         {/* Hamburger trigger — visually top-left in RTL via flex order on the controls cluster */}
         <div className="flex items-center gap-2 order-last">
+          <AiChat />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               aria-label={t("menu.open")}
