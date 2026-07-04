@@ -142,16 +142,14 @@ export function ItemCard({ item }: { item: Item }) {
             {item.views}
           </span>
         ) : <span />}
-        <a
-          href={isSafeUrl(item.url) ? item.url : "#"}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
           onClick={handleCtaClick}
           className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
         >
           {requiresFollow && !followed ? <Lock className="h-3.5 w-3.5" /> : <ExternalLink className="h-3.5 w-3.5" />}
           {item.cta}
-        </a>
+        </button>
       </div>
 
       <Dialog open={followOpen} onOpenChange={setFollowOpen}>
