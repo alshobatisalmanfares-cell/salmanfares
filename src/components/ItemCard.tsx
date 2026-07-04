@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { ExternalLink, Eye, Heart, Lock, Star, StarHalf } from "lucide-react";
 import type { Item } from "@/lib/items";
 import { itemPath } from "@/lib/items";
@@ -49,6 +49,8 @@ export function ItemCard({ item }: { item: Item }) {
   const [clickedKeys, setClickedKeys] = useState<SocialKey[]>([]);
   const { isFav, toggle: toggleFav, loading: favLoading } = useFavorite(item.id);
 
+  const detailsPath = itemPath(item);
+
   async function handleFavClick(e: React.MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
@@ -85,25 +87,13 @@ export function ItemCard({ item }: { item: Item }) {
   }
 
   function openDetails() {
-    const p = itemPath(item);
-    navigate({ to: p.to as any, params: p.params as any });
+    navigate({ to: detailsPath.to as any, params: detailsPath.params as any });
   }
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={(e) => {
-        const target = e.target as HTMLElement;
-        if (target.closest("a,button,[role=dialog]")) return;
-        openDetails();
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          openDetails();
-        }
-      }}
+    <Link
+      to={detailsPath.to as any}
+      params={detailsPath.params as any}
       className="group flex cursor-pointer flex-col rounded-2xl border border-border/60 bg-card/60 p-5 card-elevated hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/60"
     >
       <div className="flex items-start justify-between gap-3">
@@ -203,6 +193,6 @@ export function ItemCard({ item }: { item: Item }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </Link>
   );
 }
