@@ -14,33 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      ai_chat_sessions: {
-        Row: {
-          created_at: string
-          id: string
-          messages: Json
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          messages?: Json
-          title?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          messages?: Json
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       favorites: {
         Row: {
           created_at: string

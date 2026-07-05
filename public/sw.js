@@ -19,7 +19,6 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
-  if (url.pathname.startsWith('/~oauth')) return;
   e.respondWith(
     caches.match(req).then((cached) => {
       const network = fetch(req)

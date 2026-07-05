@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import { AdSlot } from "@/components/AdSlot";
-import ReactMarkdown from "react-markdown";
 
 export function isSafeUrl(url: string) {
   return /^https?:\/\//i.test(url);
@@ -132,22 +131,6 @@ function SpecsSection({ item }: { item: Item }) {
         </div>
       )}
     </div>
-  );
-}
-
-function DescriptionMarkdown({ children }: { children: string }) {
-  return (
-    <ReactMarkdown
-      components={{
-        p: ({ children }) => <p className="my-3 whitespace-pre-line text-sm leading-relaxed text-foreground">{children}</p>,
-        strong: ({ children }) => <strong className="text-base font-extrabold text-primary md:text-lg">{children}</strong>,
-        ul: ({ children }) => <ul className="my-3 list-disc space-y-1 ps-5 text-sm leading-relaxed text-foreground">{children}</ul>,
-        ol: ({ children }) => <ol className="my-3 list-decimal space-y-1 ps-5 text-sm leading-relaxed text-foreground">{children}</ol>,
-        li: ({ children }) => <li className="ps-1">{children}</li>,
-      }}
-    >
-      {children}
-    </ReactMarkdown>
   );
 }
 
@@ -301,9 +284,7 @@ export function ItemDetails({ item, loading }: { item: Item | null | undefined; 
             const hasGallery = item.gallery && item.gallery.length > 0;
             return (
               <>
-                <div className="mt-2 text-right" dir="auto">
-                  <DescriptionMarkdown>{part1}</DescriptionMarkdown>
-                </div>
+                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground">{part1}</p>
                 {hasGallery && (
                   <div className="my-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
                     {item.gallery.map((src, i) => (
@@ -312,11 +293,7 @@ export function ItemDetails({ item, loading }: { item: Item | null | undefined; 
                   </div>
                 )}
                 <AdSlot variant="inline" className="my-6" />
-                {part2 && (
-                  <div className="text-right" dir="auto">
-                    <DescriptionMarkdown>{part2}</DescriptionMarkdown>
-                  </div>
-                )}
+                {part2 && <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">{part2}</p>}
               </>
             );
           })()}
@@ -325,21 +302,21 @@ export function ItemDetails({ item, loading }: { item: Item | null | undefined; 
         <SpecsSection item={item} />
 
         <div className="mt-6 border-t border-border/50 pt-5">
-          <button
-            type="button"
+          <a
+            href={isSafeUrl(item.url) ? item.url : "#"}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={(e) => {
               if (requiresFollow && !followed) {
                 e.preventDefault();
                 setFollowOpen(true);
-                return;
               }
-              if (isSafeUrl(item.url)) window.open(item.url, "_blank", "noopener,noreferrer");
             }}
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-base font-extrabold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
           >
             {requiresFollow && !followed ? <Lock className="h-5 w-5" /> : <Download className="h-5 w-5" />}
             {item.cta || t("details.cta")}
-          </button>
+          </a>
         </div>
       </div>
 
