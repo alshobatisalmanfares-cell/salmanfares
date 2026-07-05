@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, useRouterState } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { CategorySection } from "@/components/CategorySection";
@@ -20,10 +20,8 @@ export const Route = createFileRoute("/websites")({
 });
 
 function WebsitesPage() {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { data } = useQuery({ queryKey: ["items", "websites"], queryFn: () => fetchItems("websites") });
   const [q, setQ] = useState("");
-  if (pathname !== "/websites") return <Outlet />;
   return (
     <div>
       <div className="mx-auto max-w-7xl px-4 pt-8">

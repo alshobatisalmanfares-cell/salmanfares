@@ -23,10 +23,6 @@ import { Route as AiRouteImport } from './routes/ai'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as WebsitesIndexRouteImport } from './routes/websites.index'
-import { Route as GamesIndexRouteImport } from './routes/games.index'
-import { Route as AppsIndexRouteImport } from './routes/apps.index'
-import { Route as AiIndexRouteImport } from './routes/ai.index'
 import { Route as WebsitesSlugRouteImport } from './routes/websites.$slug'
 import { Route as ItemIdRouteImport } from './routes/item.$id'
 import { Route as GuidesAndroidOnPcRouteImport } from './routes/guides.android-on-pc'
@@ -107,26 +103,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WebsitesIndexRoute = WebsitesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => WebsitesRoute,
-} as any)
-const GamesIndexRoute = GamesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => GamesRoute,
-} as any)
-const AppsIndexRoute = AppsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppsRoute,
-} as any)
-const AiIndexRoute = AiIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AiRoute,
-} as any)
 const WebsitesSlugRoute = WebsitesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -199,23 +175,23 @@ export interface FileRoutesByFullPath {
   '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
   '/websites/$slug': typeof WebsitesSlugRoute
-  '/ai/': typeof AiIndexRoute
-  '/apps/': typeof AppsIndexRoute
-  '/games/': typeof GamesIndexRoute
-  '/websites/': typeof WebsitesIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/ai': typeof AiRouteWithChildren
+  '/apps': typeof AppsRouteWithChildren
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
+  '/games': typeof GamesRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/websites': typeof WebsitesRouteWithChildren
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/ai/$slug': typeof AiSlugRoute
@@ -224,10 +200,6 @@ export interface FileRoutesByTo {
   '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
   '/websites/$slug': typeof WebsitesSlugRoute
-  '/ai': typeof AiIndexRoute
-  '/apps': typeof AppsIndexRoute
-  '/games': typeof GamesIndexRoute
-  '/websites': typeof WebsitesIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesById {
@@ -254,10 +226,6 @@ export interface FileRoutesById {
   '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
   '/websites/$slug': typeof WebsitesSlugRoute
-  '/ai/': typeof AiIndexRoute
-  '/apps/': typeof AppsIndexRoute
-  '/games/': typeof GamesIndexRoute
-  '/websites/': typeof WebsitesIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRouteTypes {
@@ -285,23 +253,23 @@ export interface FileRouteTypes {
     | '/guides/android-on-pc'
     | '/item/$id'
     | '/websites/$slug'
-    | '/ai/'
-    | '/apps/'
-    | '/games/'
-    | '/websites/'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/admin'
+    | '/ai'
+    | '/apps'
     | '/contact'
     | '/favorites'
+    | '/games'
     | '/login'
     | '/mcp'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
+    | '/websites'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/ai/$slug'
@@ -310,10 +278,6 @@ export interface FileRouteTypes {
     | '/guides/android-on-pc'
     | '/item/$id'
     | '/websites/$slug'
-    | '/ai'
-    | '/apps'
-    | '/games'
-    | '/websites'
     | '/.mcp/invoke-tool/$tool'
   id:
     | '__root__'
@@ -339,10 +303,6 @@ export interface FileRouteTypes {
     | '/guides/android-on-pc'
     | '/item/$id'
     | '/websites/$slug'
-    | '/ai/'
-    | '/apps/'
-    | '/games/'
-    | '/websites/'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
 }
@@ -468,34 +428,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/websites/': {
-      id: '/websites/'
-      path: '/'
-      fullPath: '/websites/'
-      preLoaderRoute: typeof WebsitesIndexRouteImport
-      parentRoute: typeof WebsitesRoute
-    }
-    '/games/': {
-      id: '/games/'
-      path: '/'
-      fullPath: '/games/'
-      preLoaderRoute: typeof GamesIndexRouteImport
-      parentRoute: typeof GamesRoute
-    }
-    '/apps/': {
-      id: '/apps/'
-      path: '/'
-      fullPath: '/apps/'
-      preLoaderRoute: typeof AppsIndexRouteImport
-      parentRoute: typeof AppsRoute
-    }
-    '/ai/': {
-      id: '/ai/'
-      path: '/'
-      fullPath: '/ai/'
-      preLoaderRoute: typeof AiIndexRouteImport
-      parentRoute: typeof AiRoute
-    }
     '/websites/$slug': {
       id: '/websites/$slug'
       path: '/$slug'
@@ -564,48 +496,40 @@ declare module '@tanstack/react-router' {
 
 interface AiRouteChildren {
   AiSlugRoute: typeof AiSlugRoute
-  AiIndexRoute: typeof AiIndexRoute
 }
 
 const AiRouteChildren: AiRouteChildren = {
   AiSlugRoute: AiSlugRoute,
-  AiIndexRoute: AiIndexRoute,
 }
 
 const AiRouteWithChildren = AiRoute._addFileChildren(AiRouteChildren)
 
 interface AppsRouteChildren {
   AppsSlugRoute: typeof AppsSlugRoute
-  AppsIndexRoute: typeof AppsIndexRoute
 }
 
 const AppsRouteChildren: AppsRouteChildren = {
   AppsSlugRoute: AppsSlugRoute,
-  AppsIndexRoute: AppsIndexRoute,
 }
 
 const AppsRouteWithChildren = AppsRoute._addFileChildren(AppsRouteChildren)
 
 interface GamesRouteChildren {
   GamesSlugRoute: typeof GamesSlugRoute
-  GamesIndexRoute: typeof GamesIndexRoute
 }
 
 const GamesRouteChildren: GamesRouteChildren = {
   GamesSlugRoute: GamesSlugRoute,
-  GamesIndexRoute: GamesIndexRoute,
 }
 
 const GamesRouteWithChildren = GamesRoute._addFileChildren(GamesRouteChildren)
 
 interface WebsitesRouteChildren {
   WebsitesSlugRoute: typeof WebsitesSlugRoute
-  WebsitesIndexRoute: typeof WebsitesIndexRoute
 }
 
 const WebsitesRouteChildren: WebsitesRouteChildren = {
   WebsitesSlugRoute: WebsitesSlugRoute,
-  WebsitesIndexRoute: WebsitesIndexRoute,
 }
 
 const WebsitesRouteWithChildren = WebsitesRoute._addFileChildren(
