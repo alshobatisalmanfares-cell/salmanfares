@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ExternalLink, Eye, Heart, Lock, Star, StarHalf } from "lucide-react";
 import type { Item } from "@/lib/items";
@@ -45,8 +44,7 @@ export function ItemCard({ item }: { item: Item }) {
     if (res.needLogin) toast.error(t("favorites.loginRequired"));
   }
 
-  const requiredKeys = (item.required_follows ?? []) as SocialKey[];
-  const requiresFollow = requiredKeys.length > 0;
+  const requiresFollow = (item.required_follows ?? []).length > 0;
 
   function handleCtaClick(e: React.MouseEvent) {
     e.stopPropagation();
