@@ -135,7 +135,7 @@ function SpecsSection({ item }: { item: Item }) {
 }
 
 function renderBoldSegments(text: string) {
-  const parts: Array<string | JSX.Element> = [];
+  const parts: React.ReactNode[] = [];
   const boldPattern = /\*\*(.+?)\*\*/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
