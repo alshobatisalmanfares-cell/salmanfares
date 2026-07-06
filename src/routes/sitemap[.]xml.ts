@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
 const BASE_URL = "https://salmanfares.lovable.app";
 
@@ -24,27 +25,50 @@ const STATIC_ENTRIES: SitemapEntry[] = [
   { path: "/terms", changefreq: "yearly", priority: "0.4" },
 ];
 
+const VALID_CATEGORIES = new Set(["apps", "websites", "games", "ai"]);
+
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function normalizeItemPath(row: { id: string; slug: string | null; categories: string[] | null }) {
+  const category = (row.categories ?? []).find((cat) => VALID_CATEGORIES.has(cat)) ?? "apps";
+  return row.slug ? `/${category}/${row.slug}` : `/item/${row.id}`;
+}
+
 async function fetchItemEntries(): Promise<SitemapEntry[]> {
   try {
     const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
     const key = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
     if (!url || !key) return [];
-    const supabase = createClient(url, key, { auth: { persistSession: false } });
-    const { data } = await supabase
+    const supabase = createClient<Database>(url, key, {
+      auth: {
+        storage: undefined,
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+    const { data, error } = await supabase
       .from("items")
-      .select("id, slug, categories, created_at")
+      .select("id, slug, categories, updated_at, created_at")
+      .order("updated_at", { ascending: false })
       .limit(2000);
-    return (data ?? []).map((row: { id: string; slug: string | null; categories: string[] | null; created_at?: string }) => {
-      const cat = (row.categories ?? [])[0] ?? "apps";
-      const path = row.slug ? `/${cat}/${row.slug}` : `/item/${row.id}`;
+    if (error) throw error;
+    return (data ?? []).map((row) => {
       return {
-        path,
-        lastmod: row.created_at ? row.created_at.slice(0, 10) : undefined,
-        changefreq: "weekly" as const,
-        priority: "0.6",
+        path: normalizeItemPath(row),
+        lastmod: (row.updated_at ?? row.created_at)?.slice(0, 10),
+        changefreq: "daily" as const,
+        priority: "0.7",
       };
     });
-  } catch {
+  } catch (error) {
+    console.error("Unable to generate dynamic sitemap entries", error);
     return [];
   }
 }
@@ -59,7 +83,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const urls = entries.map((e) =>
           [
             `  <url>`,
-            `    <loc>${BASE_URL}${e.path}</loc>`,
+            `    <loc>${escapeXml(`${BASE_URL}${e.path}`)}</loc>`,
             e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
             e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
             e.priority ? `    <priority>${e.priority}</priority>` : null,
@@ -78,8 +102,8 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         return new Response(xml, {
           headers: {
-            "Content-Type": "application/xml",
-            "Cache-Control": "public, max-age=3600",
+            "Content-Type": "application/xml; charset=utf-8",
+            "Cache-Control": "public, max-age=300, s-maxage=300",
           },
         });
       },

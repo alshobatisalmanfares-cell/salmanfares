@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import { AdSlot } from "@/components/AdSlot";
-import ReactMarkdown from "react-markdown";
 
 export function isSafeUrl(url: string) {
   return /^https?:\/\//i.test(url);
@@ -135,19 +134,47 @@ function SpecsSection({ item }: { item: Item }) {
   );
 }
 
+function renderBoldSegments(text: string) {
+  const parts: Array<string | JSX.Element> = [];
+  const boldPattern = /\*\*(.+?)\*\*/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = boldPattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index).replace(/\*\*/g, ""));
+    }
+    parts.push(
+      <strong key={`${match.index}-${match[1]}`} className="text-lg font-bold text-white">
+        {match[1].replace(/\*\*/g, "")}
+      </strong>,
+    );
+    lastIndex = boldPattern.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex).replace(/\*\*/g, ""));
+  }
+
+  return parts;
+}
+
 function DescriptionMarkdown({ children }: { children: string }) {
+  const paragraphs = children
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+
+  if (paragraphs.length === 0) return null;
+
   return (
-    <ReactMarkdown
-      components={{
-        p: ({ children }) => <p className="my-3 whitespace-pre-line text-sm leading-relaxed text-foreground">{children}</p>,
-        strong: ({ children }) => <strong className="text-base font-extrabold text-primary md:text-lg">{children}</strong>,
-        ul: ({ children }) => <ul className="my-3 list-disc space-y-1 ps-5 text-sm leading-relaxed text-foreground">{children}</ul>,
-        ol: ({ children }) => <ol className="my-3 list-decimal space-y-1 ps-5 text-sm leading-relaxed text-foreground">{children}</ol>,
-        li: ({ children }) => <li className="ps-1">{children}</li>,
-      }}
-    >
-      {children}
-    </ReactMarkdown>
+    <>
+      {paragraphs.map((paragraph, index) => (
+        <p key={index} className="my-3 whitespace-pre-line text-sm leading-relaxed text-foreground">
+          {renderBoldSegments(paragraph)}
+        </p>
+      ))}
+    </>
   );
 }
 
