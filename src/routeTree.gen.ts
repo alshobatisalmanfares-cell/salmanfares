@@ -13,7 +13,6 @@ import { Route as WebsitesRouteImport } from './routes/websites'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as FavoritesRouteImport } from './routes/favorites'
@@ -23,19 +22,8 @@ import { Route as AiRouteImport } from './routes/ai'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as WebsitesIndexRouteImport } from './routes/websites.index'
-import { Route as GamesIndexRouteImport } from './routes/games.index'
-import { Route as AppsIndexRouteImport } from './routes/apps.index'
-import { Route as AiIndexRouteImport } from './routes/ai.index'
-import { Route as WebsitesSlugRouteImport } from './routes/websites.$slug'
 import { Route as ItemIdRouteImport } from './routes/item.$id'
 import { Route as GuidesAndroidOnPcRouteImport } from './routes/guides.android-on-pc'
-import { Route as GamesSlugRouteImport } from './routes/games.$slug'
-import { Route as AppsSlugRouteImport } from './routes/apps.$slug'
-import { Route as AiSlugRouteImport } from './routes/ai.$slug'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 
 const WebsitesRoute = WebsitesRouteImport.update({
   id: '/websites',
@@ -55,11 +43,6 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -107,31 +90,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WebsitesIndexRoute = WebsitesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => WebsitesRoute,
-} as any)
-const GamesIndexRoute = GamesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => GamesRoute,
-} as any)
-const AppsIndexRoute = AppsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppsRoute,
-} as any)
-const AiIndexRoute = AiIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AiRoute,
-} as any)
-const WebsitesSlugRoute = WebsitesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => WebsitesRoute,
-} as any)
 const ItemIdRoute = ItemIdRouteImport.update({
   id: '/item/$id',
   path: '/item/$id',
@@ -142,123 +100,58 @@ const GuidesAndroidOnPcRoute = GuidesAndroidOnPcRouteImport.update({
   path: '/guides/android-on-pc',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GamesSlugRoute = GamesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => GamesRoute,
-} as any)
-const AppsSlugRoute = AppsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => AppsRoute,
-} as any)
-const AiSlugRoute = AiSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => AiRoute,
-} as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/ai': typeof AiRouteWithChildren
-  '/apps': typeof AppsRouteWithChildren
+  '/ai': typeof AiRoute
+  '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
-  '/games': typeof GamesRouteWithChildren
+  '/games': typeof GamesRoute
   '/login': typeof LoginRoute
-  '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/websites': typeof WebsitesRouteWithChildren
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  '/ai/$slug': typeof AiSlugRoute
-  '/apps/$slug': typeof AppsSlugRoute
-  '/games/$slug': typeof GamesSlugRoute
+  '/websites': typeof WebsitesRoute
   '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
-  '/websites/$slug': typeof WebsitesSlugRoute
-  '/ai/': typeof AiIndexRoute
-  '/apps/': typeof AppsIndexRoute
-  '/games/': typeof GamesIndexRoute
-  '/websites/': typeof WebsitesIndexRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/ai': typeof AiRoute
+  '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
+  '/games': typeof GamesRoute
   '/login': typeof LoginRoute
-  '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  '/ai/$slug': typeof AiSlugRoute
-  '/apps/$slug': typeof AppsSlugRoute
-  '/games/$slug': typeof GamesSlugRoute
+  '/websites': typeof WebsitesRoute
   '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
-  '/websites/$slug': typeof WebsitesSlugRoute
-  '/ai': typeof AiIndexRoute
-  '/apps': typeof AppsIndexRoute
-  '/games': typeof GamesIndexRoute
-  '/websites': typeof WebsitesIndexRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/ai': typeof AiRouteWithChildren
-  '/apps': typeof AppsRouteWithChildren
+  '/ai': typeof AiRoute
+  '/apps': typeof AppsRoute
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
-  '/games': typeof GamesRouteWithChildren
+  '/games': typeof GamesRoute
   '/login': typeof LoginRoute
-  '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/websites': typeof WebsitesRouteWithChildren
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  '/ai/$slug': typeof AiSlugRoute
-  '/apps/$slug': typeof AppsSlugRoute
-  '/games/$slug': typeof GamesSlugRoute
+  '/websites': typeof WebsitesRoute
   '/guides/android-on-pc': typeof GuidesAndroidOnPcRoute
   '/item/$id': typeof ItemIdRoute
-  '/websites/$slug': typeof WebsitesSlugRoute
-  '/ai/': typeof AiIndexRoute
-  '/apps/': typeof AppsIndexRoute
-  '/games/': typeof GamesIndexRoute
-  '/websites/': typeof WebsitesIndexRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -272,49 +165,29 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/games'
     | '/login'
-    | '/mcp'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
     | '/websites'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
-    | '/ai/$slug'
-    | '/apps/$slug'
-    | '/games/$slug'
     | '/guides/android-on-pc'
     | '/item/$id'
-    | '/websites/$slug'
-    | '/ai/'
-    | '/apps/'
-    | '/games/'
-    | '/websites/'
-    | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/admin'
+    | '/ai'
+    | '/apps'
     | '/contact'
     | '/favorites'
+    | '/games'
     | '/login'
-    | '/mcp'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
-    | '/ai/$slug'
-    | '/apps/$slug'
-    | '/games/$slug'
+    | '/websites'
     | '/guides/android-on-pc'
     | '/item/$id'
-    | '/websites/$slug'
-    | '/ai'
-    | '/apps'
-    | '/games'
-    | '/websites'
-    | '/.mcp/invoke-tool/$tool'
   id:
     | '__root__'
     | '/'
@@ -326,46 +199,30 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/games'
     | '/login'
-    | '/mcp'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
     | '/websites'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
-    | '/ai/$slug'
-    | '/apps/$slug'
-    | '/games/$slug'
     | '/guides/android-on-pc'
     | '/item/$id'
-    | '/websites/$slug'
-    | '/ai/'
-    | '/apps/'
-    | '/games/'
-    | '/websites/'
-    | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
-  AiRoute: typeof AiRouteWithChildren
-  AppsRoute: typeof AppsRouteWithChildren
+  AiRoute: typeof AiRoute
+  AppsRoute: typeof AppsRoute
   ContactRoute: typeof ContactRoute
   FavoritesRoute: typeof FavoritesRoute
-  GamesRoute: typeof GamesRouteWithChildren
+  GamesRoute: typeof GamesRoute
   LoginRoute: typeof LoginRoute
-  McpRoute: typeof McpRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
-  WebsitesRoute: typeof WebsitesRouteWithChildren
-  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
-  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  WebsitesRoute: typeof WebsitesRoute
   GuidesAndroidOnPcRoute: typeof GuidesAndroidOnPcRoute
   ItemIdRoute: typeof ItemIdRoute
-  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -396,13 +253,6 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -468,41 +318,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/websites/': {
-      id: '/websites/'
-      path: '/'
-      fullPath: '/websites/'
-      preLoaderRoute: typeof WebsitesIndexRouteImport
-      parentRoute: typeof WebsitesRoute
-    }
-    '/games/': {
-      id: '/games/'
-      path: '/'
-      fullPath: '/games/'
-      preLoaderRoute: typeof GamesIndexRouteImport
-      parentRoute: typeof GamesRoute
-    }
-    '/apps/': {
-      id: '/apps/'
-      path: '/'
-      fullPath: '/apps/'
-      preLoaderRoute: typeof AppsIndexRouteImport
-      parentRoute: typeof AppsRoute
-    }
-    '/ai/': {
-      id: '/ai/'
-      path: '/'
-      fullPath: '/ai/'
-      preLoaderRoute: typeof AiIndexRouteImport
-      parentRoute: typeof AiRoute
-    }
-    '/websites/$slug': {
-      id: '/websites/$slug'
-      path: '/$slug'
-      fullPath: '/websites/$slug'
-      preLoaderRoute: typeof WebsitesSlugRouteImport
-      parentRoute: typeof WebsitesRoute
-    }
     '/item/$id': {
       id: '/item/$id'
       path: '/item/$id'
@@ -517,133 +332,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesAndroidOnPcRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/games/$slug': {
-      id: '/games/$slug'
-      path: '/$slug'
-      fullPath: '/games/$slug'
-      preLoaderRoute: typeof GamesSlugRouteImport
-      parentRoute: typeof GamesRoute
-    }
-    '/apps/$slug': {
-      id: '/apps/$slug'
-      path: '/$slug'
-      fullPath: '/apps/$slug'
-      preLoaderRoute: typeof AppsSlugRouteImport
-      parentRoute: typeof AppsRoute
-    }
-    '/ai/$slug': {
-      id: '/ai/$slug'
-      path: '/$slug'
-      fullPath: '/ai/$slug'
-      preLoaderRoute: typeof AiSlugRouteImport
-      parentRoute: typeof AiRoute
-    }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
-
-interface AiRouteChildren {
-  AiSlugRoute: typeof AiSlugRoute
-  AiIndexRoute: typeof AiIndexRoute
-}
-
-const AiRouteChildren: AiRouteChildren = {
-  AiSlugRoute: AiSlugRoute,
-  AiIndexRoute: AiIndexRoute,
-}
-
-const AiRouteWithChildren = AiRoute._addFileChildren(AiRouteChildren)
-
-interface AppsRouteChildren {
-  AppsSlugRoute: typeof AppsSlugRoute
-  AppsIndexRoute: typeof AppsIndexRoute
-}
-
-const AppsRouteChildren: AppsRouteChildren = {
-  AppsSlugRoute: AppsSlugRoute,
-  AppsIndexRoute: AppsIndexRoute,
-}
-
-const AppsRouteWithChildren = AppsRoute._addFileChildren(AppsRouteChildren)
-
-interface GamesRouteChildren {
-  GamesSlugRoute: typeof GamesSlugRoute
-  GamesIndexRoute: typeof GamesIndexRoute
-}
-
-const GamesRouteChildren: GamesRouteChildren = {
-  GamesSlugRoute: GamesSlugRoute,
-  GamesIndexRoute: GamesIndexRoute,
-}
-
-const GamesRouteWithChildren = GamesRoute._addFileChildren(GamesRouteChildren)
-
-interface WebsitesRouteChildren {
-  WebsitesSlugRoute: typeof WebsitesSlugRoute
-  WebsitesIndexRoute: typeof WebsitesIndexRoute
-}
-
-const WebsitesRouteChildren: WebsitesRouteChildren = {
-  WebsitesSlugRoute: WebsitesSlugRoute,
-  WebsitesIndexRoute: WebsitesIndexRoute,
-}
-
-const WebsitesRouteWithChildren = WebsitesRoute._addFileChildren(
-  WebsitesRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
-  AiRoute: AiRouteWithChildren,
-  AppsRoute: AppsRouteWithChildren,
+  AiRoute: AiRoute,
+  AppsRoute: AppsRoute,
   ContactRoute: ContactRoute,
   FavoritesRoute: FavoritesRoute,
-  GamesRoute: GamesRouteWithChildren,
+  GamesRoute: GamesRoute,
   LoginRoute: LoginRoute,
-  McpRoute: McpRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
-  WebsitesRoute: WebsitesRouteWithChildren,
-  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
-  Char91DotwellKnownChar93OauthProtectedResourceRoute:
-    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  WebsitesRoute: WebsitesRoute,
   GuidesAndroidOnPcRoute: GuidesAndroidOnPcRoute,
   ItemIdRoute: ItemIdRoute,
-  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
