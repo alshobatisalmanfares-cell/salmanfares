@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
+import { LogOut, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import { socials, type SocialKey } from "@/components/SocialLinks";
 
 export const Route = createFileRoute("/admin")({
@@ -39,6 +39,7 @@ type FormState = {
   file_type: string;
   file_size: string;
   update_date: string;
+  featured: boolean;
 };
 
 const empty: FormState = {
@@ -47,6 +48,7 @@ const empty: FormState = {
   required_follows: [], gallery: [],
   developer: "", license: "", language: "", os: "",
   file_type: "", file_size: "", update_date: "",
+  featured: false,
 };
 
 const CATEGORY_LABELS: Record<ItemCategory, string> = {
@@ -112,6 +114,7 @@ function AdminPage() {
         file_type: form.file_type.trim() || null,
         file_size: form.file_size.trim() || null,
         update_date: form.update_date.trim() || null,
+        featured: form.featured,
       };
       if (form.id) {
         const { error } = await supabase.from("items").update(payload).eq("id", form.id);
@@ -155,6 +158,7 @@ function AdminPage() {
       file_type: it.file_type ?? "",
       file_size: it.file_size ?? "",
       update_date: it.update_date ?? "",
+      featured: !!it.featured,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -229,6 +233,13 @@ function AdminPage() {
 
   function removeGalleryImage(url: string) {
     setForm((f) => ({ ...f, gallery: f.gallery.filter((u) => u !== url) }));
+  }
+
+  async function toggleFeatured(it: Item, next: boolean) {
+    const { error } = await supabase.from("items").update({ featured: next }).eq("id", it.id);
+    if (error) { toast.error(error.message); return; }
+    toast.success(next ? "تم التمييز في الصفحة الرئيسية" : "تم إلغاء التمييز");
+    qc.invalidateQueries({ queryKey: ["items"] });
   }
 
   if (!authChecked) return <div className="p-12 text-center text-sm text-muted-foreground">...</div>;
@@ -392,6 +403,21 @@ function AdminPage() {
         </div>
         <div className="md:col-span-2 flex gap-2">
         </div>
+        <div className="md:col-span-2 rounded-lg border border-primary/30 bg-primary/5 p-3">
+          <label className="flex cursor-pointer items-center gap-3">
+            <Checkbox
+              checked={form.featured}
+              onCheckedChange={(v) => setForm((f) => ({ ...f, featured: !!v }))}
+            />
+            <div className="flex-1">
+              <div className="flex items-center gap-1.5 text-sm font-bold">
+                <Star className="h-4 w-4 text-primary" />
+                عرض في الصفحة الرئيسية (Featured)
+              </div>
+              <p className="text-xs text-muted-foreground">فعّل هذا الخيار لإظهار العنصر ضمن قائمة العناصر المميّزة في الصفحة الرئيسية.</p>
+            </div>
+          </label>
+        </div>
         <div className="md:col-span-2 pt-2 border-t border-border/40">
           <h3 className="text-sm font-bold text-muted-foreground">معلومات أساسية</h3>
         </div>
@@ -456,9 +482,21 @@ function AdminPage() {
                 <div className="flex items-center gap-2">
                   <span className="truncate font-semibold">{it.title}</span>
                   <span className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground">{(it.categories ?? []).join(", ")}</span>
+                  {it.featured && (
+                    <span className="inline-flex items-center gap-1 rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                      <Star className="h-3 w-3 fill-current" /> مميّز
+                    </span>
+                  )}
                 </div>
                 <p className="truncate text-xs text-muted-foreground">{it.description}</p>
               </div>
+              <label className="inline-flex cursor-pointer items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
+                <Checkbox
+                  checked={!!it.featured}
+                  onCheckedChange={(v) => toggleFeatured(it, !!v)}
+                />
+                Featured
+              </label>
               <Button size="sm" variant="outline" onClick={() => edit(it)}><Pencil className="h-3.5 w-3.5" /></Button>
               <Button size="sm" variant="outline" onClick={() => remove(it.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
             </div>
