@@ -14,33 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      ai_chat_sessions: {
-        Row: {
-          created_at: string
-          id: string
-          messages: Json
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          messages?: Json
-          title?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          messages?: Json
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       favorites: {
         Row: {
           created_at: string
@@ -79,7 +52,6 @@ export type Database = {
           description: string
           developer: string | null
           emoji: string
-          featured: boolean
           file_size: string | null
           file_type: string | null
           gallery: string[]
@@ -90,7 +62,6 @@ export type Database = {
           os: string | null
           rating: number | null
           required_follows: string[]
-          slug: string | null
           sort_order: number
           title: string
           update_date: string | null
@@ -106,7 +77,6 @@ export type Database = {
           description?: string
           developer?: string | null
           emoji?: string
-          featured?: boolean
           file_size?: string | null
           file_type?: string | null
           gallery?: string[]
@@ -117,7 +87,6 @@ export type Database = {
           os?: string | null
           rating?: number | null
           required_follows?: string[]
-          slug?: string | null
           sort_order?: number
           title: string
           update_date?: string | null
@@ -133,7 +102,6 @@ export type Database = {
           description?: string
           developer?: string | null
           emoji?: string
-          featured?: boolean
           file_size?: string | null
           file_type?: string | null
           gallery?: string[]
@@ -144,7 +112,6 @@ export type Database = {
           os?: string | null
           rating?: number | null
           required_follows?: string[]
-          slug?: string | null
           sort_order?: number
           title?: string
           update_date?: string | null
@@ -241,7 +208,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      slugify: { Args: { _input: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "user"

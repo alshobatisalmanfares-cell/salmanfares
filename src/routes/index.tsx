@@ -5,10 +5,9 @@ import { ArrowLeft } from "lucide-react";
 
 import { CategorySection } from "@/components/CategorySection";
 import { SearchBar, filterItems } from "@/components/SearchBar";
-import { fetchFeaturedItems } from "@/lib/items";
+import { fetchItems } from "@/lib/items";
 import type { ItemCategory } from "@/lib/items";
 import { useI18n } from "@/lib/i18n";
-import { AdSlot } from "@/components/AdSlot";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,7 +25,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { t } = useI18n();
-  const latest = useQuery({ queryKey: ["items", "featured"], queryFn: () => fetchFeaturedItems() });
+  const latest = useQuery({ queryKey: ["items", "latest"], queryFn: () => fetchItems() });
   const [q, setQ] = useState("");
 
   const all = latest.data ?? [];
@@ -87,8 +86,6 @@ function Index() {
         </div>
       </section>
 
-      <AdSlot variant="banner" className="mb-6" />
-
       {q.trim() ? (
         <CategorySection
           title={`${t("home.results")}: ${q}`}
@@ -96,13 +93,6 @@ function Index() {
           emptyText={t("home.noresults")}
           loading={latest.isLoading}
         />
-      ) : !latest.isLoading && all.length === 0 ? (
-        <section className="mx-auto max-w-3xl px-4 py-12 text-center">
-          <div className="rounded-2xl border border-border/60 bg-card/40 p-8">
-            <h2 className="text-xl font-extrabold text-foreground">Welcome to Salman for Tech</h2>
-            <p className="mt-2 text-sm text-muted-foreground">Content coming soon — سيتم عرض المحتوى المميّز هنا قريباً.</p>
-          </div>
-        </section>
       ) : (
         <>
           <CategorySection title={t("home.latest")} items={all.slice(0, 9)} loading={latest.isLoading} />
@@ -118,7 +108,6 @@ function Index() {
           {byCat.games.length > 0 && (
             <CategorySection title={t("section.games")} items={byCat.games} />
           )}
-          <AdSlot variant="banner" className="my-8" />
         </>
       )}
     </div>

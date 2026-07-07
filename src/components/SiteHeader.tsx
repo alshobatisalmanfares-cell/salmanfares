@@ -14,7 +14,6 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
-import { AiChat } from "@/components/AiChat";
 
 export function SiteHeader() {
   const { t, lang, setLang } = useI18n();
@@ -52,10 +51,10 @@ export function SiteHeader() {
     { to: "/games", label: t("nav.games"), Icon: Gamepad2 },
     { to: "/ai", label: t("nav.ai"), Icon: Sparkles },
     { to: "/favorites", label: t("favorites.title"), Icon: Heart },
-  ] as const;
-  const legalNav = [
     { to: "/about", label: t("nav.about"), Icon: Info },
     { to: "/contact", label: t("nav.contact"), Icon: Mail },
+  ] as const;
+  const legalNav = [
     { to: "/privacy", label: t("nav.privacy"), Icon: Shield },
     { to: "/terms", label: t("nav.terms"), Icon: FileText },
   ] as const;
@@ -65,7 +64,6 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         {/* Hamburger trigger — visually top-left in RTL via flex order on the controls cluster */}
         <div className="flex items-center gap-2 order-last">
-          <AiChat />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               aria-label={t("menu.open")}
@@ -182,10 +180,6 @@ export function SiteHeader() {
           <img
             src={avatarUrl}
             alt={t("site.name")}
-            width={40}
-            height={40}
-            fetchPriority="high"
-            decoding="async"
             className="h-10 w-10 rounded-full object-cover ring-1 ring-border/70"
           />
           <span className="text-xl font-extrabold text-foreground md:text-2xl">{t("site.name")}</span>
