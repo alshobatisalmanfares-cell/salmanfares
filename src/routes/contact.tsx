@@ -57,17 +57,17 @@ function ContactPage() {
       <form onSubmit={submit} className="mt-6 grid gap-4 rounded-2xl border border-border/70 bg-card/50 p-5">
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <Label>الاسم</Label>
-            <Input required value={name} onChange={(e) => setName(e.target.value)} />
+            <Label htmlFor="contact-name">الاسم</Label>
+            <Input id="contact-name" name="name" required value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div>
-            <Label>البريد الإلكتروني</Label>
-            <Input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Label htmlFor="contact-email">البريد الإلكتروني</Label>
+            <Input id="contact-email" name="email" required type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
         </div>
         <div>
-          <Label>الرسالة</Label>
-          <Textarea required rows={5} value={message} onChange={(e) => setMessage(e.target.value)} />
+          <Label htmlFor="contact-message">الرسالة</Label>
+          <Textarea id="contact-message" name="message" required rows={5} value={message} onChange={(e) => setMessage(e.target.value)} />
         </div>
         <div>
           <Button type="submit">إرسال</Button>
