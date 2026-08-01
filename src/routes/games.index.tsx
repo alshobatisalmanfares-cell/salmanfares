@@ -6,6 +6,24 @@ import { SearchBar, filterItems } from "@/components/SearchBar";
 import { fetchItems } from "@/lib/items";
 
 export const Route = createFileRoute("/games/")({
+  head: () => ({
+    meta: [
+      { title: "دليل أفضل الألعاب للجوال | سلمان فارس" },
+      {
+        name: "description",
+        content:
+          "دليل ألعاب الجوال والكمبيوتر على سلمان فارس: ألعاب مختارة مع نبذة عن أسلوب اللعب وحجم الملف ومتطلبات التشغيل وروابط تحميل محدثة.",
+      },
+      { property: "og:title", content: "دليل أفضل الألعاب للجوال | سلمان فارس" },
+      {
+        property: "og:description",
+        content: "قسم الألعاب في سلمان فارس: أفضل الألعاب المختارة مع تفاصيل التشغيل وروابط التحميل.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://salmanfares.lovable.app/games" },
+    ],
+    links: [{ rel: "canonical", href: "https://salmanfares.lovable.app/games" }],
+  }),
   component: GamesIndexPage,
 });
 
