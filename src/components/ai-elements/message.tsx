@@ -13,9 +13,6 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { cjk } from "@streamdown/cjk";
-import { code } from "@streamdown/code";
-import { math } from "@streamdown/math";
-import { mermaid } from "@streamdown/mermaid";
 import type { UIMessage } from "ai";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
@@ -321,7 +318,9 @@ export const MessageBranchPage = ({
 
 export type MessageResponseProps = ComponentProps<typeof Streamdown>;
 
-const streamdownPlugins = { cjk, code, math, mermaid };
+// Only the CJK/RTL text plugin is loaded. The code/math/mermaid plugins pull in
+// Shiki's oniguruma .wasm, which the edge SSR runtime cannot resolve (HTTP 500).
+const streamdownPlugins = { cjk };
 
 export const MessageResponse = memo(
   ({ className, ...props }: MessageResponseProps) => (
