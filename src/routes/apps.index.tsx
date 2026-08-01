@@ -7,6 +7,24 @@ import { fetchItems } from "@/lib/items";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/apps/")({
+  head: () => ({
+    meta: [
+      { title: "أفضل تطبيقات الأندرويد والآيفون | سلمان فارس" },
+      {
+        name: "description",
+        content:
+          "اكتشف مجموعة مختارة من أفضل تطبيقات الأندرويد والآيفون مع شرح المميزات ومتطلبات التشغيل وروابط التحميل المحدثة على موقع سلمان فارس.",
+      },
+      { property: "og:title", content: "أفضل تطبيقات الأندرويد والآيفون | سلمان فارس" },
+      {
+        property: "og:description",
+        content: "قسم التطبيقات في سلمان فارس: تطبيقات مختارة بعناية مع تفاصيل كاملة وروابط تحميل موثوقة.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://salmanfares.lovable.app/apps" },
+    ],
+    links: [{ rel: "canonical", href: "https://salmanfares.lovable.app/apps" }],
+  }),
   component: AppsIndexPage,
 });
 
