@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { ExternalLink, Eye, Heart, Lock, Star, StarHalf } from "lucide-react";
 import type { Item } from "@/lib/items";
 import { itemPath } from "@/lib/items";
@@ -93,16 +93,7 @@ export function ItemCard({ item }: { item: Item }) {
           </button>
         </div>
       </div>
-      <h3 className="mt-4 text-lg font-bold text-foreground">
-        <Link
-          to={detailsPath.to as any}
-          params={detailsPath.params as any}
-          onClick={(e) => e.stopPropagation()}
-          className="outline-none hover:text-primary focus-visible:underline"
-        >
-          {item.title}
-        </Link>
-      </h3>
+      <h3 className="mt-4 text-lg font-bold text-foreground">{item.title}</h3>
       <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground line-clamp-3">
         {item.description}
       </p>
