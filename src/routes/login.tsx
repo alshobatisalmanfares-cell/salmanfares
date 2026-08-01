@@ -11,12 +11,18 @@ import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "تسجيل الدخول | سلمان فارس" }] }),
+  validateSearch: (s: Record<string, unknown>): { next?: string } => {
+    const next = typeof s.next === "string" && s.next.startsWith("/") && !s.next.startsWith("//") ? s.next : undefined;
+    return next ? { next } : {};
+  },
   component: LoginPage,
 });
 
 function LoginPage() {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const returnTo = next ?? "/";
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,12 +34,12 @@ function LoginPage() {
     setGoogleLoading(true);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${window.location.origin}${returnTo}`,
       });
       if (result.error) throw result.error;
       if (result.redirected) return;
       toast.success(t("auth.success.signin"));
-      navigate({ to: "/" });
+      navigate({ href: returnTo });
     } catch (err: any) {
       toast.error(err?.message ?? t("auth.error"));
     } finally {
@@ -49,7 +55,7 @@ function LoginPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/` },
+          options: { emailRedirectTo: `${window.location.origin}${returnTo}` },
         });
         if (error) throw error;
         toast.success(t("auth.success.signup"));
@@ -60,7 +66,7 @@ function LoginPage() {
         if (error) throw error;
         toast.success(t("auth.success.signin"));
       }
-      navigate({ to: "/" });
+      navigate({ href: returnTo });
     } catch (err: any) {
       toast.error(err?.message ?? t("auth.error"));
     } finally {

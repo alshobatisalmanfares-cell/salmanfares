@@ -160,6 +160,10 @@ export function AiChat() {
   async function handleSend(textInput: string) {
     const text = textInput.trim();
     if (!text || loading) return;
+    if (!userId) {
+      toast.error("سجّل الدخول لاستخدام المساعد الذكي");
+      return;
+    }
     const next: Msg[] = [...messages, { role: "user", content: text }];
     setMessages(next);
     setLoading(true);
@@ -328,12 +332,12 @@ export function AiChat() {
           className="border-t border-border/50 bg-card/40 p-3"
         >
           <PromptInputTextarea
-            placeholder="اكتب رسالتك..."
-            disabled={loading}
+            placeholder={userId ? "اكتب رسالتك..." : "سجّل الدخول للدردشة مع المساعد"}
+            disabled={loading || !userId}
             className="min-h-14 text-sm text-foreground"
           />
           <PromptInputFooter className="justify-end">
-            <PromptInputSubmit status={chatStatus} disabled={loading} />
+            <PromptInputSubmit status={chatStatus} disabled={loading || !userId} />
           </PromptInputFooter>
         </PromptInput>
       </SheetContent>
