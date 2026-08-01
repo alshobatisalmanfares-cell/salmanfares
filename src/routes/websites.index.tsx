@@ -6,6 +6,24 @@ import { SearchBar, filterItems } from "@/components/SearchBar";
 import { fetchItems } from "@/lib/items";
 
 export const Route = createFileRoute("/websites/")({
+  head: () => ({
+    meta: [
+      { title: "أفضل المواقع التقنية المفيدة | سلمان فارس" },
+      {
+        name: "description",
+        content:
+          "قائمة بأفضل المواقع التقنية والخدمية المفيدة على سلمان فارس، مع شرح لكل موقع وأهم استخداماته وروابط الدخول المباشرة.",
+      },
+      { property: "og:title", content: "أفضل المواقع التقنية المفيدة | سلمان فارس" },
+      {
+        property: "og:description",
+        content: "قسم المواقع في سلمان فارس: مواقع مختارة تسهّل عملك اليومي على الويب.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://salmanfares.lovable.app/websites" },
+    ],
+    links: [{ rel: "canonical", href: "https://salmanfares.lovable.app/websites" }],
+  }),
   component: WebsitesIndexPage,
 });
 
