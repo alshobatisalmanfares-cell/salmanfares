@@ -13,11 +13,47 @@ export const Route = createFileRoute("/guides/android-on-pc")({
       { property: "og:title", content: "كيف احمل تطبيقات الاندرويد على الكمبيوتر - دليل شامل" },
       { property: "og:description", content: "مقارنة تفصيلية بين أفضل محاكيات الأندرويد و WSA لتشغيل التطبيقات على ويندوز وماك." },
       { property: "og:type", content: "article" },
+      { property: "og:url", content: "https://salmanfares.lovable.app/guides/android-on-pc" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "كيف احمل تطبيقات الاندرويد على الكمبيوتر" },
       { name: "twitter:description", content: "دليل شامل لتشغيل تطبيقات الأندرويد على الكمبيوتر." },
     ],
-    links: [{ rel: "canonical", href: "/guides/android-on-pc" }],
+    links: [{ rel: "canonical", href: "https://salmanfares.lovable.app/guides/android-on-pc" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "هل تشغيل تطبيقات الأندرويد على الكمبيوتر آمن؟",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "نعم إذا حمّلت المحاكي من موقعه الرسمي والتطبيقات من متاجر موثوقة.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "ما أفضل محاكي للألعاب؟",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "LDPlayer يُعد الخيار الأمثل لألعاب FPS و MOBA، بينما BlueStacks متوازن لكل الاستخدامات.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "هل يمكن تشغيل تطبيقات الأندرويد على ماك M1/M2؟",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "نعم عبر BlueStacks Air المُحسَّن لمعالجات Apple Silicon.",
+              },
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: AndroidOnPcGuide,
 });
