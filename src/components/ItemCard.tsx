@@ -35,6 +35,7 @@ export function ItemCard({ item }: { item: Item }) {
   const detailsPath = itemPath(item);
 
   function openDetails() {
+    if (!item.slug && !item.id) return;
     navigate({ to: detailsPath.to as any, params: detailsPath.params as any });
   }
 

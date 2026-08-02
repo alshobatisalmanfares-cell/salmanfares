@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, History, LogIn, MessageCircle, PlusCircle } from "lucide-react";
+import { ArrowRight, History, LogIn, Menu, MessageCircle, PlusCircle, Trash2, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import {
   Sheet,
@@ -54,6 +54,7 @@ export function AiChat() {
   const [sessions, setSessions] = useState<SavedSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [streamingText, setStreamingText] = useState<string | null>(null);
   const send = useServerFn(chatWithAssistant);
 
@@ -169,11 +170,32 @@ export function AiChat() {
   function startNewConversation() {
     setActiveSessionId(null);
     setMessages([GREETING]);
+    setHistoryOpen(false);
   }
 
   function openSession(session: SavedSession) {
     setActiveSessionId(session.id);
     setMessages(session.messages);
+    setHistoryOpen(false);
+  }
+
+  async function deleteSession(id: string) {
+    if (!userId) return;
+    const { error } = await supabase
+      .from("ai_chat_sessions")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", userId);
+    if (error) {
+      toast.error("تعذّر حذف المحادثة");
+      return;
+    }
+    setSessions((prev) => prev.filter((s) => s.id !== id));
+    if (activeSessionId === id) {
+      setActiveSessionId(null);
+      setMessages([GREETING]);
+    }
+    toast.success("تم حذف المحادثة");
   }
 
   async function handleSend(textInput: string) {
@@ -224,6 +246,14 @@ export function AiChat() {
       >
         <SheetHeader className="border-b border-border/50 bg-card/40 px-4 py-3 text-start">
           <div className="flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => setHistoryOpen(true)}
+            aria-label="سجل المحادثات"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border/70 bg-background/70 text-foreground transition-colors hover:bg-muted/60"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
           <SheetTitle className="flex items-center gap-3">
             <img
               src={avatarUrl}
@@ -246,62 +276,92 @@ export function AiChat() {
           </div>
         </SheetHeader>
 
-        <div className="border-b border-border/50 bg-background/50 px-4 py-3">
-          {userId ? (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="inline-flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                  <History className="h-3.5 w-3.5 text-primary" />
+        {historyOpen && (
+          <div className="absolute inset-0 z-50 flex">
+            <div
+              className="absolute inset-0 bg-background/70 backdrop-blur-sm"
+              onClick={() => setHistoryOpen(false)}
+            />
+            <aside className="relative z-10 flex h-full w-[78%] max-w-72 flex-col border-e border-border/60 bg-card shadow-xl">
+              <div className="flex items-center justify-between gap-2 border-b border-border/50 px-3 py-3">
+                <span className="inline-flex items-center gap-2 text-sm font-bold text-foreground">
+                  <History className="h-4 w-4 text-primary" />
                   سجل المحادثات
-                </div>
+                </span>
                 <button
                   type="button"
-                  onClick={startNewConversation}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-primary/10 px-2 py-1 text-[11px] font-bold text-primary hover:bg-primary/20"
+                  onClick={() => setHistoryOpen(false)}
+                  aria-label="إغلاق"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border/60 text-muted-foreground hover:bg-muted/60"
                 >
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  جديد
+                  <X className="h-4 w-4" />
                 </button>
               </div>
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {historyLoading ? (
-                  <span className="text-xs text-muted-foreground">يتم التحميل...</span>
-                ) : visibleSessions.length === 0 ? (
-                  <span className="text-xs text-muted-foreground">ستظهر محادثاتك المحفوظة هنا.</span>
-                ) : (
-                  visibleSessions.map((session) => (
+              {userId ? (
+                <>
+                  <div className="px-3 py-3">
                     <button
-                      key={session.id}
                       type="button"
-                      onClick={() => openSession(session)}
-                      className={`max-w-40 shrink-0 truncate rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
-                        session.id === activeSessionId
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border/70 bg-card/40 text-foreground hover:bg-muted/60"
-                      }`}
+                      onClick={startNewConversation}
+                      className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3 py-2 text-xs font-bold text-primary hover:bg-primary/20"
                     >
-                      {session.title}
+                      <PlusCircle className="h-3.5 w-3.5" />
+                      محادثة جديدة
                     </button>
-                  ))
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between gap-3 rounded-xl border border-primary/30 bg-primary/10 px-3 py-2">
-              <p className="text-xs leading-relaxed text-foreground">
-                سجّل الدخول لحفظ محادثاتك مع مساعد سلمان فارس والعودة إليها لاحقاً.
-              </p>
-              <Link
-                to="/login"
-                onClick={() => setOpen(false)}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground"
-              >
-                <LogIn className="h-3.5 w-3.5" />
-                دخول
-              </Link>
-            </div>
-          )}
-        </div>
+                  </div>
+                  <div className="flex-1 space-y-1.5 overflow-y-auto px-3 pb-4">
+                    {historyLoading ? (
+                      <span className="text-xs text-muted-foreground">يتم التحميل...</span>
+                    ) : visibleSessions.length === 0 ? (
+                      <span className="text-xs text-muted-foreground">ستظهر محادثاتك المحفوظة هنا.</span>
+                    ) : (
+                      visibleSessions.map((session) => (
+                        <div
+                          key={session.id}
+                          className={`flex items-center gap-1 rounded-lg border px-2 py-1.5 transition-colors ${
+                            session.id === activeSessionId
+                              ? "border-primary bg-primary/10"
+                              : "border-border/60 bg-background/40 hover:bg-muted/50"
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => openSession(session)}
+                            className="min-w-0 flex-1 truncate text-start text-xs font-semibold text-foreground"
+                          >
+                            {session.title}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void deleteSession(session.id)}
+                            aria-label="حذف المحادثة"
+                            className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-3 px-3 py-4">
+                  <p className="text-xs leading-relaxed text-foreground">
+                    سجّل الدخول لحفظ محادثاتك مع مساعد سلمان فارس والعودة إليها لاحقاً.
+                  </p>
+                  <Link
+                    to="/login"
+                    onClick={() => setOpen(false)}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground"
+                  >
+                    <LogIn className="h-3.5 w-3.5" />
+                    دخول
+                  </Link>
+                </div>
+              )}
+            </aside>
+          </div>
+        )}
 
         <Conversation className="min-h-0">
           <ConversationContent className="gap-4 px-4 py-4">
