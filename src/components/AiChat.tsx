@@ -54,6 +54,7 @@ export function AiChat() {
   const [sessions, setSessions] = useState<SavedSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [streamingText, setStreamingText] = useState<string | null>(null);
   const send = useServerFn(chatWithAssistant);
 
   useEffect(() => {
@@ -69,7 +70,25 @@ export function AiChat() {
     void loadSessions(userId);
   }, [open, userId]);
 
-  const chatStatus = loading ? "submitted" : "ready";
+  const chatStatus = loading || streamingText !== null ? "submitted" : "ready";
+
+  function typewrite(full: string): Promise<void> {
+    return new Promise((resolve) => {
+      let i = 0;
+      setStreamingText("");
+      const step = () => {
+        i = Math.min(full.length, i + 2);
+        setStreamingText(full.slice(0, i));
+        if (i < full.length) {
+          window.setTimeout(step, 16);
+        } else {
+          setStreamingText(null);
+          resolve();
+        }
+      };
+      window.setTimeout(step, 16);
+    });
+  }
 
   const visibleSessions = useMemo(
     () => sessions.slice().sort((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at)),
@@ -170,10 +189,13 @@ export function AiChat() {
     try {
       const history = next.filter((m) => m !== GREETING).slice(-20);
       const res = await send({ data: { messages: history } });
+      setLoading(false);
+      await typewrite(res.reply);
       const finalMessages: Msg[] = [...next, { role: "assistant", content: res.reply }];
       setMessages(finalMessages);
       await saveSession(finalMessages);
     } catch (err: any) {
+      setStreamingText(null);
       const msg = String(err?.message ?? "");
       if (msg.includes("rate_limit")) toast.error("الخدمة مشغولة الآن، حاول بعد قليل");
       else if (msg.includes("credits")) toast.error("انتهى رصيد المساعد الذكي");
@@ -198,10 +220,10 @@ export function AiChat() {
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="flex w-full flex-col gap-0 bg-background/95 p-0 backdrop-blur-xl sm:max-w-md"
+        className="flex w-full flex-col gap-0 bg-background/95 p-0 backdrop-blur-xl sm:max-w-md [&>button]:hidden"
       >
         <SheetHeader className="border-b border-border/50 bg-card/40 px-4 py-3 text-start">
-          <div className="flex items-center justify-between gap-3 pe-8">
+          <div className="flex items-center justify-between gap-3">
           <SheetTitle className="flex items-center gap-3">
             <img
               src={avatarUrl}
@@ -301,7 +323,7 @@ export function AiChat() {
                     className={
                       m.role === "user"
                         ? "rounded-2xl bg-primary px-3.5 py-2 text-sm leading-relaxed text-primary-foreground"
-                        : "max-w-[82%] px-0 py-1 text-sm leading-relaxed text-foreground"
+                        : "max-w-[82%] px-0 py-1 text-sm leading-relaxed text-foreground [&_a]:font-bold [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4 [&_strong]:text-[1.05em] [&_strong]:font-black [&_strong]:text-foreground"
                     }
                   >
                     <MessageResponse>{m.content}</MessageResponse>
@@ -309,6 +331,18 @@ export function AiChat() {
                 </div>
               </Message>
             ))}
+            {streamingText !== null && (
+              <div className="flex gap-2">
+                <img
+                  src={avatarUrl}
+                  alt="سلمان فارس"
+                  className="h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-border/70"
+                />
+                <div className="max-w-[82%] px-0 py-1 text-sm leading-relaxed text-foreground [&_a]:font-bold [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4 [&_strong]:text-[1.05em] [&_strong]:font-black [&_strong]:text-foreground">
+                  <MessageResponse>{streamingText}</MessageResponse>
+                </div>
+              </div>
+            )}
             {loading && (
               <div className="flex gap-2">
                 <img
@@ -333,11 +367,11 @@ export function AiChat() {
         >
           <PromptInputTextarea
             placeholder={userId ? "اكتب رسالتك..." : "سجّل الدخول للدردشة مع المساعد"}
-            disabled={loading || !userId}
+            disabled={!userId}
             className="min-h-14 text-sm text-foreground"
           />
           <PromptInputFooter className="justify-end">
-            <PromptInputSubmit status={chatStatus} disabled={loading || !userId} />
+            <PromptInputSubmit status={chatStatus} disabled={loading || streamingText !== null || !userId} />
           </PromptInputFooter>
         </PromptInput>
       </SheetContent>
