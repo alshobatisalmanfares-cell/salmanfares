@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { createClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const MessageSchema = z.object({
@@ -35,12 +36,62 @@ const SYSTEM_PROMPT = `أنت "المساعد الرقمي لموقع سلمان
 - استخدم دائماً الاسم الرسمي "سلمان فارس".
 - إن لم تعرف الإجابة، اعترف بذلك واقترح صفحة التواصل (/contact).`;
 
+const SITE_URL = "https://salmanfares.lovable.app";
+
+type CatalogRow = {
+  id: string;
+  slug: string | null;
+  title: string;
+  description: string | null;
+  categories: string[] | null;
+};
+
+function itemUrl(row: CatalogRow) {
+  const cat = row.categories?.[0] ?? "apps";
+  return row.slug ? `${SITE_URL}/${cat}/${row.slug}` : `${SITE_URL}/item/${row.id}`;
+}
+
+async function buildCatalogPrompt(): Promise<string> {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) return "";
+  const client = createClient(url, key, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+  });
+  const { data, error } = await client
+    .from("items")
+    .select("id,slug,title,description,categories")
+    .order("sort_order", { ascending: false })
+    .limit(200);
+  if (error || !data) return "";
+
+  const rows = data as CatalogRow[];
+  const lines = rows.map((row) => {
+    const cats = (row.categories ?? []).join("، ") || "apps";
+    const desc = (row.description ?? "").replace(/\s+/g, " ").slice(0, 140);
+    return `- ${row.title} | التصنيفات: ${cats} | الرابط: ${itemUrl(row)} | الوصف: ${desc}`;
+  });
+
+  return `
+
+قائمة العناصر المنشورة على الموقع (استخدمها حرفياً ولا تخترع روابط):
+${lines.join("\n")}
+
+قواعد الترشيح والروابط:
+- عند السؤال عن أي تطبيق أو لعبة أو أداة أو موقع، أرفق دائماً رابطاً ماركداون مباشراً بالشكل [اسم العنصر](الرابط) من القائمة أعلاه فقط.
+- بعد ذكر العنصر المطلوب، اقترح من 1 إلى 3 عناصر مشابهة من نفس التصنيف مع روابطها الماركداون وسطر وصف قصير لكل عنصر.
+- اعرض الترشيحات كقائمة مرقمة، واجعل اسم العنصر داخل الرابط بخط عريض عند التأكيد (**[الاسم](الرابط)**).
+- إذا لم يتوفر عنصر مناسب في القائمة، قل ذلك بوضوح واقترح تصفح القسم المناسب بدل اختراع رابط.`;
+}
+
 export const chatWithAssistant = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => InputSchema.parse(data))
   .handler(async ({ data }) => {
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
+
+    const catalog = await buildCatalogPrompt();
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -51,7 +102,7 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: SYSTEM_PROMPT + catalog },
           ...data.messages,
         ],
       }),
