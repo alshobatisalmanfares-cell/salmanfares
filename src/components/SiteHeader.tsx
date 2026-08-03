@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, Home, AppWindow, Globe, Gamepad2, Info, Mail, Shield, FileText, Languages, Settings as SettingsIcon, Heart, Sparkles } from "lucide-react";
+import { Menu, Home, AppWindow, Globe, Gamepad2, Info, Mail, Shield, FileText, Languages, Settings as SettingsIcon, Heart, Sparkles, Bot, Download } from "lucide-react";
+import { toast } from "sonner";
+import { usePwaInstall } from "@/lib/pwa-install";
 import { supabase } from "@/integrations/supabase/client";
 import avatarUrl from "@/assets/avatar.jpg";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -21,6 +23,16 @@ export function SiteHeader() {
   const [signedIn, setSignedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [open, setOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const { canInstall, install } = usePwaInstall();
+
+  async function handleInstall() {
+    setOpen(false);
+    const res = await install();
+    if (res === "unavailable") {
+      toast("أضف الموقع إلى الشاشة الرئيسية من خيارات المتصفح (مشاركة ← إضافة إلى الشاشة الرئيسية).");
+    }
+  }
 
   async function refreshRole(userId: string | undefined) {
     if (!userId) { setIsAdmin(false); return; }
@@ -65,7 +77,7 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         {/* Hamburger trigger — visually top-left in RTL via flex order on the controls cluster */}
         <div className="flex items-center gap-2 order-last">
-          <AiChat />
+          <AiChat open={chatOpen} onOpenChange={setChatOpen} />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               aria-label={t("menu.open")}
@@ -94,6 +106,33 @@ export function SiteHeader() {
                     </SheetClose>
                   ))}
                 </nav>
+              </div>
+
+              <div className="mt-4 space-y-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    setTimeout(() => setChatOpen(true), 220);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 px-3 py-2.5 text-sm font-bold text-foreground transition-colors hover:bg-primary/20"
+                >
+                  <Bot className="h-4 w-4 text-primary" />
+                  المساعد الرقمي
+                </button>
+                <button
+                  type="button"
+                  onClick={handleInstall}
+                  className="flex w-full items-center gap-3 rounded-lg border border-border/60 bg-card/40 px-3 py-2.5 text-sm font-bold text-foreground transition-colors hover:bg-muted/60"
+                >
+                  <Download className="h-4 w-4 text-primary" />
+                  تثبيت التطبيق
+                  {canInstall && (
+                    <span className="ms-auto rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black text-emerald-500">
+                      جاهز
+                    </span>
+                  )}
+                </button>
               </div>
 
               <div className="mt-6 border-t border-border/50 pt-4">
