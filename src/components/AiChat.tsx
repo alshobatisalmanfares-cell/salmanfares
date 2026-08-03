@@ -46,8 +46,21 @@ const GREETING: Msg = {
     "أهلاً بك في موقع سلمان فارس. أنا المساعد الرقمي الرسمي هنا لخدمتك. كيف يمكنني مساعدتك اليوم؟ يمكنني إرشادك إلى أقسام التطبيقات، الألعاب، المواقع، وأدوات الذكاء الاصطناعي.",
 };
 
-export function AiChat() {
-  const [open, setOpen] = useState(false);
+export function AiChat({
+  open: openProp,
+  onOpenChange,
+  hideTrigger,
+}: {
+  open?: boolean;
+  onOpenChange?: (v: boolean) => void;
+  hideTrigger?: boolean;
+} = {}) {
+  const [openState, setOpenState] = useState(false);
+  const open = openProp ?? openState;
+  const setOpen = (v: boolean) => {
+    setOpenState(v);
+    onOpenChange?.(v);
+  };
   const [messages, setMessages] = useState<Msg[]>([GREETING]);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -231,15 +244,17 @@ export function AiChat() {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger
-        aria-label="المساعد الذكي"
-        className="relative inline-flex h-10 w-10 items-center justify-center rounded-md border border-primary/40 bg-primary/10 text-primary transition-colors hover:bg-primary/20"
-      >
-        <MessageCircle className="h-5 w-5" />
-        <span className="absolute -right-1 -top-1 rounded-full border border-background bg-emerald-500 px-1.5 py-0.5 text-[9px] font-black leading-none text-white shadow-sm">
-          AI
-        </span>
-      </SheetTrigger>
+      {!hideTrigger && (
+        <SheetTrigger
+          aria-label="المساعد الذكي"
+          className="relative inline-flex h-10 w-10 items-center justify-center rounded-md border border-primary/40 bg-primary/10 text-primary transition-colors hover:bg-primary/20"
+        >
+          <MessageCircle className="h-5 w-5" />
+          <span className="absolute -right-1 -top-1 rounded-full border border-background bg-emerald-500 px-1.5 py-0.5 text-[9px] font-black leading-none text-white shadow-sm">
+            AI
+          </span>
+        </SheetTrigger>
+      )}
       <SheetContent
         side="right"
         className="flex w-full flex-col gap-0 bg-background/95 p-0 backdrop-blur-xl sm:max-w-md [&>button]:hidden"

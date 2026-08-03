@@ -32,16 +32,17 @@ async function fetchItemEntries(): Promise<SitemapEntry[]> {
     const supabase = createClient(url, key, { auth: { persistSession: false } });
     const { data } = await supabase
       .from("items")
-      .select("id, slug, categories, created_at")
+      .select("id, slug, categories, updated_at, created_at")
       .limit(2000);
-    return (data ?? []).map((row: { id: string; slug: string | null; categories: string[] | null; created_at?: string }) => {
+    return (data ?? []).map((row: { id: string; slug: string | null; categories: string[] | null; updated_at?: string; created_at?: string }) => {
       const cat = (row.categories ?? [])[0] ?? "apps";
       const path = row.slug ? `/${cat}/${row.slug}` : `/item/${row.id}`;
+      const stamp = row.updated_at ?? row.created_at;
       return {
         path,
-        lastmod: row.created_at ? row.created_at.slice(0, 10) : undefined,
-        changefreq: "weekly" as const,
-        priority: "0.6",
+        lastmod: stamp ? stamp.slice(0, 10) : undefined,
+        changefreq: "daily" as const,
+        priority: "0.8",
       };
     });
   } catch {

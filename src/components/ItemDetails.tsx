@@ -161,22 +161,37 @@ export function ItemDetails({ item, loading }: { item: Item | null | undefined; 
 
   const [followOpen, setFollowOpen] = useState(false);
   const [clickedKeys, setClickedKeys] = useState<SocialKey[]>([]);
-  const requiredKeys = ((item?.required_follows ?? []) as SocialKey[]);
+  // Only keep follow requirements we can actually render a link for.
+  const requiredKeys = ((item?.required_follows ?? []) as SocialKey[]).filter((k) =>
+    socials.some((s) => s.key === k),
+  );
   const requiresFollow = requiredKeys.length > 0;
-  const followStorageKey = `follow:${item?.id ?? ""}`;
+  // Unlock state is scoped to the exact required set, so changing the
+  // requirements re-locks the item.
+  const followStorageKey = `follow:${item?.id ?? ""}:${[...requiredKeys].sort().join(",")}`;
   const [followed, setFollowed] = useState(false);
   useEffect(() => {
-    if (!item) return;
+    if (!item || !requiresFollow) {
+      setFollowed(false);
+      return;
+    }
     setFollowed(localStorage.getItem(followStorageKey) === "1");
-  }, [followStorageKey, item]);
-  const allClicked = requiredKeys.every((k) => clickedKeys.includes(k));
+  }, [followStorageKey, item, requiresFollow]);
+  const allClicked = requiredKeys.length > 0 && requiredKeys.every((k) => clickedKeys.includes(k));
+  const locked = requiresFollow && !followed;
+
+  function openTarget() {
+    if (!item) return;
+    if (requiresFollow && localStorage.getItem(followStorageKey) !== "1") return;
+    if (isSafeUrl(item.url)) window.open(item.url, "_blank", "noopener,noreferrer");
+  }
 
   function confirmFollowed() {
     if (!allClicked || !item) return;
     localStorage.setItem(followStorageKey, "1");
     setFollowed(true);
     setFollowOpen(false);
-    if (isSafeUrl(item.url)) window.open(item.url, "_blank", "noopener,noreferrer");
+    openTarget();
   }
 
   async function handleFav() {
@@ -327,19 +342,26 @@ export function ItemDetails({ item, loading }: { item: Item | null | undefined; 
         <div className="mt-6 border-t border-border/50 pt-5">
           <button
             type="button"
+            aria-disabled={locked}
             onClick={(e) => {
-              if (requiresFollow && !followed) {
-                e.preventDefault();
+              e.preventDefault();
+              if (locked) {
+                setClickedKeys([]);
                 setFollowOpen(true);
                 return;
               }
-              if (isSafeUrl(item.url)) window.open(item.url, "_blank", "noopener,noreferrer");
+              openTarget();
             }}
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-base font-extrabold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
           >
-            {requiresFollow && !followed ? <Lock className="h-5 w-5" /> : <Download className="h-5 w-5" />}
+            {locked ? <Lock className="h-5 w-5" /> : <Download className="h-5 w-5" />}
             {item.cta || t("details.cta")}
           </button>
+          {locked && (
+            <p className="mt-2 text-center text-xs font-semibold text-muted-foreground">
+              {t("lock.follow.desc")}
+            </p>
+          )}
         </div>
       </div>
 
