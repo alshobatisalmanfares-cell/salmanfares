@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Download, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import { registerServiceWorker } from "@/lib/pwa-sw";
 
 /**
  * Handles PWA setup + Supabase auth state:
@@ -17,12 +18,8 @@ export function PwaBoot() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Register the service worker in the background.
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js").catch(() => {});
-      });
-    }
+    // Register the generated service worker (guarded: production, non-preview only).
+    void registerServiceWorker();
 
     // Keep Supabase session sync alive so OAuth redirects land cleanly.
     const { data: sub } = supabase.auth.onAuthStateChange(() => {});
