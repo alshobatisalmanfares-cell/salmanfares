@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, Home, AppWindow, Globe, Gamepad2, Info, Mail, Shield, FileText, Languages, Settings as SettingsIcon, Heart, Sparkles, Bot, Download } from "lucide-react";
+import { Menu, Home, AppWindow, Globe, Gamepad2, Info, Mail, Shield, FileText, Languages, Settings as SettingsIcon, Heart, Sparkles, Bot, Download, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { usePwaInstall } from "@/lib/pwa-install";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +17,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { AiChat } from "@/components/AiChat";
+import { SyncIconButton, useDataSync } from "@/components/SyncButton";
 
 export function SiteHeader() {
   const { t, lang, setLang } = useI18n();
@@ -25,6 +26,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const { canInstall, install } = usePwaInstall();
+  const { sync, syncing } = useDataSync();
 
   async function handleInstall() {
     setOpen(false);
@@ -78,6 +80,7 @@ export function SiteHeader() {
         {/* Hamburger trigger — visually top-left in RTL via flex order on the controls cluster */}
         <div className="flex items-center gap-2 order-last">
           <AiChat open={chatOpen} onOpenChange={setChatOpen} />
+          <SyncIconButton />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               aria-label={t("menu.open")}
@@ -132,6 +135,15 @@ export function SiteHeader() {
                       جاهز
                     </span>
                   )}
+                </button>
+                <button
+                  type="button"
+                  onClick={sync}
+                  disabled={syncing}
+                  className="flex w-full items-center gap-3 rounded-lg border border-border/60 bg-card/40 px-3 py-2.5 text-sm font-bold text-foreground transition-colors hover:bg-muted/60 disabled:opacity-60"
+                >
+                  <RefreshCw className={`h-4 w-4 text-primary ${syncing ? "animate-spin" : ""}`} />
+                  تحديث البيانات
                 </button>
               </div>
 
