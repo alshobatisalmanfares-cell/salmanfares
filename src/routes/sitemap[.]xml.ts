@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
 
 const BASE_URL = "https://salmanfares.lovable.app";
 
@@ -18,37 +17,10 @@ const STATIC_ENTRIES: SitemapEntry[] = [
   { path: "/games", changefreq: "weekly", priority: "0.9" },
   { path: "/ai", changefreq: "weekly", priority: "0.9" },
   { path: "/about", changefreq: "monthly", priority: "0.7" },
-  { path: "/guides/android-on-pc", changefreq: "monthly", priority: "0.8" },
   { path: "/contact", changefreq: "monthly", priority: "0.7" },
   { path: "/privacy", changefreq: "yearly", priority: "0.4" },
   { path: "/terms", changefreq: "yearly", priority: "0.4" },
 ];
-
-async function fetchItemEntries(): Promise<SitemapEntry[]> {
-  try {
-    const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-    const key = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-    if (!url || !key) return [];
-    const supabase = createClient(url, key, { auth: { persistSession: false } });
-    const { data } = await supabase
-      .from("items")
-      .select("id, slug, categories, updated_at, created_at")
-      .limit(2000);
-    return (data ?? []).map((row: { id: string; slug: string | null; categories: string[] | null; updated_at?: string; created_at?: string }) => {
-      const cat = (row.categories ?? [])[0] ?? "apps";
-      const path = row.slug ? `/${cat}/${row.slug}` : `/item/${row.id}`;
-      const stamp = row.updated_at ?? row.created_at;
-      return {
-        path,
-        lastmod: stamp ? stamp.slice(0, 10) : undefined,
-        changefreq: "daily" as const,
-        priority: "0.8",
-      };
-    });
-  } catch {
-    return [];
-  }
-}
 
 function normalizePath(path: string): string {
   if (path === "/") return "";
@@ -59,10 +31,7 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const dynamicEntries = await fetchItemEntries();
-        const entries = [...STATIC_ENTRIES, ...dynamicEntries];
-
-        const urls = entries.map((e) => {
+        const urls = STATIC_ENTRIES.map((e) => {
           const normalizedPath = normalizePath(e.path);
           return [
             `  <url>`,
