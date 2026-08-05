@@ -255,6 +255,7 @@ export function SiteFooter() {
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
           <Link to="/about" className="hover:text-foreground">{t("footer.about")}</Link>
           <Link to="/contact" className="hover:text-foreground">{t("footer.contact")}</Link>
+          <Link to="/sitemap" className="hover:text-foreground">{t("footer.sitemap")}</Link>
         </div>
         <div className="text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} {t("site.name")}
