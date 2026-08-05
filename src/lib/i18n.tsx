@@ -73,6 +73,7 @@ const dict: Record<string, Tr> = {
 
   "footer.about": { ar: "من نحن", en: "About", es: "Acerca", nl: "Over ons", tr: "Hakkımızda", ur: "تعارف", pt: "Sobre", fr: "À propos", de: "Über uns" },
   "footer.contact": { ar: "تواصل معنا", en: "Contact us", es: "Contacto", nl: "Contact", tr: "İletişim", ur: "ہم سے رابطہ", pt: "Contato", fr: "Contact", de: "Kontakt" },
+  "footer.sitemap": { ar: "خريطة الموقع", en: "Sitemap", es: "Mapa del sitio", nl: "Sitemap", tr: "Site haritası", ur: "سائٹ کا نقشہ", pt: "Mapa do site", fr: "Plan du site", de: "Sitemap" },
 
   "about.title": { ar: "من نحن", en: "About us", es: "Acerca de nosotros", nl: "Over ons", tr: "Hakkımızda", ur: "ہمارے بارے میں", pt: "Sobre nós", fr: "À propos", de: "Über uns" },
   "about.intro": { ar: "منصة سلمان فارس هي بوابتكم المتكاملة للوصول إلى نخبة التطبيقات والأدوات الرقمية الحديثة.", en: "Salman Faris is your gateway to a curated selection of modern digital tools and apps.", es: "Salman Faris es tu portal a una selección de apps y herramientas digitales modernas.", nl: "Salman Faris is je gateway naar moderne digitale tools en apps.", tr: "Salman Faris, modern dijital araçlara açılan kapınızdır.", ur: "سلمان فارس جدید ڈیجیٹل ٹولز تک آپ کا گیٹ وے ہے۔", pt: "Salman Faris é seu portal para apps e ferramentas digitais modernas.", fr: "Salman Faris est votre passerelle vers une sélection d'outils numériques modernes.", de: "Salman Faris ist Ihr Tor zu modernen digitalen Tools." },
