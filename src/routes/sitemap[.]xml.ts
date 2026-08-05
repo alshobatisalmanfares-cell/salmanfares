@@ -50,6 +50,11 @@ async function fetchItemEntries(): Promise<SitemapEntry[]> {
   }
 }
 
+function normalizePath(path: string): string {
+  if (path === "/") return "";
+  return path.replace(/\/$/, "");
+}
+
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
@@ -57,18 +62,19 @@ export const Route = createFileRoute("/sitemap.xml")({
         const dynamicEntries = await fetchItemEntries();
         const entries = [...STATIC_ENTRIES, ...dynamicEntries];
 
-        const urls = entries.map((e) =>
-          [
+        const urls = entries.map((e) => {
+          const normalizedPath = normalizePath(e.path);
+          return [
             `  <url>`,
-            `    <loc>${BASE_URL}${e.path}</loc>`,
+            `    <loc>${BASE_URL}${normalizedPath}</loc>`,
             e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
             e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
             e.priority ? `    <priority>${e.priority}</priority>` : null,
             `  </url>`,
           ]
             .filter(Boolean)
-            .join("\n"),
-        );
+            .join("\n");
+        });
 
         const xml = [
           `<?xml version="1.0" encoding="UTF-8"?>`,
