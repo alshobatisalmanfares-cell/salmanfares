@@ -42,14 +42,23 @@ type FormState = {
   featured: boolean;
 };
 
-const empty: FormState = {
-  title: "", description: "", categories: ["apps"], url: "",
-  cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
-  required_follows: [], gallery: [],
-  developer: "", license: "", language: "", os: "",
-  file_type: "", file_size: "", update_date: "",
-  featured: false,
-};
+function currentYearMonth() {
+  const d = new Date();
+  return `${d.getFullYear()}/${d.getMonth() + 1}`;
+}
+
+function makeEmpty(): FormState {
+  return {
+    title: "", description: "", categories: ["apps"], url: "",
+    cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
+    required_follows: [], gallery: [],
+    developer: "", license: "مجاني", language: "", os: "",
+    file_type: "APK", file_size: "", update_date: currentYearMonth(),
+    featured: false,
+  };
+}
+
+const empty: FormState = makeEmpty();
 
 const CATEGORY_LABELS: Record<ItemCategory, string> = {
   apps: "تطبيقات",
@@ -63,7 +72,9 @@ function AdminPage() {
   const qc = useQueryClient();
   const [authChecked, setAuthChecked] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [form, setForm] = useState<FormState>(empty);
+  const [form, setForm] = useState<FormState>(() => makeEmpty());
+  const [filterCat, setFilterCat] = useState<ItemCategory | "all">("all");
+  const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
@@ -116,6 +127,18 @@ function AdminPage() {
         update_date: form.update_date.trim() || null,
         featured: form.featured,
       };
+      const targetUrl = payload.url;
+      const { data: dupes } = await supabase
+        .from("items")
+        .select("id,title,url")
+        .eq("url", targetUrl);
+      const conflict = (dupes ?? []).find((d) => d.id !== form.id);
+      if (conflict) {
+        toast.error(`هذا الرابط مستخدم بالفعل في العنصر: ${conflict.title}`);
+        setSaving(false);
+        return;
+      }
+
       if (form.id) {
         const { error } = await supabase.from("items").update(payload).eq("id", form.id);
         if (error) throw error;
@@ -125,7 +148,7 @@ function AdminPage() {
         if (error) throw error;
         toast.success("تمت الإضافة");
       }
-      setForm(empty);
+      setForm(makeEmpty());
       qc.invalidateQueries({ queryKey: ["items"] });
     } catch (err: any) {
       toast.error(err?.message ?? "خطأ");
@@ -157,7 +180,7 @@ function AdminPage() {
       os: it.os ?? "",
       file_type: it.file_type ?? "",
       file_size: it.file_size ?? "",
-      update_date: it.update_date ?? "",
+      update_date: it.update_date ?? currentYearMonth(),
       featured: !!it.featured,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -461,7 +484,7 @@ function AdminPage() {
             {form.id ? "حفظ التعديل" : "إضافة"}
           </Button>
           {form.id && (
-            <Button type="button" variant="outline" onClick={() => setForm(empty)}>إلغاء</Button>
+            <Button type="button" variant="outline" onClick={() => setForm(makeEmpty())}>إلغاء</Button>
           )}
         </div>
       </form>
