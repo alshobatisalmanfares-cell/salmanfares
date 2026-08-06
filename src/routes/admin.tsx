@@ -42,14 +42,23 @@ type FormState = {
   featured: boolean;
 };
 
-const empty: FormState = {
-  title: "", description: "", categories: ["apps"], url: "",
-  cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
-  required_follows: [], gallery: [],
-  developer: "", license: "", language: "", os: "",
-  file_type: "", file_size: "", update_date: "",
-  featured: false,
-};
+function currentYearMonth() {
+  const d = new Date();
+  return `${d.getFullYear()}/${d.getMonth() + 1}`;
+}
+
+function makeEmpty(): FormState {
+  return {
+    title: "", description: "", categories: ["apps"], url: "",
+    cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
+    required_follows: [], gallery: [],
+    developer: "", license: "مجاني", language: "", os: "",
+    file_type: "APK", file_size: "", update_date: currentYearMonth(),
+    featured: false,
+  };
+}
+
+const empty: FormState = makeEmpty();
 
 const CATEGORY_LABELS: Record<ItemCategory, string> = {
   apps: "تطبيقات",
@@ -63,7 +72,9 @@ function AdminPage() {
   const qc = useQueryClient();
   const [authChecked, setAuthChecked] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [form, setForm] = useState<FormState>(empty);
+  const [form, setForm] = useState<FormState>(() => makeEmpty());
+  const [filterCat, setFilterCat] = useState<ItemCategory | "all">("all");
+  const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
@@ -88,6 +99,13 @@ function AdminPage() {
     queryKey: ["items", "admin-all"],
     queryFn: () => fetchItems(),
     enabled: isAdmin,
+  });
+
+  const q = search.trim().toLowerCase();
+  const filteredItems: Item[] = (items ?? []).filter((it) => {
+    const catOk = filterCat === "all" || (it.categories ?? []).includes(filterCat);
+    const nameOk = !q || it.title.toLowerCase().includes(q);
+    return catOk && nameOk;
   });
 
   async function save(e: React.FormEvent) {
@@ -116,6 +134,18 @@ function AdminPage() {
         update_date: form.update_date.trim() || null,
         featured: form.featured,
       };
+      const targetUrl = payload.url;
+      const { data: dupes } = await supabase
+        .from("items")
+        .select("id,title,url")
+        .eq("url", targetUrl);
+      const conflict = (dupes ?? []).find((d) => d.id !== form.id);
+      if (conflict) {
+        toast.error(`هذا الرابط مستخدم بالفعل في العنصر: ${conflict.title}`);
+        setSaving(false);
+        return;
+      }
+
       if (form.id) {
         const { error } = await supabase.from("items").update(payload).eq("id", form.id);
         if (error) throw error;
@@ -125,7 +155,7 @@ function AdminPage() {
         if (error) throw error;
         toast.success("تمت الإضافة");
       }
-      setForm(empty);
+      setForm(makeEmpty());
       qc.invalidateQueries({ queryKey: ["items"] });
     } catch (err: any) {
       toast.error(err?.message ?? "خطأ");
@@ -157,7 +187,7 @@ function AdminPage() {
       os: it.os ?? "",
       file_type: it.file_type ?? "",
       file_size: it.file_size ?? "",
-      update_date: it.update_date ?? "",
+      update_date: it.update_date ?? currentYearMonth(),
       featured: !!it.featured,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -461,15 +491,38 @@ function AdminPage() {
             {form.id ? "حفظ التعديل" : "إضافة"}
           </Button>
           {form.id && (
-            <Button type="button" variant="outline" onClick={() => setForm(empty)}>إلغاء</Button>
+            <Button type="button" variant="outline" onClick={() => setForm(makeEmpty())}>إلغاء</Button>
           )}
         </div>
       </form>
 
       <div className="mt-8">
-        <h2 className="mb-3 text-sm font-bold text-muted-foreground">العناصر ({items?.length ?? 0})</h2>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          {(["all", ...ALL_CATEGORIES] as const).map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setFilterCat(c as ItemCategory | "all")}
+              className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+                filterCat === c
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border/70 bg-card/40 text-foreground hover:bg-muted/50"
+              }`}
+            >
+              {c === "all" ? "الكل" : CATEGORY_LABELS[c as ItemCategory]}
+            </button>
+          ))}
+        </div>
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="ابحث عن عنصر بالاسم..."
+          aria-label="بحث في العناصر"
+          className="mb-3"
+        />
+        <h2 className="mb-3 text-sm font-bold text-muted-foreground">العناصر ({filteredItems.length})</h2>
         <div className="space-y-2">
-          {(items ?? []).map((it) => (
+          {filteredItems.map((it) => (
             <div key={it.id} className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/40 p-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border/60 bg-muted/30 text-2xl">
                 {it.image_url ? (
