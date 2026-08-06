@@ -102,6 +102,7 @@ function AdminPage() {
   });
 
   async function save(e: React.FormEvent) {
+    // eslint-disable-next-line
     e.preventDefault();
     setSaving(true);
     try {
