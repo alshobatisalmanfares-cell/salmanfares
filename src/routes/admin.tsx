@@ -50,9 +50,9 @@ function currentYearMonth() {
 function makeEmpty(): FormState {
   return {
     title: "", description: "", categories: ["apps"], url: "",
-    cta: "تحميل التطبيق", emoji: "✨", badge: "", views: "", image_url: "", rating: "",
+    cta: "تحميل التطبيق", emoji: "✨", badge: "جديد", views: "", image_url: "", rating: "",
     required_follows: [], gallery: [],
-    developer: "", license: "مجاني", language: "", os: "",
+    developer: "salman fares | سلمان فارس", license: "مجاني", language: "All", os: "",
     file_type: "APK", file_size: "", update_date: currentYearMonth(),
     featured: false,
   };
