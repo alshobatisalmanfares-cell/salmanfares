@@ -101,8 +101,14 @@ function AdminPage() {
     enabled: isAdmin,
   });
 
+  const q = search.trim().toLowerCase();
+  const filteredItems: Item[] = (items ?? []).filter((it) => {
+    const catOk = filterCat === "all" || (it.categories ?? []).includes(filterCat);
+    const nameOk = !q || it.title.toLowerCase().includes(q);
+    return catOk && nameOk;
+  });
+
   async function save(e: React.FormEvent) {
-    // eslint-disable-next-line
     e.preventDefault();
     setSaving(true);
     try {
