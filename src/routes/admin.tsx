@@ -490,9 +490,32 @@ function AdminPage() {
       </form>
 
       <div className="mt-8">
-        <h2 className="mb-3 text-sm font-bold text-muted-foreground">العناصر ({items?.length ?? 0})</h2>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          {(["all", ...ALL_CATEGORIES] as const).map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setFilterCat(c as ItemCategory | "all")}
+              className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+                filterCat === c
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border/70 bg-card/40 text-foreground hover:bg-muted/50"
+              }`}
+            >
+              {c === "all" ? "الكل" : CATEGORY_LABELS[c as ItemCategory]}
+            </button>
+          ))}
+        </div>
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="ابحث عن عنصر بالاسم..."
+          aria-label="بحث في العناصر"
+          className="mb-3"
+        />
+        <h2 className="mb-3 text-sm font-bold text-muted-foreground">العناصر ({filteredItems.length})</h2>
         <div className="space-y-2">
-          {(items ?? []).map((it) => (
+          {filteredItems.map((it) => (
             <div key={it.id} className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/40 p-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border/60 bg-muted/30 text-2xl">
                 {it.image_url ? (
