@@ -30,7 +30,6 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
-import { Shimmer } from "@/components/ai-elements/shimmer";
 
 type Msg = { role: "user" | "assistant"; content: string };
 type SavedSession = {
