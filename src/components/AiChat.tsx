@@ -526,7 +526,7 @@ export function AiChat({
                 aria-label="إرسال"
                 className="h-9 w-9 rounded-xl bg-primary text-primary-foreground shadow-md transition-all hover:bg-primary/90"
               >
-                {chatStatus === "ready" || chatStatus === "error" ? <Send className="h-4 w-4 rtl:-scale-x-100" /> : undefined}
+                {chatStatus === "ready" ? <Send className="h-4 w-4 rtl:-scale-x-100" /> : undefined}
               </PromptInputSubmit>
             </PromptInputFooter>
           </PromptInput>
