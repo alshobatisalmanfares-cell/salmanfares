@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Bot, Check, Copy, Gamepad2, History, LogIn, Menu, MessageCircle, Mic, PlusCircle, Smartphone, Trash2, Wrench, X } from "lucide-react";
+import { ArrowRight, Bot, Check, Copy, Gamepad2, History, LogIn, Menu, MessageCircle, Mic, PlusCircle, Smartphone, Trash2, Wrench, Send, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import {
   Sheet,
