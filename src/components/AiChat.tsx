@@ -501,7 +501,14 @@ export function AiChat({
             <PromptInputTextarea
               placeholder={userId ? "اكتب رسالتك..." : "سجّل الدخول للدردشة مع المساعد"}
               disabled={!userId}
-              className="max-h-40 min-h-11 text-sm text-foreground"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                  // Enter inserts a new line; sending is only via the send button
+                  e.preventDefault();
+                  document.execCommand("insertText", false, "\n");
+                }
+              }}
+              className="max-h-32 min-h-9 py-1.5 text-[13px] leading-5 text-foreground"
             />
             <PromptInputFooter className="justify-between gap-2">
               <button
@@ -516,12 +523,15 @@ export function AiChat({
               <PromptInputSubmit
                 status={chatStatus}
                 disabled={loading || streamingText !== null || !userId}
-                className="h-10 w-10 rounded-xl bg-primary text-primary-foreground shadow-md transition-all hover:bg-primary/90"
-              />
+                aria-label="إرسال"
+                className="h-9 w-9 rounded-xl bg-primary text-primary-foreground shadow-md transition-all hover:bg-primary/90"
+              >
+                {chatStatus === "ready" || chatStatus === "error" ? <Send className="h-4 w-4 rtl:-scale-x-100" /> : undefined}
+              </PromptInputSubmit>
             </PromptInputFooter>
           </PromptInput>
           <p className="mt-2 text-center text-[10px] text-muted-foreground">
-            اضغط Enter للإرسال • المساعد الذكي لموقع سلمان للتقنية
+            اضغط زر الإرسال لإرسال رسالتك • المساعد الذكي لموقع سلمان فارس
           </p>
         </div>
       </SheetContent>
