@@ -1,4 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { Plus, Camera, Image as ImageIcon, FileText, Loader2, Settings } from "lucide-react";
+import { useOnlineStatus } from "@/lib/online-status";
+import { readSettings } from "@/lib/app-settings";
+import { requestMic } from "@/components/PermissionsModal";
 import { ArrowRight, Bot, Check, Copy, Gamepad2, History, LogIn, Menu, MessageCircle, Mic, PlusCircle, Smartphone, Trash2, Wrench, Send, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import {
@@ -103,6 +108,36 @@ export function AiChat({
   const [streamingText, setStreamingText] = useState<string | null>(null);
   const [listening, setListening] = useState(false);
   const send = useServerFn(chatWithAssistant);
+  const online = useOnlineStatus();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [attachment, setAttachment] = useState<{ name: string; text: string; processing: boolean } | null>(null);
+  const [waveLevels, setWaveLevels] = useState<number[]>([]);
+  const voiceRef = useRef<{ stop: () => void } | null>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const galleryRef = useRef<HTMLInputElement>(null);
+  const filesRef = useRef<HTMLInputElement>(null);
+  const processing = !!attachment?.processing;
+
+  async function onPickFile(file: File | undefined) {
+    setMenuOpen(false);
+    if (!file) return;
+    setAttachment({ name: file.name, text: "", processing: true });
+    try {
+      const isText = /^text\/|json|xml|csv|javascript/.test(file.type) || /\.(txt|md|csv|json|html?|js|ts)$/i.test(file.name);
+      let text = "";
+      if (isText) text = (await file.text()).slice(0, 6000);
+      else if (file.type === "application/pdf") {
+        // Light-weight extraction of readable text runs inside the PDF.
+        const raw = new TextDecoder("latin1").decode(await file.arrayBuffer());
+        text = (raw.match(/\(([^()]{3,})\)\s*Tj/g) ?? []).map((m) => m.replace(/^\(|\)\s*Tj$/g, "")).join(" ").slice(0, 6000);
+      }
+      const kb = Math.round(file.size / 1024);
+      setAttachment({ name: file.name, processing: false, text: text ? `[مرفق: ${file.name}]\n${text}` : `[أرفق المستخدم ملفاً: ${file.name} (${file.type || "غير معروف"}، ${kb}KB)]` });
+    } catch {
+      toast.error("تعذّر قراءة الملف");
+      setAttachment(null);
+    }
+  }
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -245,8 +280,15 @@ export function AiChat({
   }
 
   async function handleSend(textInput: string) {
-    const text = textInput.trim();
+    if (!online || (typeof navigator !== "undefined" && !navigator.onLine)) {
+      toast.error("لا يوجد اتصال بالإنترنت. يرجى الاتصال بالإنترنت لتلقي إجابات الذكاء الاصطناعي.");
+      return;
+    }
+    if (processing) return;
+    const extra = attachment?.text ? `\n\n${attachment.text}` : "";
+    const text = (textInput.trim() + extra).trim();
     if (!text || loading) return;
+    setAttachment(null);
     if (!userId) {
       toast.error("سجّل الدخول لاستخدام المساعد الذكي");
       return;
@@ -256,7 +298,7 @@ export function AiChat({
     setLoading(true);
     try {
       const history = next.filter((m) => m !== GREETING).slice(-20);
-      const res = await send({ data: { messages: history } });
+      const res = await send({ data: { messages: history, model: readSettings().model, useMemory: readSettings().memoryEnabled } });
       setLoading(false);
       await typewrite(res.reply);
       const finalMessages: Msg[] = [...next, { role: "assistant", content: res.reply }];
@@ -277,22 +319,58 @@ export function AiChat({
 
   const isEmpty = !messages.some((m) => m.role === "user") && !loading && streamingText === null;
 
-  function startVoice() {
+  async function startVoice() {
+    if (voiceRef.current) { voiceRef.current.stop(); return; }
     const W = window as any;
     const SR = W.SpeechRecognition || W.webkitSpeechRecognition;
     if (!SR) {
       toast.error("الإدخال الصوتي غير مدعوم في هذا المتصفح");
       return;
     }
+    const stream = await requestMic();
+    if (!stream) return;
+    // Live waveform via Web Audio AnalyserNode
+    const ctx = new (W.AudioContext || W.webkitAudioContext)();
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 64;
+    ctx.createMediaStreamSource(stream).connect(analyser);
+    const buf = new Uint8Array(analyser.frequencyBinCount);
+    let raf = 0;
+    const tick = () => {
+      analyser.getByteFrequencyData(buf);
+      setWaveLevels(Array.from(buf.slice(0, 20), (v) => Math.max(0.1, v / 255)));
+      raf = requestAnimationFrame(tick);
+    };
+    tick();
     const rec = new SR();
     rec.lang = "ar-SA";
-    rec.interimResults = false;
+    rec.interimResults = true;
+    rec.continuous = false;
+    let finalText = "";
     rec.onresult = (e: any) => {
-      const t = e.results?.[0]?.[0]?.transcript;
+      // Only accumulate finalized segments once, avoiding duplicated transcripts.
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalText += e.results[i][0].transcript;
+      }
+    };
+    const cleanup = () => {
+      cancelAnimationFrame(raf);
+      stream.getTracks().forEach((t) => t.stop());
+      void ctx.close().catch(() => {});
+      setWaveLevels([]);
+      setListening(false);
+      voiceRef.current = null;
+    };
+    rec.onend = () => {
+      cleanup();
+      const t = finalText.trim();
       if (t) void handleSend(t).catch(() => {});
     };
-    rec.onend = () => setListening(false);
-    rec.onerror = () => setListening(false);
+    rec.onerror = (e: any) => {
+      if (e?.error === "not-allowed") toast.error("تم رفض صلاحية الميكروفون. يرجى تفعيلها من إعدادات الجهاز أو المتصفح.");
+      cleanup();
+    };
+    voiceRef.current = { stop: () => rec.stop() };
     setListening(true);
     rec.start();
   }
@@ -492,6 +570,28 @@ export function AiChat({
         </Conversation>
 
         <div className="px-3 pb-3 pt-2">
+          {!online && (
+            <p className="mx-auto mb-2 max-w-3xl rounded-xl bg-destructive/10 px-3 py-2 text-center text-xs font-bold text-destructive">
+              لا يوجد اتصال بالإنترنت. يرجى الاتصال بالإنترنت لتلقي إجابات الذكاء الاصطناعي.
+            </p>
+          )}
+          {attachment && (
+            <div className="mx-auto mb-2 flex max-w-3xl items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-xs">
+              {attachment.processing ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <FileText className="h-4 w-4 text-primary" />}
+              <span className="flex-1 truncate">{attachment.processing ? (/\.pdf$/i.test(attachment.name) ? "جارِ قراءة ملف PDF..." : "جارِ قراءة الملف...") : attachment.name}</span>
+              <button type="button" onClick={() => setAttachment(null)} aria-label="إزالة المرفق"><X className="h-3.5 w-3.5" /></button>
+            </div>
+          )}
+          {listening && (
+            <div className="mx-auto mb-2 flex h-10 max-w-3xl items-center justify-center gap-1 rounded-xl bg-primary/10" aria-label="جارٍ التسجيل">
+              {(waveLevels.length ? waveLevels : Array(20).fill(0.1)).map((v, i) => (
+                <span key={i} className="w-1 rounded-full bg-primary transition-all" style={{ height: `${Math.round(v * 32) + 4}px` }} />
+              ))}
+            </div>
+          )}
+          <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => { void onPickFile(e.target.files?.[0]); e.target.value = ""; }} />
+          <input ref={galleryRef} type="file" accept="image/*,video/*" hidden onChange={(e) => { void onPickFile(e.target.files?.[0]); e.target.value = ""; }} />
+          <input ref={filesRef} type="file" accept="*/*" hidden onChange={(e) => { void onPickFile(e.target.files?.[0]); e.target.value = ""; }} />
           <PromptInput
             onSubmit={async (message) => {
               await handleSend(message.text);
@@ -511,6 +611,23 @@ export function AiChat({
               className="max-h-32 min-h-9 py-1.5 text-[13px] leading-5 text-foreground"
             />
             <PromptInputFooter className="justify-between gap-2">
+              <div className="relative flex gap-2">
+              <button
+                type="button"
+                onClick={() => setMenuOpen((v) => !v)}
+                disabled={!userId}
+                aria-label="إرفاق"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 text-muted-foreground hover:bg-muted/60 disabled:opacity-50"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+              {menuOpen && (
+                <div className="absolute bottom-12 start-0 z-10 w-40 overflow-hidden rounded-xl border border-border bg-popover text-sm shadow-xl">
+                  <button type="button" onClick={() => cameraRef.current?.click()} className="flex w-full items-center gap-2 px-3 py-2.5 hover:bg-muted"><Camera className="h-4 w-4" />الكاميرا</button>
+                  <button type="button" onClick={() => galleryRef.current?.click()} className="flex w-full items-center gap-2 px-3 py-2.5 hover:bg-muted"><ImageIcon className="h-4 w-4" />المعرض</button>
+                  <button type="button" onClick={() => filesRef.current?.click()} className="flex w-full items-center gap-2 px-3 py-2.5 hover:bg-muted"><FileText className="h-4 w-4" />الملفات</button>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={startVoice}
@@ -520,9 +637,10 @@ export function AiChat({
               >
                 <Mic className={`h-4 w-4 ${listening ? "animate-pulse" : ""}`} />
               </button>
+              </div>
               <PromptInputSubmit
                 status={chatStatus}
-                disabled={loading || streamingText !== null || !userId}
+                disabled={loading || streamingText !== null || !userId || processing || !online}
                 aria-label="إرسال"
                 className="h-9 w-9 rounded-xl bg-primary text-primary-foreground shadow-md transition-all hover:bg-primary/90"
               >
