@@ -13,12 +13,14 @@ import { Route as WebsitesRouteImport } from './routes/websites'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapRouteImport } from './routes/sitemap'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as GamesRouteImport } from './routes/games'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as AppsRouteImport } from './routes/apps'
 import { Route as AiRouteImport } from './routes/ai'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -59,6 +61,11 @@ const SitemapRoute = SitemapRouteImport.update({
   path: '/sitemap',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -87,6 +94,11 @@ const FavoritesRoute = FavoritesRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppsRoute = AppsRouteImport.update({
@@ -194,12 +206,14 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/ai': typeof AiRouteWithChildren
   '/apps': typeof AppsRouteWithChildren
+  '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
   '/games': typeof GamesRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
+  '/settings': typeof SettingsRoute
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -223,11 +237,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
+  '/settings': typeof SettingsRoute
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -253,12 +269,14 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/ai': typeof AiRouteWithChildren
   '/apps': typeof AppsRouteWithChildren
+  '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
   '/favorites': typeof FavoritesRoute
   '/games': typeof GamesRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/privacy': typeof PrivacyRoute
+  '/settings': typeof SettingsRoute
   '/sitemap': typeof SitemapRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -286,12 +304,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/ai'
     | '/apps'
+    | '/chat'
     | '/contact'
     | '/favorites'
     | '/games'
     | '/login'
     | '/mcp'
     | '/privacy'
+    | '/settings'
     | '/sitemap'
     | '/sitemap.xml'
     | '/terms'
@@ -315,11 +335,13 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/chat'
     | '/contact'
     | '/favorites'
     | '/login'
     | '/mcp'
     | '/privacy'
+    | '/settings'
     | '/sitemap'
     | '/sitemap.xml'
     | '/terms'
@@ -344,12 +366,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/ai'
     | '/apps'
+    | '/chat'
     | '/contact'
     | '/favorites'
     | '/games'
     | '/login'
     | '/mcp'
     | '/privacy'
+    | '/settings'
     | '/sitemap'
     | '/sitemap.xml'
     | '/terms'
@@ -376,12 +400,14 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AiRoute: typeof AiRouteWithChildren
   AppsRoute: typeof AppsRouteWithChildren
+  ChatRoute: typeof ChatRoute
   ContactRoute: typeof ContactRoute
   FavoritesRoute: typeof FavoritesRoute
   GamesRoute: typeof GamesRouteWithChildren
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
   PrivacyRoute: typeof PrivacyRoute
+  SettingsRoute: typeof SettingsRoute
   SitemapRoute: typeof SitemapRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
@@ -424,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -464,6 +497,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/apps': {
@@ -658,12 +698,14 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AiRoute: AiRouteWithChildren,
   AppsRoute: AppsRouteWithChildren,
+  ChatRoute: ChatRoute,
   ContactRoute: ContactRoute,
   FavoritesRoute: FavoritesRoute,
   GamesRoute: GamesRouteWithChildren,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
   PrivacyRoute: PrivacyRoute,
+  SettingsRoute: SettingsRoute,
   SitemapRoute: SitemapRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,

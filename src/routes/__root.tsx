@@ -13,6 +13,7 @@ import { SiteHeader, SiteFooter } from "@/components/SiteHeader";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/lib/i18n";
 import { PwaBoot } from "@/components/PwaBoot";
+import { PermissionsModal } from "@/components/PermissionsModal";
 import { OfflineBanner } from "@/components/OfflineBanner";
 
 function NotFoundComponent() {
@@ -184,6 +185,7 @@ function RootComponent() {
           <SiteFooter />
         </div>
         <PwaBoot />
+        <PermissionsModal />
         <OfflineBanner />
         <Toaster richColors position="top-center" />
       </I18nProvider>
