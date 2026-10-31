@@ -420,6 +420,14 @@ export function AiChat({
               </span>
             </span>
           </SheetTitle>
+          <Link
+            to="/settings"
+            onClick={() => setOpen(false)}
+            aria-label="الإعدادات"
+            className="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border/70 text-muted-foreground hover:bg-muted/60"
+          >
+            <Settings className="h-4 w-4" />
+          </Link>
           <button
             type="button"
             onClick={() => setOpen(false)}
