@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { Plus, Camera, Image as ImageIcon, FileText, Loader2, Settings } from "lucide-react";
 import { useOnlineStatus } from "@/lib/online-status";
 import { readSettings } from "@/lib/app-settings";
