@@ -170,7 +170,7 @@ function SettingsPage() {
       </Section>
 
       <Section title="عن التطبيق والمشاريع">
-        {[["زاد الدعاة", "https://zad-alduat.lovable.app"], ["كنز ستور", "https://kanzstore.lovable.app"], ["متجر سلمان فارس", "https://salmanfares.lovable.app"]].map(([n, u]) => (
+        {[["زاد الدعاة", "https://zad-alduat.lovable.app"], ["كنز ستور", "https://kanzstore.lovable.app"], ["متجر سلمان فارس", "https://salmanfares.lovable.app/"]].map(([n, u]) => (
           <a key={u} href={u} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between text-sm font-bold hover:text-primary">
             {n}<ExternalLink className="h-4 w-4" />
           </a>
