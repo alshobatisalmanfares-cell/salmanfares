@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, Camera, Image as ImageIcon, FileText, Loader2, Settings } from "lucide-react";
 import { useOnlineStatus } from "@/lib/online-status";
 import { readSettings } from "@/lib/app-settings";
+import { readImage } from "@/lib/chat-media";
 import { requestMic } from "@/components/PermissionsModal";
 import { ArrowRight, Bot, Check, Copy, Gamepad2, History, LogIn, Menu, MessageCircle, Mic, PlusCircle, Smartphone, Trash2, Wrench, Send, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
@@ -109,7 +110,7 @@ export function AiChat({
   const send = useServerFn(chatWithAssistant);
   const online = useOnlineStatus();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [attachment, setAttachment] = useState<{ name: string; text: string; processing: boolean } | null>(null);
+  const [attachment, setAttachment] = useState<{ name: string; text: string; processing: boolean; image?: { dataUrl: string } } | null>(null);
   const [waveLevels, setWaveLevels] = useState<number[]>([]);
   const voiceRef = useRef<{ stop: () => void } | null>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
@@ -122,6 +123,11 @@ export function AiChat({
     if (!file) return;
     setAttachment({ name: file.name, text: "", processing: true });
     try {
+      if (file.type.startsWith("image/")) {
+        const image = await readImage(file);
+        setAttachment({ name: file.name, text: `[صورة مرفقة: ${file.name}]`, processing: false, image });
+        return;
+      }
       const isText = /^text\/|json|xml|csv|javascript/.test(file.type) || /\.(txt|md|csv|json|html?|js|ts)$/i.test(file.name);
       let text = "";
       if (isText) text = (await file.text()).slice(0, 6000);
@@ -132,8 +138,8 @@ export function AiChat({
       }
       const kb = Math.round(file.size / 1024);
       setAttachment({ name: file.name, processing: false, text: text ? `[مرفق: ${file.name}]\n${text}` : `[أرفق المستخدم ملفاً: ${file.name} (${file.type || "غير معروف"}، ${kb}KB)]` });
-    } catch {
-      toast.error("تعذّر قراءة الملف");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "تعذّر قراءة الملف");
       setAttachment(null);
     }
   }
@@ -287,17 +293,18 @@ export function AiChat({
     const extra = attachment?.text ? `\n\n${attachment.text}` : "";
     const text = (textInput.trim() + extra).trim();
     if (!text || loading) return;
-    setAttachment(null);
     if (!userId) {
       toast.error("سجّل الدخول لاستخدام المساعد الذكي");
       return;
     }
+    const image = attachment?.image;
+    setAttachment(null);
     const next: Msg[] = [...messages, { role: "user", content: text }];
     setMessages(next);
     setLoading(true);
     try {
       const history = next.filter((m) => m !== GREETING).slice(-20);
-      const res = await send({ data: { messages: history, model: readSettings().model, useMemory: readSettings().memoryEnabled } });
+      const res = await send({ data: { messages: history, image, model: readSettings().model, useMemory: readSettings().memoryEnabled } });
       setLoading(false);
       await typewrite(res.reply);
       const finalMessages: Msg[] = [...next, { role: "assistant", content: res.reply }];
@@ -308,6 +315,7 @@ export function AiChat({
       const msg = String(err?.message ?? "");
       if (msg.includes("rate_limit")) toast.error("الخدمة مشغولة الآن، حاول بعد قليل");
       else if (msg.includes("credits")) toast.error("انتهى رصيد المساعد الذكي");
+      else if (msg.includes("ai_gateway_error:")) toast.error(msg.split(/ai_gateway_error:\d+:/)[1] || msg);
       else toast.error("تعذّر الاتصال بالمساعد أو حفظ المحادثة");
       setMessages((prev) => prev.slice(0, -1));
       throw err;
@@ -584,7 +592,7 @@ export function AiChat({
           )}
           {attachment && (
             <div className="mx-auto mb-2 flex max-w-3xl items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-xs">
-              {attachment.processing ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <FileText className="h-4 w-4 text-primary" />}
+              {attachment.processing ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : attachment.image ? <img src={attachment.image.dataUrl} alt="الصورة المرفقة" className="h-10 w-10 rounded-md object-cover" /> : <FileText className="h-4 w-4 text-primary" />}
               <span className="flex-1 truncate">{attachment.processing ? (/\.pdf$/i.test(attachment.name) ? "جارِ قراءة ملف PDF..." : "جارِ قراءة الملف...") : attachment.name}</span>
               <button type="button" onClick={() => setAttachment(null)} aria-label="إزالة المرفق"><X className="h-3.5 w-3.5" /></button>
             </div>
@@ -597,7 +605,7 @@ export function AiChat({
             </div>
           )}
           <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => { void onPickFile(e.target.files?.[0]); e.target.value = ""; }} />
-          <input ref={galleryRef} type="file" accept="image/*,video/*" hidden onChange={(e) => { void onPickFile(e.target.files?.[0]); e.target.value = ""; }} />
+          <input ref={galleryRef} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={(e) => { void onPickFile(e.target.files?.[0]); e.target.value = ""; }} />
           <input ref={filesRef} type="file" accept="*/*" hidden onChange={(e) => { void onPickFile(e.target.files?.[0]); e.target.value = ""; }} />
           <PromptInput
             onSubmit={async (message) => {
