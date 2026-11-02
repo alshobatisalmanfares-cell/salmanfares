@@ -2,6 +2,7 @@ const SW_URL = "/sw.js";
 
 function isRefusedContext(): boolean {
   if (typeof window === "undefined") return true;
+  if (import.meta.env.VITE_NATIVE_APP === "true") return true;
   if (!import.meta.env.PROD) return true;
   try {
     if (window.self !== window.top) return true;

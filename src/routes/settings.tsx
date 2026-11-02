@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, LANGS } from "@/lib/i18n";
 import { useAppSettings, type ChatModel, type FontSize } from "@/lib/app-settings";
+import { writeOffline } from "@/lib/offline-data";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -97,12 +98,16 @@ function SettingsPage() {
     if (!userId || !confirm("هل تريد حذف جميع المحادثات نهائياً؟")) return;
     const { error } = await supabase.from("ai_chat_sessions").delete().eq("user_id", userId);
     if (error) toast.error("تعذّر حذف المحادثات");
-    else toast.success("تم حذف جميع المحادثات");
+    else {
+      await writeOffline(`chats:${userId}`, []);
+      toast.success("تم حذف جميع المحادثات");
+    }
   }
   async function deleteAccount() {
     if (!userId || !confirm("سيتم حذف بياناتك (المحادثات والذاكرة) وتسجيل خروجك. متابعة؟")) return;
     await supabase.from("ai_chat_sessions").delete().eq("user_id", userId);
     await supabase.from("user_memories").delete().eq("user_id", userId);
+    await writeOffline(`chats:${userId}`, []);
     await supabase.auth.signOut();
     toast.success("تم حذف بياناتك وتسجيل الخروج. لحذف الحساب نهائياً تواصل معنا.");
     navigate({ to: "/contact" });

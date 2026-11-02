@@ -1,6 +1,12 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@import "@fontsource/tajawal/400.css";
+@import "@fontsource/tajawal/500.css";
+@import "@fontsource/tajawal/700.css";
+@import "@fontsource/tajawal/900.css";
+@import "@fontsource/almarai/400.css";
+@import "@fontsource/almarai/700.css";
 
 @custom-variant dark (&:is(.dark *));
 

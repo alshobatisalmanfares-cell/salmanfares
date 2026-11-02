@@ -8,16 +8,22 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/tanstack/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+const nativeBuild = process.env.VITE_NATIVE_APP === "true";
+
 // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
 // @cloudflare/vite-plugin builds from this — wrangler.jsonc main alone is insufficient.
 export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
+    ...(nativeBuild ? {
+      spa: { enabled: true, prerender: { outputPath: "/" } },
+      prerender: { autoStaticPathsDiscovery: false },
+    } : {}),
   },
   vite: {
     plugins: [
       mcpPlugin(),
-      VitePWA({
+      ...(!nativeBuild ? [VitePWA({
         registerType: "autoUpdate",
         injectRegister: null,
         filename: "sw.js",
@@ -66,7 +72,7 @@ export default defineConfig({
             },
           ],
         },
-      }),
+      })] : []),
     ],
   },
 });

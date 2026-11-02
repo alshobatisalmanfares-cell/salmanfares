@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useOnlineStatus } from "@/lib/online-status";
 import { updateServiceWorker } from "@/lib/pwa-sw";
+import { refreshNativeItems } from "@/lib/items";
 
 /** Manual "refresh data" control: revalidates every cached query + the service worker. */
 export function useDataSync() {
@@ -18,6 +19,7 @@ export function useDataSync() {
     }
     setSyncing(true);
     try {
+      await refreshNativeItems();
       await Promise.all([
         queryClient.refetchQueries({ type: "all" }),
         updateServiceWorker(),
