@@ -91,8 +91,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "موقع سلمان للتقنية" },
       { name: "twitter:description", content: "​موقع سلمان للتقنية - منصتك الشاملة لاكتشاف أفضل التطبيقات، الألعاب، والمواقع التقنية المميزة والمحدثة باستمرار." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/bU3DOz3UDyU9X5DCn1DZLGCLn4D3/social-images/social-1778618125921-1000085693.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/bU3DOz3UDyU9X5DCn1DZLGCLn4D3/social-images/social-1778618125921-1000085693.webp" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "سلمان للتقنية" },
@@ -101,12 +99,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: appCss,
-      },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Almarai:wght@300;400;700;800&display=swap",
       },
       {
         rel: "manifest",

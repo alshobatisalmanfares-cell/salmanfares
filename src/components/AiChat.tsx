@@ -3,6 +3,7 @@ import { Plus, Camera, Image as ImageIcon, FileText, Loader2, Settings } from "l
 import { useOnlineStatus } from "@/lib/online-status";
 import { readSettings } from "@/lib/app-settings";
 import { readImage } from "@/lib/chat-media";
+import { readOffline, writeOffline } from "@/lib/offline-data";
 import { requestMic } from "@/components/PermissionsModal";
 import { ArrowRight, Bot, Check, Copy, Gamepad2, History, LogIn, Menu, MessageCircle, Mic, PlusCircle, Smartphone, Trash2, Wrench, Send, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
@@ -193,6 +194,9 @@ export function AiChat({
   }
 
   async function loadSessions(uid: string) {
+    const cached = await readOffline<SavedSession[]>(`chats:${uid}`, []);
+    setSessions(cached);
+    if (!navigator.onLine) return;
     setHistoryLoading(true);
     const { data, error } = await supabase
       .from("ai_chat_sessions")
@@ -205,15 +209,20 @@ export function AiChat({
       toast.error("تعذّر تحميل سجل المحادثات");
       return;
     }
-    setSessions(
+    const loaded =
       (data ?? []).map((row) => ({
         id: row.id,
         title: row.title,
         messages: normalizeMessages(row.messages),
         updated_at: row.updated_at,
-      })),
-    );
+      }));
+    setSessions(loaded);
+    await writeOffline(`chats:${uid}`, loaded);
   }
+
+  useEffect(() => {
+    if (userId && !historyLoading && sessions.length) void writeOffline(`chats:${userId}`, sessions);
+  }, [sessions, userId, historyLoading]);
 
   async function saveSession(nextMessages: Msg[]) {
     if (!userId) return;
@@ -267,6 +276,10 @@ export function AiChat({
 
   async function deleteSession(id: string) {
     if (!userId) return;
+    if (!navigator.onLine) {
+      toast.error("اتصل بالإنترنت لحذف المحادثة من حسابك");
+      return;
+    }
     const { error } = await supabase
       .from("ai_chat_sessions")
       .delete()
@@ -277,6 +290,7 @@ export function AiChat({
       return;
     }
     setSessions((prev) => prev.filter((s) => s.id !== id));
+    await writeOffline(`chats:${userId}`, sessions.filter(s => s.id !== id));
     if (activeSessionId === id) {
       setActiveSessionId(null);
       setMessages([GREETING]);
