@@ -1,0 +1,13 @@
+import { readFile, writeFile, access } from "node:fs/promises";
+
+let html;
+for (const path of ["dist/client/index.html", "dist/client/_shell/index.html"]) {
+  try { html = await readFile(path, "utf8"); break; } catch { /* Try shell output. */ }
+}
+if (!html || /http-equiv=["']refresh/i.test(html)) throw new Error("A real local SPA entry is required; remote redirects are forbidden.");
+if (!html.includes("module")) throw new Error("Native entry has no application script.");
+// Native fonts are bundled by CSS; remote fonts and advertising are unnecessary offline.
+html = html.replace(/<link\b[^>]*href=["']https:\/\/fonts\.[^>]*>/g, "").replace(/<script\b[^>]*src=["']https:\/\/pagead2\.[^>]*>[\s\S]*?<\/script>/g, "");
+await writeFile("dist/client/index.html", html);
+await access("dist/client/native-cache");
+console.log("Verified a local application entry and packaged media; no live-site redirect.");

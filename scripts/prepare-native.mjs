@@ -1,0 +1,33 @@
+import { loadEnv } from "vite";
+import { mkdir, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+
+const env = { ...loadEnv("production", process.cwd(), "VITE_"), ...process.env };
+const origin = env.VITE_SUPABASE_URL;
+const key = env.VITE_SUPABASE_PUBLISHABLE_KEY;
+if (!origin || !key) throw new Error("Native packaging needs the public Cloud URL and publishable key in repository variables.");
+const response = await fetch(`${origin}/rest/v1/items?select=*&order=sort_order.desc,created_at.desc`, { headers: { apikey: key } });
+if (!response.ok) throw new Error(`Cannot package catalog: ${response.status}`);
+const rows = await response.json();
+await mkdir("public/native-cache", { recursive: true });
+const media = new Map();
+async function localMedia(url) {
+  if (!url || !url.startsWith("https://")) return url;
+  if (media.has(url)) return media.get(url);
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`Cannot package a catalog image: ${r.status}`);
+  const extensions = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif", "image/svg+xml": "svg" };
+  const ext = extensions[(r.headers.get("content-type") ?? "").split(";")[0]];
+  if (!ext) throw new Error("Catalog media must be an image");
+  const name = `${createHash("sha256").update(url).digest("hex")}.${ext}`;
+  await writeFile(`public/native-cache/${name}`, new Uint8Array(await r.arrayBuffer()));
+  const path = `/native-cache/${name}`;
+  media.set(url, path);
+  return path;
+}
+for (const row of rows) {
+  row.image_url = await localMedia(row.image_url);
+  row.gallery = await Promise.all((row.gallery ?? []).map(localMedia));
+}
+await writeFile("src/lib/native-catalog.json", JSON.stringify(rows));
+console.log(`Packaged ${rows.length} public catalog entries and ${media.size} local images.`);

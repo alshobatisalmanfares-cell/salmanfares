@@ -11,6 +11,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -23,7 +26,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -31,17 +34,12 @@ jobs:
       - name: Install dependencies
         run: |
           npm install --legacy-peer-deps
-          npm install --no-save --legacy-peer-deps @capacitor/core @capacitor/cli @capacitor/android
 
-      - name: Build web app
-        run: npm run build
+      - name: Build offline native app and package catalog images
+        run: npm run build:native
 
-      - name: Ensure web dir has an entry page
-        run: |
-          mkdir -p dist/client
-          if [ ! -f dist/client/index.html ]; then
-            echo '<!doctype html><meta http-equiv="refresh" content="0;url=https://salmanfares.lovable.app">' > dist/client/index.html
-          fi
+      - name: Test offline and image rules
+        run: npx vitest run src/lib/chat-media.test.ts src/lib/native-runtime.test.ts
 
       - name: Add / update Android platform
         run: |
