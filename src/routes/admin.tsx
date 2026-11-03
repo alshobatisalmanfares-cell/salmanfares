@@ -14,7 +14,14 @@ import { LogOut, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import { socials, type SocialKey } from "@/components/SocialLinks";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "لوحة التحكم | سلمان فارس" }] }),
+  head: () => ({ meta: [
+    { title: "لوحة التحكم | سلمان فارس" },
+    { name: "description", content: "إدارة محتوى موقع سلمان فارس." },
+    { property: "og:title", content: "لوحة التحكم | سلمان فارس" },
+    { property: "og:description", content: "لوحة إدارة التطبيقات والمواقع والألعاب في موقع سلمان فارس." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: AdminPage,
 });
 

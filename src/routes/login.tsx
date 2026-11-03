@@ -10,7 +10,14 @@ import { Eye, EyeOff } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "تسجيل الدخول | سلمان فارس" }] }),
+  head: () => ({ meta: [
+    { title: "تسجيل الدخول | سلمان فارس" },
+    { name: "description", content: "سجّل الدخول إلى موقع سلمان فارس للوصول إلى المفضلة والمساعد." },
+    { property: "og:title", content: "تسجيل الدخول | سلمان فارس" },
+    { property: "og:description", content: "الدخول إلى حسابك على موقع سلمان فارس." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   validateSearch: (s: Record<string, unknown>): { next?: string } => {
     const next = typeof s.next === "string" && s.next.startsWith("/") && !s.next.startsWith("//") ? s.next : undefined;
     return next ? { next } : {};

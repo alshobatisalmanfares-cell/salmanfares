@@ -9,6 +9,8 @@ export const Route = createFileRoute("/ai")({
   head: () => ({
     meta: [
       { title: "أدوات الذكاء الاصطناعي | سلمان فارس" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "description", content: "قائمة مختارة من أفضل أدوات الذكاء الاصطناعي: توليد النصوص، الصور، الفيديو، والمساعدين الأذكياء لتعزيز إنتاجيتك اليومية." },
       { property: "og:title", content: "أدوات الذكاء الاصطناعي | سلمان فارس" },
       { property: "og:description", content: "أفضل أدوات AI للكتابة والتصميم والإنتاجية، مختارة ومحدثة على موقع سلمان فارس." },

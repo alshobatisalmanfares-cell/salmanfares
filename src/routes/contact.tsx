@@ -12,6 +12,8 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "تواصل معنا | سلمان فارس" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "description", content: "تواصل مع فريق سلمان فارس عبر النموذج أو حسابات التواصل الاجتماعي." },
       { property: "og:title", content: "تواصل معنا | سلمان فارس" },
       { property: "og:description", content: "تواصل مع فريق سلمان فارس عبر النموذج أو حسابات التواصل الاجتماعي." },

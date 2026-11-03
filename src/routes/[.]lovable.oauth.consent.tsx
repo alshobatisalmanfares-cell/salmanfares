@@ -12,6 +12,14 @@ const oauth = () => (supabase.auth as unknown as { oauth: OAuthApi }).oauth;
 
 export const Route = createFileRoute("/.lovable/oauth/consent")({
   ssr: false,
+  head: () => ({ meta: [
+    { title: "الموافقة على الوصول | سلمان فارس" },
+    { name: "description", content: "مراجعة طلب الوصول إلى حساب موقع سلمان فارس." },
+    { property: "og:title", content: "الموافقة على الوصول | سلمان فارس" },
+    { property: "og:description", content: "راجع صلاحيات الاتصال بحسابك." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   validateSearch: (s: Record<string, unknown>) => ({
     authorization_id: typeof s.authorization_id === "string" ? s.authorization_id : "",
   }),

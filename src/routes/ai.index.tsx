@@ -20,6 +20,7 @@ export const Route = createFileRoute("/ai/")({
         content: "قسم الذكاء الاصطناعي في سلمان فارس: أدوات مختارة لإنشاء المحتوى والصور والفيديو بسهولة.",
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:url", content: "https://salmanfares.lovable.app/ai" },
     ],
     links: [{ rel: "canonical", href: "https://salmanfares.lovable.app/ai" }],

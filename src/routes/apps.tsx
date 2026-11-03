@@ -10,6 +10,8 @@ export const Route = createFileRoute("/apps")({
   head: () => ({
     meta: [
       { title: "أفضل التطبيقات | سلمان فارس" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "description", content: "تصفح مجموعة مختارة من أفضل التطبيقات للأندرويد والآيفون: أدوات إنتاجية، تصميم، تواصل اجتماعي، وترفيه، محدثة باستمرار على موقع سلمان فارس." },
       { property: "og:title", content: "أفضل التطبيقات | سلمان فارس" },
       { property: "og:description", content: "قائمة مختارة لأفضل تطبيقات الهاتف — إنتاجية وتصميم وترفيه — بمراجعات موجزة." },

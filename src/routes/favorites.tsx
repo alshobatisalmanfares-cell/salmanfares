@@ -10,6 +10,8 @@ export const Route = createFileRoute("/favorites")({
   head: () => ({
     meta: [
       { title: "المفضلة | سلمان فارس" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "description", content: "صفحة المفضلة الخاصة بك على موقع سلمان فارس — احفظ التطبيقات، الألعاب، المواقع، وأدوات الذكاء الاصطناعي للرجوع إليها لاحقاً." },
       { property: "og:title", content: "المفضلة | سلمان فارس" },
       { property: "og:description", content: "احفظ تطبيقاتك ومواقعك المفضلة وارجع إليها في أي وقت." },

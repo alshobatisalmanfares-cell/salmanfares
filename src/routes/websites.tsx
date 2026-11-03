@@ -9,6 +9,8 @@ export const Route = createFileRoute("/websites")({
   head: () => ({
     meta: [
       { title: "أفضل المواقع | سلمان فارس" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "description", content: "تصفح أفضل المواقع التقنية المفيدة: أدوات ويب، تعلم، تصميم، إنتاجية، وموارد مختارة بعناية ومحدثة باستمرار." },
       { property: "og:title", content: "أفضل المواقع | سلمان فارس" },
       { property: "og:description", content: "قائمة مختارة لأفضل المواقع التقنية والأدوات المفيدة على الإنترنت." },

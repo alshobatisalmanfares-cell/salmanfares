@@ -6,6 +6,8 @@ export const Route = createFileRoute("/sitemap")({
   head: () => ({
     meta: [
       { title: "خريطة الموقع | سلمان فارس" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "description", content: "خريطة موقع سلمان فارس: تصفح الأقسام والصفحات الرئيسية بسهولة." },
       { property: "og:title", content: "خريطة الموقع | سلمان فارس" },
       { property: "og:description", content: "خريطة موقع سلمان فارس: تصفح الأقسام والصفحات الرئيسية بسهولة." },
