@@ -7,6 +7,8 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "من نحن | سلمان فارس" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "description", content: "منصة سلمان فارس - بوابتكم المتكاملة لنخبة التطبيقات والأدوات الرقمية الحديثة." },
       { property: "og:title", content: "من نحن | سلمان فارس" },
       { property: "og:description", content: "منصة سلمان فارس - بوابتكم المتكاملة لنخبة التطبيقات والأدوات الرقمية الحديثة." },

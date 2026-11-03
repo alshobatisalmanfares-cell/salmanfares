@@ -20,6 +20,7 @@ export const Route = createFileRoute("/games/")({
         content: "قسم الألعاب في سلمان فارس: أفضل الألعاب المختارة مع تفاصيل التشغيل وروابط التحميل.",
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:url", content: "https://salmanfares.lovable.app/games" },
     ],
     links: [{ rel: "canonical", href: "https://salmanfares.lovable.app/games" }],

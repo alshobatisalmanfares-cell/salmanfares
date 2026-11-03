@@ -5,6 +5,10 @@ export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
       { title: "شروط الاستخدام | سلمان فارس" },
+      { property: "og:title", content: "شروط الاستخدام | سلمان فارس" },
+      { property: "og:description", content: "شروط استخدام موقع سلمان فارس." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "description", content: "شروط استخدام موقع سلمان فارس." },
     ],
   }),

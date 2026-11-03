@@ -35,9 +35,10 @@ export function buildItemHead(item: Item | null, url: string) {
     { property: "og:title", content: item?.title ?? title },
     { property: "og:description", content: description },
     { property: "og:type", content: "article" },
+    { name: "twitter:card", content: "summary_large_image" },
     { property: "og:url", content: url },
   ];
-  if (image) {
+  if (image?.startsWith("https://")) {
     meta.push({ property: "og:image", content: image });
     meta.push({ name: "twitter:image", content: image });
   }

@@ -20,6 +20,7 @@ export const Route = createFileRoute("/websites/")({
         content: "قسم المواقع في سلمان فارس: مواقع مختارة تسهّل عملك اليومي على الويب.",
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:url", content: "https://salmanfares.lovable.app/websites" },
     ],
     links: [{ rel: "canonical", href: "https://salmanfares.lovable.app/websites" }],

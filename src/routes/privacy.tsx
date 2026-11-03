@@ -5,6 +5,8 @@ export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
       { title: "سياسة الخصوصية | سلمان فارس" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "description", content: "سياسة الخصوصية لموقع سلمان فارس: ما البيانات التي نجمعها، كيف تُستخدم، دور شركاء الإعلانات، وطرق التواصل معنا لأي استفسار." },
       { property: "og:title", content: "سياسة الخصوصية | سلمان فارس" },
       { property: "og:description", content: "تعرّف على سياسة الخصوصية وطريقة تعاملنا مع بياناتك على موقع سلمان فارس." },
