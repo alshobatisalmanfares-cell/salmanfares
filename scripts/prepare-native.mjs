@@ -9,7 +9,7 @@ if (!origin || !key) throw new Error("Native packaging needs the public Cloud UR
 const response = await fetch(`${origin}/rest/v1/items?select=*&order=sort_order.desc,created_at.desc`, { headers: { apikey: key } });
 if (!response.ok) throw new Error(`Cannot package catalog: ${response.status}`);
 const rows = await response.json();
-await mkdir("public/native-cache", { recursive: true });
+await mkdir("dist/native-media", { recursive: true });
 const media = new Map();
 async function localMedia(url) {
   if (!url || !url.startsWith("https://")) return url;
@@ -17,7 +17,7 @@ async function localMedia(url) {
   const hash = createHash("sha256").update(url).digest("hex");
   for (const ext of ["jpg", "png", "webp", "gif", "svg"]) {
     try {
-      await access(`public/native-cache/${hash}.${ext}`);
+      await access(`dist/native-media/${hash}.${ext}`);
       const path = `/native-cache/${hash}.${ext}`;
       media.set(url, path);
       return path;
@@ -35,7 +35,7 @@ async function localMedia(url) {
   const ext = extensions[(r.headers.get("content-type") ?? "").split(";")[0]];
   if (!ext) throw new Error("Catalog media must be an image");
   const name = `${hash}.${ext}`;
-  await writeFile(`public/native-cache/${name}`, new Uint8Array(await r.arrayBuffer()));
+  await writeFile(`dist/native-media/${name}`, new Uint8Array(await r.arrayBuffer()));
   const path = `/native-cache/${name}`;
   media.set(url, path);
   return path;
