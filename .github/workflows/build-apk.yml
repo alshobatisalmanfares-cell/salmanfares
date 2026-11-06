@@ -35,6 +35,9 @@ jobs:
         run: |
           npm install --legacy-peer-deps
 
+      - name: Build web app
+        run: npm run build
+
       - name: Build offline native app and package catalog images
         run: npm run build:native
 
