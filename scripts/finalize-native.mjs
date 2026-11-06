@@ -1,7 +1,8 @@
 import { readFile, writeFile, access, cp } from "node:fs/promises";
 
 let html;
-for (const path of ["dist/client/index.html", "dist/client/_shell/index.html"]) {
+// TanStack writes a "/" SPA shell as dist/client/.html; older layouts use index.html or _shell.
+for (const path of ["dist/client/.html", "dist/client/index.html", "dist/client/_shell.html", "dist/client/_shell/index.html"]) {
   try { html = await readFile(path, "utf8"); break; } catch { /* Try shell output. */ }
 }
 if (!html || /http-equiv=["']refresh/i.test(html)) throw new Error("A real local SPA entry is required; remote redirects are forbidden.");
