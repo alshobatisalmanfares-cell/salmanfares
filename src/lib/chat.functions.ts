@@ -101,11 +101,6 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => InputSchema.parse(data))
   .handler(async ({ data, context }) => {
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
-
-    const catalog = await buildCatalogPrompt();
-
     let personal = "";
     if (data.useMemory !== false) {
       const sb = context.supabase;
@@ -117,6 +112,18 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
       if (sess?.length) personal += `\n\nعناوين محادثات المستخدم السابقة (للسياق فقط):\n${sess.map((s) => `- ${s.title}`).join("\n")}`;
     }
 
+    return runChat(data, personal);
+  });
+
+/** Guest chat for unauthenticated store visitors: no memory, no personal data. */
+export const chatAsGuest = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => InputSchema.parse(data))
+  .handler(async ({ data }) => runChat({ ...data, image: undefined }, ""));
+
+async function runChat(data: z.infer<typeof InputSchema>, personal: string) {
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) throw new Error("LOVABLE_API_KEY missing");
+    const catalog = await buildCatalogPrompt();
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -153,4 +160,4 @@ export const chatWithAssistant = createServerFn({ method: "POST" })
     const reply = json.choices?.[0]?.message?.content?.trim() ?? "";
     if (!reply) throw new Error("empty_reply");
     return { reply };
-  });
+}
