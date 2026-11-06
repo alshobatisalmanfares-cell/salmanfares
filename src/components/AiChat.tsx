@@ -15,7 +15,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useServerFn } from "@tanstack/react-start";
-import { chatWithAssistant } from "@/lib/chat.functions";
+import { chatWithAssistant, chatAsGuest } from "@/lib/chat.functions";
 import avatarUrl from "@/assets/avatar.jpg";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -109,6 +109,7 @@ export function AiChat({
   const [streamingText, setStreamingText] = useState<string | null>(null);
   const [listening, setListening] = useState(false);
   const send = useServerFn(chatWithAssistant);
+  const sendGuest = useServerFn(chatAsGuest);
   const online = useOnlineStatus();
   const [menuOpen, setMenuOpen] = useState(false);
   const [attachment, setAttachment] = useState<{ name: string; text: string; processing: boolean; image?: { dataUrl: string } } | null>(null);
@@ -307,10 +308,6 @@ export function AiChat({
     const extra = attachment?.text ? `\n\n${attachment.text}` : "";
     const text = (textInput.trim() + extra).trim();
     if (!text || loading) return;
-    if (!userId) {
-      toast.error("سجّل الدخول لاستخدام المساعد الذكي");
-      return;
-    }
     const image = attachment?.image;
     setAttachment(null);
     const next: Msg[] = [...messages, { role: "user", content: text }];
@@ -318,7 +315,7 @@ export function AiChat({
     setLoading(true);
     try {
       const history = next.filter((m) => m !== GREETING).slice(-20);
-      const res = await send({ data: { messages: history, image, model: readSettings().model, useMemory: readSettings().memoryEnabled } });
+      const res = userId ? await send({ data: { messages: history, image, model: readSettings().model, useMemory: readSettings().memoryEnabled } }) : await sendGuest({ data: { messages: history, model: readSettings().model } });
       setLoading(false);
       await typewrite(res.reply);
       const finalMessages: Msg[] = [...next, { role: "assistant", content: res.reply }];
@@ -413,7 +410,7 @@ export function AiChat({
         side="right"
         className="flex w-full flex-col gap-0 bg-background/95 p-0 backdrop-blur-xl sm:max-w-md [&>button]:hidden"
       >
-        <SheetHeader className="sticky top-0 z-20 border-b border-border/50 bg-background/80 px-4 py-3 text-start backdrop-blur-md">
+        <SheetHeader className="sticky top-0 z-20 border-b border-border/50 bg-background/80 px-3 py-2 text-start backdrop-blur-md">
           <div className="flex items-center justify-between gap-3">
           <button
             type="button"
@@ -428,27 +425,14 @@ export function AiChat({
               <img
                 src={avatarUrl}
                 alt="سلمان فارس"
-                className="h-10 w-10 rounded-full object-cover ring-2 ring-primary/30"
+                className="h-8 w-8 rounded-full object-cover ring-2 ring-primary/30"
               />
-              <span className="absolute bottom-0 end-0 h-3 w-3 rounded-full border-2 border-background bg-success shadow-[0_0_8px_var(--success)]" />
             </span>
             <span className="flex flex-col leading-tight">
-              <span className="text-base font-extrabold">المساعد الرقمي</span>
+              <span className="text-sm font-extrabold">المساعد الرقمي</span>
               <span className="text-[11px] font-normal text-muted-foreground">المهندس سلمان فارس</span>
-              <span className="mt-0.5 inline-flex items-center gap-1 text-[10px] font-bold text-success">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" />
-                متصل الآن
-              </span>
             </span>
           </SheetTitle>
-          <Link
-            to="/settings"
-            onClick={() => setOpen(false)}
-            aria-label="الإعدادات"
-            className="ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border/70 text-muted-foreground hover:bg-muted/60"
-          >
-            <Settings className="h-4 w-4" />
-          </Link>
           <button
             type="button"
             onClick={() => setOpen(false)}
@@ -554,7 +538,7 @@ export function AiChat({
                 <img src={avatarUrl} alt="سلمان فارس" className="h-16 w-16 rounded-2xl object-cover shadow-lg ring-2 ring-primary/30" />
                 <h2 className="mt-4 text-xl font-extrabold text-foreground">كيف يمكنني مساعدتك اليوم؟</h2>
                 <p className="mt-1.5 text-xs text-muted-foreground">اختر اقتراحاً أو اكتب سؤالك مباشرة</p>
-                <div className="mt-6 grid w-full grid-cols-2 gap-2.5">
+                <div className="mt-5 grid w-full max-w-sm grid-cols-2 gap-2">
                   {SUGGESTIONS.map((s) => (
                     <button
                       key={s.label}
@@ -618,9 +602,6 @@ export function AiChat({
               ))}
             </div>
           )}
-          <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => { void onPickFile(e.target.files?.[0]); e.target.value = ""; }} />
-          <input ref={galleryRef} type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={(e) => { void onPickFile(e.target.files?.[0]); e.target.value = ""; }} />
-          <input ref={filesRef} type="file" accept="*/*" hidden onChange={(e) => { void onPickFile(e.target.files?.[0]); e.target.value = ""; }} />
           <PromptInput
             onSubmit={async (message) => {
               await handleSend(message.text);
@@ -628,8 +609,7 @@ export function AiChat({
             className="mx-auto max-w-3xl rounded-2xl border border-border/80 bg-card/90 p-2.5 shadow-2xl backdrop-blur-lg transition-shadow focus-within:ring-2 focus-within:ring-primary/50 [&_[data-slot=input-group]]:border-0 [&_[data-slot=input-group]]:bg-transparent [&_[data-slot=input-group]]:shadow-none [&_[data-slot=input-group]]:ring-0"
           >
             <PromptInputTextarea
-              placeholder={userId ? "اكتب رسالتك..." : "سجّل الدخول للدردشة مع المساعد"}
-              disabled={!userId}
+              placeholder="اسأل عن تطبيق، لعبة أو أداة..."
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.nativeEvent.isComposing) {
                   // Enter inserts a new line; sending is only via the send button
@@ -643,24 +623,7 @@ export function AiChat({
               <div className="relative flex gap-2">
               <button
                 type="button"
-                onClick={() => setMenuOpen((v) => !v)}
-                disabled={!userId}
-                aria-label="إرفاق"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 text-muted-foreground hover:bg-muted/60 disabled:opacity-50"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-              {menuOpen && (
-                <div className="absolute bottom-12 start-0 z-10 w-40 overflow-hidden rounded-xl border border-border bg-popover text-sm shadow-xl">
-                  <button type="button" onClick={() => cameraRef.current?.click()} className="flex w-full items-center gap-2 px-3 py-2.5 hover:bg-muted"><Camera className="h-4 w-4" />الكاميرا</button>
-                  <button type="button" onClick={() => galleryRef.current?.click()} className="flex w-full items-center gap-2 px-3 py-2.5 hover:bg-muted"><ImageIcon className="h-4 w-4" />المعرض</button>
-                  <button type="button" onClick={() => filesRef.current?.click()} className="flex w-full items-center gap-2 px-3 py-2.5 hover:bg-muted"><FileText className="h-4 w-4" />الملفات</button>
-                </div>
-              )}
-              <button
-                type="button"
                 onClick={startVoice}
-                disabled={!userId}
                 aria-label="إدخال صوتي"
                 className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border/60 transition-colors disabled:opacity-50 ${listening ? "bg-destructive/15 text-destructive" : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"}`}
               >
@@ -669,7 +632,7 @@ export function AiChat({
               </div>
               <PromptInputSubmit
                 status={chatStatus}
-                disabled={loading || streamingText !== null || !userId || processing || !online}
+                disabled={loading || streamingText !== null || processing || !online}
                 aria-label="إرسال"
                 className="h-9 w-9 rounded-xl bg-primary text-primary-foreground shadow-md transition-all hover:bg-primary/90"
               >
