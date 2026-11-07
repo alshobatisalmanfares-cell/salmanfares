@@ -8,52 +8,57 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Java 17
+      # Capacitor 7's Android project compiles with Java 21.
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: "21"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
+      # Capacitor 7 targets and compiles against Android SDK 35.
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          api-level: 33
-          build-tools-version: "33.0.2"
-          force-sdk-install: true
+          accept-android-sdk-licenses: true
+          log-accepted-android-sdk-licenses: false
+          packages: "platform-tools platforms;android-35 build-tools;35.0.0"
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Install dependencies
-        run: |
-          npm install --legacy-peer-deps
+        run: npm install --legacy-peer-deps --no-audit --no-fund
 
-      - name: Build web app
-        run: npm run build
-
-      - name: Build offline native app and package catalog images
+      # Builds the offline app shell and bundles the public catalog and its images.
+      # The public Cloud URL and publishable key come from the committed .env file.
+      - name: Build offline app
         run: npm run build:native
 
-      - name: Test offline and image rules
+      - name: Run tests
         run: npx vitest run src/lib/chat-media.test.ts src/lib/native-runtime.test.ts
 
-      - name: Set up offline browser checks
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Verify local routes and images without internet
+      - name: Verify pages and images work without internet
         run: |
           pip install playwright
           python -m playwright install --with-deps chromium
@@ -67,23 +72,31 @@ jobs:
       - name: Add microphone permission
         run: |
           MANIFEST=android/app/src/main/AndroidManifest.xml
-          grep -q RECORD_AUDIO $MANIFEST || sed -i 's#<application#<uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <application#' $MANIFEST
+          grep -q RECORD_AUDIO "$MANIFEST" || sed -i 's#<application#<uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n    <application#' "$MANIFEST"
+          grep -q RECORD_AUDIO "$MANIFEST"
 
       - name: Build debug APK
         working-directory: android
         run: |
           chmod +x ./gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Rename APK
+        run: |
+          mkdir -p release
+          cp android/app/build/outputs/apk/debug/app-debug.apk "release/salman-fares-${{ github.run_number }}.apk"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: salman-fares-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: release/*.apk
+          if-no-files-found: error
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: موقع سلمان فارس — Build ${{ github.run_number }}
-          files: android/app/build/outputs/apk/debug/app-debug.apk
+          files: release/*.apk
+          fail_on_unmatched_files: true
