@@ -1,6 +1,26 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { downloadNative } from "./native-download.mjs";
+import { mkdtemp, mkdir, writeFile, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
+import { execFileSync } from "node:child_process";
+
+test("finalization preserves the local shell and copies media into the Capacitor package", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "native-finalize-"));
+  try {
+    await mkdir(join(directory, "dist/client"), { recursive: true });
+    await mkdir(join(directory, "node_modules/.cache/native-media"), { recursive: true });
+    const html = '<html><script type="module" src="/assets/app.js"></script></html>';
+    await writeFile(join(directory, "dist/client/.html"), html);
+    await writeFile(join(directory, "node_modules/.cache/native-media/image.png"), "fixture-image");
+    execFileSync(process.execPath, [resolve("scripts/finalize-native.mjs")], { cwd: directory });
+    assert.equal(await readFile(join(directory, "dist/client/index.html"), "utf8"), html);
+    assert.equal(await readFile(join(directory, "dist/client/native-cache/image.png"), "utf8"), "fixture-image");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
 
 const decode = response => response.text();
 const wait = async () => {};
