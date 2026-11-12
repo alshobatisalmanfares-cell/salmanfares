@@ -13,11 +13,13 @@ const nativeBuild = process.env.VITE_NATIVE_APP === "true";
 // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
 // @cloudflare/vite-plugin builds from this — wrangler.jsonc main alone is insufficient.
 export default defineConfig({
+  // Outside Lovable, Nitro defaults to .output/public; Capacitor requires dist/client.
+  ...(nativeBuild ? { nitro: { output: { dir: "dist", serverDir: "dist/server", publicDir: "dist/client" } } } : {}),
   tanstackStart: {
     server: { entry: "server" },
     ...(nativeBuild ? {
       spa: { enabled: true, prerender: { outputPath: "/" } },
-      prerender: { autoStaticPathsDiscovery: false },
+      prerender: { autoStaticPathsDiscovery: false, crawlLinks: false, failOnError: true },
     } : {}),
   },
   vite: {

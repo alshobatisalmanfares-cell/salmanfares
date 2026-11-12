@@ -48,10 +48,23 @@ jobs:
       # Builds the offline app shell and bundles the public catalog and its images.
       # The public Cloud URL and publishable key come from the committed .env file.
       - name: Build offline app
-        run: npm run build:native
+        run: |
+          set -o pipefail
+          mkdir -p build-logs
+          npm run build:native 2>&1 | tee build-logs/offline-build.log
+
+      - name: Upload offline build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-build-diagnostics
+          path: build-logs/offline-build.log
+          if-no-files-found: ignore
 
       - name: Run tests
-        run: npx vitest run src/lib/chat-media.test.ts src/lib/native-runtime.test.ts
+        run: |
+          node --test scripts/native-build.test.mjs
+          npx vitest run src/lib/chat-media.test.ts src/lib/native-runtime.test.ts
 
       - name: Set up Python
         uses: actions/setup-python@v5
